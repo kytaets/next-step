@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -30,7 +28,6 @@ export class CompanyController {
 
   @Post()
   @UseGuards(SessionAuthGuard, CreateCompanyGuard)
-  @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() dto: CreateCompanyDto,
     @CurrentUser() user: UserWithoutPassword,
@@ -39,7 +36,6 @@ export class CompanyController {
   }
 
   @Get('search')
-  @HttpCode(HttpStatus.OK)
   async search(
     @Query() dto: SearchCompanyDto,
   ): Promise<PagedDataResponse<Company[]>> {
@@ -48,20 +44,17 @@ export class CompanyController {
 
   @Get('me')
   @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
   async getMyProfile(@CurrentCompany() company: Company): Promise<Company> {
     return this.service.findOneOrThrow({ id: company.id });
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async getProfile(@Param('id', ParseUUIDPipe) id: string): Promise<Company> {
     return this.service.findOneOrThrow({ id });
   }
 
   @Patch('me')
   @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
   async update(
     @Body() dto: UpdateCompanyDto,
     @CurrentCompany() company: Company,

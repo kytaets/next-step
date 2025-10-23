@@ -107,8 +107,11 @@ export class AuthService {
     await this.emailService.sendResetPasswordEmail(dto.email, resetToken);
   }
 
-  async resetPassword(token: string, dto: ResetPasswordDto): Promise<void> {
-    const email = await this.tokenService.consumeToken(TokenType.RESET, token);
+  async resetPassword(dto: ResetPasswordDto): Promise<void> {
+    const email = await this.tokenService.consumeToken(
+      TokenType.RESET,
+      dto.token,
+    );
     if (!email) {
       throw new BadRequestException('Invalid or expired reset token');
     }

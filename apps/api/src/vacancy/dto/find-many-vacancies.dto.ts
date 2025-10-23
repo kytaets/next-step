@@ -31,10 +31,10 @@ class OrderBy {
   salaryMin?: Prisma.SortOrder;
 }
 
-export class SearchVacancyDto {
+export class FindManyVacanciesDto {
   @IsOptional()
   @IsString()
-  @Length(10, 100)
+  @Length(2, 100)
   title?: string;
 
   @IsOptional()
@@ -64,13 +64,17 @@ export class SearchVacancyDto {
   employmentTypes?: EmploymentType[];
 
   @IsOptional()
-  @IsEnum(SeniorityLevel)
-  seniorityLevel?: SeniorityLevel;
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayUnique()
+  @IsEnum(SeniorityLevel, { each: true })
+  seniorityLevels?: SeniorityLevel[];
 
   @IsOptional()
   @IsArray()
   @ArrayNotEmpty()
   @ArrayUnique()
+  @ValidateNested({ each: true })
   @Type(() => VacancyLanguageDto)
   requiredLanguages?: VacancyLanguageDto[];
 
@@ -80,6 +84,10 @@ export class SearchVacancyDto {
   @ArrayUnique()
   @IsUUID('4', { each: true })
   requiredSkillIds?: string[];
+
+  @IsOptional()
+  @IsUUID()
+  companyId?: string;
 
   @IsOptional()
   @ValidateNested()

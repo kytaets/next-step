@@ -51,7 +51,6 @@ export class AuthController {
   }
 
   @Post('register')
-  @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterDto): Promise<MessageResponse> {
     await this.service.register(dto);
     return {
@@ -85,7 +84,6 @@ export class AuthController {
   }
 
   @Get('verify')
-  @HttpCode(HttpStatus.OK)
   async verifyEmail(@Query('token') token: string): Promise<MessageResponse> {
     await this.service.verifyEmail(token);
     return { message: 'Email verified successfully' };
@@ -111,11 +109,8 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(
-    @Query('token') token: string,
-    @Body() dto: ResetPasswordDto,
-  ): Promise<MessageResponse> {
-    await this.service.resetPassword(token, dto);
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<MessageResponse> {
+    await this.service.resetPassword(dto);
     return { message: 'Password reset successfully' };
   }
 }

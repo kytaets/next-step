@@ -4,11 +4,10 @@ import { VacancyService } from './vacancy.service';
 import { VacancyRepository } from './vacancy.repository';
 import { LanguageService } from '../language/language.service';
 import { SkillService } from '../skill/skill.service';
-import { VacancySearchService } from './vacancy-search.service';
 import { CompanyService } from '../company/company.service';
 import { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { SearchVacancyDto } from './dto/search-vacancy.dto';
+import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
 import { SetLanguagesDto } from './dto/set-languages.dto';
 import { SetSkillsDto } from './dto/set-skills.dto';
 import {
@@ -20,18 +19,48 @@ import {
   EmploymentType,
   LanguageLevel,
 } from '@prisma/client';
+import { createPaginationMeta, getPaginationByPage } from '@common/utils';
+import { ConfigService } from '@nestjs/config';
+import { VacancyQueryBuilder } from './builders/vacancy-query.builder';
+
+jest.mock('./builders/vacancy-query.builder');
+
+jest.mock('@common/utils', () => ({
+  getPaginationByPage: jest.fn(),
+  createPaginationMeta: jest.fn(),
+}));
+
+const mockedGetPaginationByPage = getPaginationByPage as jest.MockedFunction<
+  typeof getPaginationByPage
+>;
+
+const mockedCreatePaginationMeta = createPaginationMeta as jest.MockedFunction<
+  typeof createPaginationMeta
+>;
+
+const mockVacancyQueryBuilder = {
+  withTitle: jest.fn().mockReturnThis(),
+  withSalaryMin: jest.fn().mockReturnThis(),
+  withExperience: jest.fn().mockReturnThis(),
+  withWorkFormats: jest.fn().mockReturnThis(),
+  withEmploymentTypes: jest.fn().mockReturnThis(),
+  withSeniorityLevels: jest.fn().mockReturnThis(),
+  withRequiredSkills: jest.fn().mockReturnThis(),
+  withRequiredLanguages: jest.fn().mockReturnThis(),
+  withCompanyId: jest.fn().mockReturnThis(),
+  build: jest.fn(),
+};
 
 describe('VacancyService', () => {
   let service: VacancyService;
   let vacancyRepository: jest.Mocked<VacancyRepository>;
   let languageService: jest.Mocked<LanguageService>;
   let skillService: jest.Mocked<SkillService>;
-  let searchService: jest.Mocked<VacancySearchService>;
   let companyService: jest.Mocked<CompanyService>;
 
   const mockVacancy: Vacancy = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    companyId: '123e4567-e89b-12d3-a456-426614174002',
+    id: 'vacancy-uuid-1',
+    companyId: 'company-uuid-1',
     title: 'Software Engineer',
     description: 'Job description',
     salaryMin: 100,
@@ -47,8 +76,8 @@ describe('VacancyService', () => {
   };
 
   const mockCompany: Company = {
-    id: '123e4567-e89b-12d3-a456-426614174003',
-    userId: '123e4567-e89b-12d3-a456-426614174001',
+    id: 'company-uuid-2',
+    userId: 'user-uuid-1',
     name: 'Company',
     description: 'Description',
     isVerified: false,
@@ -58,13 +87,20 @@ describe('VacancyService', () => {
     updatedAt: new Date(),
   };
 
+  const pageSize: number = 20;
+
   beforeEach(async () => {
+    (VacancyQueryBuilder as jest.Mock).mockImplementation(
+      () => mockVacancyQueryBuilder,
+    );
+
     const mockVacancyRepository = {
       create: jest.fn(),
       findOne: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
       setRequiredSkills: jest.fn(),
       setRequiredLanguages: jest.fn(),
     };
@@ -77,17 +113,20 @@ describe('VacancyService', () => {
       assertExists: jest.fn(),
     };
 
-    const mockSearchService = {
-      search: jest.fn(),
-    };
-
     const mockCompanyService = {
       findOneOrThrow: jest.fn(),
     };
 
+    const mockConfigService = {
+      getOrThrow: jest.fn(),
+    };
+
+    mockConfigService.getOrThrow.mockReturnValue(pageSize);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         VacancyService,
+        { provide: ConfigService, useValue: mockConfigService },
         {
           provide: VacancyRepository,
           useValue: mockVacancyRepository,
@@ -101,10 +140,6 @@ describe('VacancyService', () => {
           useValue: mockSkillService,
         },
         {
-          provide: VacancySearchService,
-          useValue: mockSearchService,
-        },
-        {
           provide: CompanyService,
           useValue: mockCompanyService,
         },
@@ -115,7 +150,6 @@ describe('VacancyService', () => {
     vacancyRepository = module.get(VacancyRepository);
     languageService = module.get(LanguageService);
     skillService = module.get(SkillService);
-    searchService = module.get(VacancySearchService);
     companyService = module.get(CompanyService);
   });
 
@@ -154,7 +188,7 @@ describe('VacancyService', () => {
 
   describe('findOneOrThrow', () => {
     const where: Prisma.VacancyWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'vacancy-uuid-1',
     };
 
     it('should return a vacancy', async () => {
@@ -177,57 +211,65 @@ describe('VacancyService', () => {
     });
   });
 
-  describe('searchByCompanyId', () => {
-    const companyId = '123e4567-e89b-12d3-a456-426614174001';
-    const vacancies = [mockVacancy];
-    const dto: SearchVacancyDto = {
-      page: 1,
-    };
-    const meta = { total: 1, page: 1, totalPages: 1 };
-
-    it('should return vacancies for valid company', async () => {
-      searchService.search.mockResolvedValue({
-        data: vacancies,
-        meta,
-      });
-      companyService.findOneOrThrow.mockResolvedValue(mockCompany);
-
-      const result = await service.searchByCompanyId(companyId, dto);
-
-      expect(companyService.findOneOrThrow).toHaveBeenCalledWith({
-        id: companyId,
-      });
-      expect(searchService.search).toHaveBeenCalledWith(dto, {
-        companyId,
-      });
-      expect(result).toEqual({
-        data: vacancies,
-        meta,
-      });
-    });
-  });
-
   describe('search', () => {
-    const dto: SearchVacancyDto = {
-      title: 'Title',
-      page: 1,
-    };
     const vacancies = [mockVacancy];
+    const mockPagination = { skip: 0, take: pageSize };
     const meta = { total: 1, page: 1, totalPages: 1 };
 
     it('should return search results', async () => {
-      searchService.search.mockResolvedValue({ meta, data: vacancies });
+      const dto: FindManyVacanciesDto = {
+        title: 'Title',
+        page: 1,
+      };
 
-      const result = await service.search(dto);
+      mockVacancyQueryBuilder.build.mockReturnValue({
+        isActive: true,
+        title: dto.title,
+      });
+      mockedGetPaginationByPage.mockReturnValue(mockPagination);
+      mockedCreatePaginationMeta.mockReturnValue(meta);
+      vacancyRepository.findMany.mockResolvedValue(vacancies);
+      vacancyRepository.count.mockResolvedValue(vacancies.length);
 
-      expect(searchService.search).toHaveBeenCalledWith(dto, undefined);
+      const result = await service.findMany(dto);
+
       expect(result).toEqual({ meta, data: vacancies });
+    });
+
+    it('should validate filters', async () => {
+      const dto: FindManyVacanciesDto = {
+        page: 1,
+        requiredSkillIds: ['skill-uuid-1'],
+        requiredLanguages: [
+          { level: LanguageLevel.PRE_INTERMEDIATE, languageId: 'lang-uuid-1' },
+        ],
+        companyId: 'company-uuid-1',
+      };
+
+      skillService.assertExists.mockResolvedValue();
+      languageService.assertExists.mockResolvedValue();
+      companyService.findOneOrThrow.mockResolvedValue(mockCompany);
+      mockVacancyQueryBuilder.build.mockReturnValue({
+        isActive: true,
+      });
+
+      await service.findMany(dto);
+
+      expect(skillService.assertExists).toHaveBeenCalledWith(
+        dto.requiredSkillIds,
+      );
+      expect(languageService.assertExists).toHaveBeenCalledWith([
+        'lang-uuid-1',
+      ]);
+      expect(companyService.findOneOrThrow).toHaveBeenCalledWith({
+        id: dto.companyId,
+      });
     });
   });
 
   describe('update', () => {
     const where: Prisma.VacancyWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'vacancy-uuid-1',
     };
     const dto: UpdateVacancyDto = {
       title: 'Updated Title',
@@ -245,7 +287,7 @@ describe('VacancyService', () => {
 
   describe('delete', () => {
     const where: Prisma.VacancyWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'vacancy-uuid-1',
     };
 
     it('should delete a vacancy', async () => {
@@ -261,15 +303,9 @@ describe('VacancyService', () => {
   describe('setRequiredSkills', () => {
     const vacancyId = 'vacancy-1';
     const setSkillsDto: SetSkillsDto = {
-      requiredSkillIds: [
-        '123e4567-e89b-12d3-a456-426614174001',
-        '123e4567-e89b-12d3-a456-426614174002',
-      ],
+      requiredSkillIds: ['skill-uuid-1', 'skill-uuid-2'],
     };
-    const skills = [
-      { skillId: '123e4567-e89b-12d3-a456-426614174001' },
-      { skillId: '123e4567-e89b-12d3-a456-426614174002' },
-    ];
+    const skills = [{ skillId: 'skill-uuid-1' }, { skillId: 'skill-uuid-2' }];
 
     it('should set required skills for a vacancy', async () => {
       skillService.assertExists.mockResolvedValue(undefined);
@@ -290,23 +326,20 @@ describe('VacancyService', () => {
   });
 
   describe('setRequiredLanguages', () => {
-    const vacancyId = 'vacancy-1';
+    const vacancyId = 'vacancy-uuid-1';
     const setLanguagesDto: SetLanguagesDto = {
       requiredLanguages: [
         {
-          languageId: '123e4567-e89b-12d3-a456-426614174001',
+          languageId: 'lang-uuid-1',
           level: LanguageLevel.INTERMEDIATE,
         },
         {
-          languageId: '123e4567-e89b-12d3-a456-426614174002',
+          languageId: 'lang-uuid-2',
           level: LanguageLevel.ADVANCED,
         },
       ],
     };
-    const languageIds = [
-      '123e4567-e89b-12d3-a456-426614174001',
-      '123e4567-e89b-12d3-a456-426614174002',
-    ];
+    const languageIds = ['lang-uuid-1', 'lang-uuid-2'];
 
     it('should set required languages for a vacancy', async () => {
       languageService.assertExists.mockResolvedValue();

@@ -3,14 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { VacancyService } from './vacancy.service';
@@ -21,7 +18,7 @@ import { CompanyGuard } from '../company/guards/company.guard';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { SearchVacancyDto } from './dto/search-vacancy.dto';
+import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
 import { SetSkillsDto } from './dto/set-skills.dto';
 import { SetLanguagesDto } from './dto/set-languages.dto';
 import { VacancyOwnerGuard } from './guards/vacancy-owner.guard';
@@ -32,7 +29,6 @@ export class VacancyController {
 
   @Post()
   @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.CREATED)
   async create(
     @CurrentCompany() company: Company,
     @Body() dto: CreateVacancyDto,
@@ -40,42 +36,20 @@ export class VacancyController {
     return this.service.create(company.id, dto);
   }
 
-  @Get('search/my')
-  @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
-  async getMyVacancies(
-    @CurrentCompany() company: Company,
-    @Query() dto: SearchVacancyDto,
+  @Post('search')
+  async findMany(
+    @Body() dto: FindManyVacanciesDto,
   ): Promise<PagedDataResponse<Vacancy[]>> {
-    return this.service.searchByCompanyId(company.id, dto);
-  }
-
-  @Get('search')
-  @HttpCode(HttpStatus.OK)
-  async search(
-    @Query() dto: SearchVacancyDto,
-  ): Promise<PagedDataResponse<Vacancy[]>> {
-    return this.service.search(dto);
-  }
-
-  @Get('search/company/:companyId')
-  @HttpCode(HttpStatus.OK)
-  async searchByCompany(
-    @Param('companyId') companyId: string,
-    @Query() dto: SearchVacancyDto,
-  ): Promise<PagedDataResponse<Vacancy[]>> {
-    return this.service.searchByCompanyId(companyId, dto);
+    return this.service.findMany(dto);
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Vacancy> {
     return this.service.findOneOrThrow({ id });
   }
 
   @Patch(':id')
   @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
-  @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateVacancyDto,
@@ -85,7 +59,6 @@ export class VacancyController {
 
   @Delete(':id')
   @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
-  @HttpCode(HttpStatus.OK)
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<MessageResponse> {
@@ -95,7 +68,6 @@ export class VacancyController {
 
   @Put(':id/skills')
   @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
-  @HttpCode(HttpStatus.OK)
   async setRequiredSkills(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetSkillsDto,
@@ -105,7 +77,6 @@ export class VacancyController {
 
   @Put(':id/languages')
   @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
-  @HttpCode(HttpStatus.OK)
   async setRequiredLanguages(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetLanguagesDto,

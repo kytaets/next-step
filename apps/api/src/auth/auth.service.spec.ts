@@ -355,19 +355,19 @@ describe('AuthService', () => {
   describe('resetPassword', () => {
     const dto: ResetPasswordDto = {
       password: '12345678',
+      token: '123e4567-e89b-12d3-a456-426614174102',
     };
-    const token = '123e4567-e89b-12d3-a456-426614174102';
     const email = 'test@example.com';
 
     it('should reset password', async () => {
       tokenService.consumeToken.mockResolvedValue(email);
       userService.update.mockResolvedValue(mockUserWithoutPassword);
 
-      const result = await service.resetPassword(token, dto);
+      const result = await service.resetPassword(dto);
 
       expect(tokenService.consumeToken).toHaveBeenCalledWith(
         TokenType.RESET,
-        token,
+        dto.token,
       );
       expect(userService.update).toHaveBeenCalledWith(
         { email },
@@ -379,13 +379,13 @@ describe('AuthService', () => {
     it('should throw BadRequestException if token is invalid', async () => {
       tokenService.consumeToken.mockResolvedValue(null);
 
-      await expect(service.resetPassword(token, dto)).rejects.toThrow(
+      await expect(service.resetPassword(dto)).rejects.toThrow(
         new BadRequestException('Invalid or expired reset token'),
       );
 
       expect(tokenService.consumeToken).toHaveBeenCalledWith(
         TokenType.RESET,
-        token,
+        dto.token,
       );
       expect(userService.update).not.toHaveBeenCalled();
     });

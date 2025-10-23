@@ -7,7 +7,6 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { LanguageModule } from '../language/language.module';
 import { SkillModule } from '../skill/skill.module';
-import { VacancySearchService } from './vacancy-search.service';
 
 @Module({
   imports: [
@@ -18,7 +17,7 @@ import { VacancySearchService } from './vacancy-search.service';
     SkillModule,
   ],
   controllers: [VacancyController],
-  providers: [VacancyService, VacancyRepository, VacancySearchService],
+  providers: [VacancyService, VacancyRepository],
   exports: [VacancyService],
 })
 export class VacancyModule {}

@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -35,7 +33,6 @@ export class JobSeekerController {
 
   @Post()
   @UseGuards(SessionAuthGuard, CreateJobSeekerGuard)
-  @HttpCode(HttpStatus.CREATED)
   async create(
     @CurrentUser() user: UserWithoutPassword,
     @Body() dto: CreateJobSeekerDto,
@@ -45,21 +42,18 @@ export class JobSeekerController {
 
   @Get('me')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  @HttpCode(HttpStatus.OK)
   getMyProfile(@CurrentJobSeeker() jobSeeker: JobSeeker): JobSeeker {
     return jobSeeker;
   }
 
   @Get(':id')
   @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
   async getProfile(@Param('id', ParseUUIDPipe) id: string): Promise<JobSeeker> {
     return this.service.findOneOrThrow({ id });
   }
 
   @Get('search')
   @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
   async search(
     @Query() dto: SearchJobSeekerDto,
   ): Promise<PagedDataResponse<JobSeeker[]>> {
@@ -68,7 +62,6 @@ export class JobSeekerController {
 
   @Patch('me')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  @HttpCode(HttpStatus.OK)
   async update(
     @CurrentJobSeeker() jobSeeker: JobSeeker,
     @Body() dto: UpdateJobSeekerDto,
@@ -78,7 +71,6 @@ export class JobSeekerController {
 
   @Put('me/skills')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  @HttpCode(HttpStatus.OK)
   async setSkills(
     @CurrentJobSeeker() jobSeeker: JobSeeker,
     @Body() dto: SetSkillsDto,
@@ -88,7 +80,6 @@ export class JobSeekerController {
 
   @Put('me/languages')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  @HttpCode(HttpStatus.OK)
   async setLanguages(
     @CurrentJobSeeker() jobSeeker: JobSeeker,
     @Body() dto: SetLanguagesDto,
@@ -98,7 +89,6 @@ export class JobSeekerController {
 
   @Put('me/contacts')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  @HttpCode(HttpStatus.OK)
   async setContacts(
     @CurrentJobSeeker() jobSeeker: JobSeeker,
     @Body() dto: SetContactsDto,

@@ -3,6 +3,10 @@ import { randomUUID } from 'node:crypto';
 import { RedisService } from '../redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { TokenType } from './enums/token-type.enum';
+import {
+  TokenPayload,
+  TokenPayloadSchema,
+} from './schemas/token-payload.schema';
 
 @Injectable()
 export class TokenService {
@@ -11,18 +15,27 @@ export class TokenService {
     private readonly config: ConfigService,
   ) {}
 
-  async createToken(type: TokenType, email: string): Promise<string> {
+  async createToken(type: TokenType, payload: TokenPayload): Promise<string> {
     const token = randomUUID();
     const key = this.tokenKey(type, token);
     const ttl = this.tokenTtl(type);
-
-    await this.redis.setex(key, email, ttl);
+    await this.redis.setex(key, JSON.stringify(payload), ttl);
     return token;
   }
 
-  async consumeToken(type: TokenType, token: string): Promise<string | null> {
+  async consumeToken(
+    type: TokenType,
+    token: string,
+  ): Promise<TokenPayload | null> {
     const key = this.tokenKey(type, token);
-    return this.redis.getdel(key);
+    const data = await this.redis.getdel(key);
+
+    if (!data) return null;
+
+    const parsed = await TokenPayloadSchema.safeParseAsync(JSON.parse(data));
+    if (!parsed.success) return null;
+
+    return parsed.data;
   }
 
   private tokenKey(type: TokenType, token: string): string {
@@ -33,6 +46,7 @@ export class TokenService {
     return {
       [TokenType.VERIFY]: this.config.getOrThrow<number>('token.verify.ttl'),
       [TokenType.RESET]: this.config.getOrThrow<number>('token.reset.ttl'),
+      [TokenType.INVITE]: this.config.getOrThrow<number>('token.invite.ttl'),
     }[type];
   }
 }

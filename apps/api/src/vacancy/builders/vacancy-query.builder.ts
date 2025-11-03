@@ -55,10 +55,10 @@ export class VacancyQueryBuilder {
     return this;
   }
 
-  withRequiredSkills(ids?: string[]) {
-    if (ids?.length) {
+  withRequiredSkillIds(skillIds?: string[]) {
+    if (skillIds?.length) {
       this.where.requiredSkills = {
-        some: { skillId: { in: ids } },
+        some: { skillId: { in: skillIds } },
       };
     }
     return this;

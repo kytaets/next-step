@@ -1,9 +1,10 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Company, Prisma } from '@prisma/client';
+import { Company, CompanyRole, Prisma } from '@prisma/client';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SearchCompanyDto } from './dto/search-company.dto';
@@ -11,6 +12,13 @@ import { CompanyRepository } from './company.repository';
 import { ConfigService } from '@nestjs/config';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
 import { PagedDataResponse } from '@common/responses';
+import { InviteDto } from './dto/invite.dto';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import { EmailService } from '../email/email.service';
+import { TokenService } from '../token/token.service';
+import { TokenType } from '../token/enums/token-type.enum';
+import { UserService } from '../user/user.service';
+import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
 
 @Injectable()
 export class CompanyService {
@@ -18,6 +26,10 @@ export class CompanyService {
 
   constructor(
     private readonly repository: CompanyRepository,
+    private readonly recruiterService: RecruiterService,
+    private readonly email: EmailService,
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
     private readonly config: ConfigService,
   ) {
     this.searchPageSize = this.config.getOrThrow<number>(
@@ -25,9 +37,14 @@ export class CompanyService {
     );
   }
 
-  async create(userId: string, dto: CreateCompanyDto): Promise<Company> {
-    await this.assertNotExists({ userId });
-    return this.repository.create(userId, dto);
+  async create(recruiterId: string, dto: CreateCompanyDto): Promise<Company> {
+    const company = await this.repository.create(recruiterId, dto);
+    await this.recruiterService.setCompany(
+      { id: recruiterId },
+      company.id,
+      CompanyRole.ADMIN,
+    );
+    return company;
   }
 
   async findOneOrThrow(
@@ -62,7 +79,39 @@ export class CompanyService {
     return { data, meta };
   }
 
+  async invite(companyId: string, dto: InviteDto): Promise<void> {
+    const user = await this.userService.findOneOrThrow({ email: dto.email });
+    await this.recruiterService.findOneOrThrow({ userId: user.id });
+
+    const company = await this.findOneOrThrow({ id: companyId });
+
+    const token = await this.tokenService.createToken(TokenType.INVITE, {
+      email: dto.email,
+      companyId,
+    });
+    await this.email.sendCompanyInvitation(dto.email, token, company.name);
+  }
+
+  async removeRecruiter(companyId: string, recruiterId: string): Promise<void> {
+    const recruiter = await this.recruiterService.findOneOrThrow({
+      id: recruiterId,
+    });
+
+    if (recruiter.companyId !== companyId) {
+      throw new ForbiddenException(
+        'You can only remove members from your own company',
+      );
+    }
+
+    await this.recruiterService.leaveCompany(recruiter);
+  }
+
   async update(id: string, dto: UpdateCompanyDto): Promise<Company> {
     return this.repository.update({ id }, dto);
+  }
+
+  async delete(recruiter: RecruiterWithCompany): Promise<void> {
+    await this.repository.delete({ id: recruiter.companyId });
+    await this.recruiterService.setRole(recruiter.id, CompanyRole.MEMBER);
   }
 }

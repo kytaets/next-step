@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -11,32 +13,34 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { VacancyService } from './vacancy.service';
-import { Company, Vacancy } from '@prisma/client';
+import { Vacancy } from '@prisma/client';
 import { CreateVacancyDto } from './dto/create-vacancy.dto';
-import { CurrentCompany } from '../company/decorators/current-company.decorator';
-import { CompanyGuard } from '../company/guards/company.guard';
-import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
+import { SessionAuthGuard } from '../user/guards/session-auth.guard';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
 import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
 import { SetSkillsDto } from './dto/set-skills.dto';
 import { SetLanguagesDto } from './dto/set-languages.dto';
 import { VacancyOwnerGuard } from './guards/vacancy-owner.guard';
+import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
+import { CurrentRecruiterWithCompany } from '../recruiter/decorators/current-recruiter-with-company.decorator';
+import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
 
 @Controller('vacancies')
 export class VacancyController {
   constructor(private readonly service: VacancyService) {}
 
   @Post()
-  @UseGuards(SessionAuthGuard, CompanyGuard)
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard)
   async create(
-    @CurrentCompany() company: Company,
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
     @Body() dto: CreateVacancyDto,
   ): Promise<Vacancy> {
-    return this.service.create(company.id, dto);
+    return this.service.create(recruiter.companyId, dto);
   }
 
   @Post('search')
+  @HttpCode(HttpStatus.OK)
   async findMany(
     @Body() dto: FindManyVacanciesDto,
   ): Promise<PagedDataResponse<Vacancy[]>> {
@@ -49,7 +53,7 @@ export class VacancyController {
   }
 
   @Patch(':id')
-  @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard, VacancyOwnerGuard)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateVacancyDto,
@@ -58,7 +62,7 @@ export class VacancyController {
   }
 
   @Delete(':id')
-  @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard, VacancyOwnerGuard)
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<MessageResponse> {
@@ -67,7 +71,7 @@ export class VacancyController {
   }
 
   @Put(':id/skills')
-  @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard, VacancyOwnerGuard)
   async setRequiredSkills(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetSkillsDto,
@@ -76,7 +80,7 @@ export class VacancyController {
   }
 
   @Put(':id/languages')
-  @UseGuards(SessionAuthGuard, CompanyGuard, VacancyOwnerGuard)
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard, VacancyOwnerGuard)
   async setRequiredLanguages(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetLanguagesDto,

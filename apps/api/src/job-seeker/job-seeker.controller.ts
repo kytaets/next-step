@@ -1,38 +1,38 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
-import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
+import { SessionAuthGuard } from '../user/guards/session-auth.guard';
 import { JobSeekerGuard } from './guards/job-seeker.guard';
 import { JobSeekerService } from './job-seeker.service';
 import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUser } from '../user/decorators/current-user.decorator';
 import { UserWithoutPassword } from '../user/types/user-without-password.type';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
 import { JobSeeker } from '@prisma/client';
-import { CompanyGuard } from '../company/guards/company.guard';
-import { SearchJobSeekerDto } from './dto/search-job-seeker.dto';
+import { FindManyJobSeekersDto } from './dto/find-many-job-seekers.dto';
 import { SetSkillsDto } from './dto/set-skills.dto';
 import { SetLanguagesDto } from './dto/set-languages.dto';
-import { CreateJobSeekerGuard } from './guards/create-job-seeker.guard';
 import { CurrentJobSeeker } from './decorators/current-job-seeker.decorator';
 import { SetContactsDto } from './dto/set-contacts.dto';
-import { PagedDataResponse } from '@common/responses';
+import { MessageResponse, PagedDataResponse } from '@common/responses';
 
 @Controller('job-seekers')
 export class JobSeekerController {
   constructor(private readonly service: JobSeekerService) {}
 
   @Post()
-  @UseGuards(SessionAuthGuard, CreateJobSeekerGuard)
+  @UseGuards(SessionAuthGuard)
   async create(
     @CurrentUser() user: UserWithoutPassword,
     @Body() dto: CreateJobSeekerDto,
@@ -42,22 +42,23 @@ export class JobSeekerController {
 
   @Get('me')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
-  getMyProfile(@CurrentJobSeeker() jobSeeker: JobSeeker): JobSeeker {
+  getMe(@CurrentJobSeeker() jobSeeker: JobSeeker): JobSeeker {
     return jobSeeker;
   }
 
   @Get(':id')
-  @UseGuards(SessionAuthGuard, CompanyGuard)
-  async getProfile(@Param('id', ParseUUIDPipe) id: string): Promise<JobSeeker> {
+  @UseGuards(SessionAuthGuard)
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<JobSeeker> {
     return this.service.findOneOrThrow({ id });
   }
 
-  @Get('search')
-  @UseGuards(SessionAuthGuard, CompanyGuard)
-  async search(
-    @Query() dto: SearchJobSeekerDto,
+  @Post('search')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(SessionAuthGuard)
+  async findMany(
+    @Body() dto: FindManyJobSeekersDto,
   ): Promise<PagedDataResponse<JobSeeker[]>> {
-    return this.service.search(dto);
+    return this.service.findMany(dto);
   }
 
   @Patch('me')
@@ -67,6 +68,15 @@ export class JobSeekerController {
     @Body() dto: UpdateJobSeekerDto,
   ): Promise<JobSeeker> {
     return this.service.update(jobSeeker.id, dto);
+  }
+
+  @Delete('me')
+  @UseGuards(SessionAuthGuard, JobSeekerGuard)
+  async delete(
+    @CurrentJobSeeker() jobSeeker: JobSeeker,
+  ): Promise<MessageResponse> {
+    await this.service.delete(jobSeeker.id);
+    return { message: 'Job seeker deleted successfully' };
   }
 
   @Put('me/skills')

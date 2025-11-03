@@ -10,7 +10,7 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 import { VacancyService } from '../vacancy/vacancy.service';
 import { getPaginationByPage, createPaginationMeta } from '@common/utils';
 import { ConfigService } from '@nestjs/config';
-import { SearchApplicationDto } from './dto/search-application';
+import { FindManyApplicationDto } from './dto/search-application';
 import { JobSeekerService } from '../job-seeker/job-seeker.service';
 import { SetStatusDto } from './dto/set-status.dto';
 import { PagedDataResponse } from '@common/responses';
@@ -57,24 +57,24 @@ export class ApplicationService {
     return application;
   }
 
-  async searchByVacancyId(
+  async findManyByVacancyId(
     vacancyId: string,
-    dto: SearchApplicationDto,
+    dto: FindManyApplicationDto,
   ): Promise<PagedDataResponse<Application[]>> {
     await this.vacancyService.findOneOrThrow({ id: vacancyId });
     return this.search(dto, { vacancyId });
   }
 
-  async searchByJobSeekerId(
+  async findManyByJobSeekerId(
     jobSeekerId: string,
-    dto: SearchApplicationDto,
+    dto: FindManyApplicationDto,
   ): Promise<PagedDataResponse<Application[]>> {
     await this.jobSeekerService.findOneOrThrow({ id: jobSeekerId });
     return this.search(dto, { jobSeekerId });
   }
 
   async search(
-    dto: SearchApplicationDto,
+    dto: FindManyApplicationDto,
     additionalWhereParams: Prisma.ApplicationWhereInput,
   ): Promise<PagedDataResponse<Application[]>> {
     const where: Prisma.ApplicationWhereInput = { ...additionalWhereParams };
@@ -104,18 +104,17 @@ export class ApplicationService {
 
   async setStatus(
     id: string,
-    companyId: string,
     dto: SetStatusDto,
+    recruiterCompanyId: string,
   ): Promise<Application> {
     const application = await this.findOneOrThrow({ id });
-
     const vacancy = await this.vacancyService.findOneOrThrow({
       id: application.vacancyId,
     });
 
-    if (vacancy.companyId !== companyId) {
+    if (vacancy.companyId !== recruiterCompanyId) {
       throw new ForbiddenException(
-        'You are not allowed to change the status of this application',
+        'You can only update applications for your own company',
       );
     }
 

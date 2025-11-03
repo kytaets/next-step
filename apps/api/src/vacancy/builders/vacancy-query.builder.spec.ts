@@ -119,7 +119,7 @@ describe('VacancyQueryBuilder', () => {
   describe('withRequiredSkills', () => {
     it('should add required skills filter', () => {
       const skillIds = ['skill-uuid-2', 'skill-uuid-2'];
-      const where = builder.withRequiredSkills(skillIds).build();
+      const where = builder.withRequiredSkillIds(skillIds).build();
       expect(where).toEqual({
         isActive: true,
         requiredSkills: {
@@ -248,7 +248,7 @@ describe('VacancyQueryBuilder', () => {
       .withExperience(3)
       .withWorkFormats([WorkFormat.REMOTE])
       .withSeniorityLevels([SeniorityLevel.SENIOR])
-      .withRequiredSkills(skillIds)
+      .withRequiredSkillIds(skillIds)
       .withCompanyId(companyId, true)
       .build();
 

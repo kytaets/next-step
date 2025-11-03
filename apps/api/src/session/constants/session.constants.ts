@@ -1,2 +1,2 @@
 export const SESSION_PREFIX = 'session:';
-export const USER_SESSIONS_PREFIX = 'user:sessions:';
+export const USER_SESSIONS_PREFIX = 'user:_sessions:';

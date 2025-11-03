@@ -49,4 +49,13 @@ export class UserRepository {
       omit: { password: true },
     });
   }
+
+  async delete(
+    where: Prisma.UserWhereUniqueInput,
+  ): Promise<UserWithoutPassword> {
+    return this.prisma.user.delete({
+      where,
+      omit: { password: true },
+    });
+  }
 }

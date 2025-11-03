@@ -63,7 +63,7 @@ export class VacancyService {
       .withWorkFormats(dto.workFormats)
       .withEmploymentTypes(dto.employmentTypes)
       .withSeniorityLevels(dto.seniorityLevels)
-      .withRequiredSkills(dto.requiredSkillIds)
+      .withRequiredSkillIds(dto.requiredSkillIds)
       .withRequiredLanguages(dto.requiredLanguages)
       .withCompanyId(dto.companyId, true)
       .build();

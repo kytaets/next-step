@@ -3,10 +3,13 @@ import { RedisService } from '../redis/redis.service';
 import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import {
+  SessionPayloadSchema,
+  SessionPayload,
+} from './schemas/session-payload.schema';
+import {
   SESSION_PREFIX,
   USER_SESSIONS_PREFIX,
 } from './constants/session.constants';
-import { SessionSchema, Session } from './schemas/session.schema';
 
 @Injectable()
 export class SessionService {
@@ -21,137 +24,108 @@ export class SessionService {
     this.sessionTTL = this.config.getOrThrow<number>('session.ttl');
   }
 
-  async createSession(userId: string, ua: string, ip: string): Promise<string> {
+  async createSession(
+    userId: string,
+    data: { ip: string; ua: string },
+  ): Promise<string> {
     const sid = randomUUID();
+    const payload: SessionPayload = { sid, userId, ...data };
 
-    const session: Session = {
-      sid,
-      userId,
-      ua,
-      ip,
-    };
+    const pipeline = this.redis.pipeline();
+    pipeline.setex(
+      this.k.session(sid),
+      this.sessionTTL,
+      JSON.stringify(payload),
+    );
+    pipeline.zadd(this.k.userSessions(userId), Date.now(), sid);
+    pipeline.expire(this.k.userSessions(userId), this.sessionTTL);
 
-    const sessionKey = this.sessionKey(sid);
-    const userSessionKey = this.userSessionKey(userId, sid);
+    await pipeline.exec();
 
-    const sids = await this.getSidsByUserId(userId);
-
-    if (sids.length >= this.maxSessions) {
-      await this.pruneUserSessions(sids);
+    const count = await this.redis.zcard(this.k.userSessions(userId));
+    if (count > this.maxSessions) {
+      const oldest = await this.redis.zrange(this.k.userSessions(userId), 0, 0);
+      if (oldest.length) {
+        await this.redis.zrem(this.k.userSessions(userId), oldest);
+        await this.redis.del(this.k.session(oldest[0]));
+      }
     }
-
-    await this.redis
-      .pipeline()
-      .setex(sessionKey, this.sessionTTL, JSON.stringify(session))
-      .setex(userSessionKey, this.sessionTTL, '1')
-      .exec();
 
     return sid;
   }
 
-  async getSession(sid: string): Promise<Session | null> {
-    const key = this.sessionKey(sid);
-    const data = await this.redis.get(key);
-
+  async getSession(sid: string): Promise<SessionPayload | null> {
+    const data = await this.redis.get(this.k.session(sid));
     if (!data) return null;
-    const parsed = SessionSchema.safeParse(JSON.parse(data));
-    if (!parsed.success) return null;
-    return parsed.data;
+    return this.parseSession(data);
   }
 
   async deleteSession(sid: string): Promise<void> {
     const session = await this.getSession(sid);
     if (!session) return;
 
-    const sessionKey = this.sessionKey(sid);
-    const userSessionsKey = this.userSessionKey(session.userId, sid);
-
-    await this.redis.pipeline().del(sessionKey).del(userSessionsKey).exec();
+    await this.redis.del(this.k.session(sid));
+    await this.redis.zrem(this.k.userSessions(session.userId), [sid]);
   }
 
   async deleteAllSessions(userId: string): Promise<void> {
-    const sids = await this.getSidsByUserId(userId);
+    const sids = await this.redis.zrange(this.k.userSessions(userId), 0, -1);
+    const pipeline = this.redis.pipeline();
+    for (const sid of sids) pipeline.del(this.k.session(sid));
+    pipeline.del(this.k.userSessions(userId));
+    await pipeline.exec();
+  }
 
-    if (sids.length) {
-      await Promise.all(
-        sids.map((sid) => {
-          return this.deleteSession(sid);
-        }),
-      );
+  async refreshSessionTTL(sid: string): Promise<void> {
+    const session = await this.getSession(sid);
+    if (!session) return;
+    const key = this.k.session(sid);
+    const exists = await this.redis.exists(key);
+    if (exists) {
+      const pipeline = this.redis.pipeline();
+      pipeline.expire(key, this.sessionTTL);
+      pipeline.zadd(this.k.userSessions(session.userId), Date.now(), sid);
+      pipeline.expire(this.k.userSessions(session.userId), this.sessionTTL);
+      await pipeline.exec();
     }
   }
 
-  async refreshSessionTTL(userId: string, sid: string): Promise<void> {
-    await this.redis
-      .pipeline()
-      .expire(this.sessionKey(sid), this.sessionTTL)
-      .expire(this.userSessionKey(userId, sid), this.sessionTTL)
-      .exec();
-  }
+  async getUserSessions(userId: string): Promise<SessionPayload[]> {
+    const sids = await this.redis.zrange(this.k.userSessions(userId), 0, -1);
+    const sessions: SessionPayload[] = [];
+    const zombies: string[] = [];
+    const rawSessions = await this.redis.mget(
+      sids.map((sid) => this.k.session(sid)),
+    );
 
-  async getUserSessions(userId: string): Promise<Session[]> {
-    const sessions: Session[] = [];
-    const sids = await this.getSidsByUserId(userId);
-
-    const sessionKeys = sids.map((sid) => this.sessionKey(sid));
-    const raw = await this.redis.mget(sessionKeys);
-
-    for (const data of raw) {
+    for (let i = 0; i < rawSessions.length; i++) {
+      const data = rawSessions[i];
       if (data) {
-        const parsed = SessionSchema.safeParse(JSON.parse(data));
-        if (!parsed.success) continue;
-        sessions.push(parsed.data);
+        const parsed = await SessionPayloadSchema.safeParseAsync(
+          JSON.parse(data),
+        );
+        if (parsed.success) {
+          sessions.push(parsed.data);
+        }
+      } else {
+        zombies.push(sids[i]);
       }
+    }
+
+    if (zombies.length) {
+      await this.redis.zrem(this.k.userSessions(userId), zombies);
     }
 
     return sessions;
   }
 
-  private async pruneUserSessions(sids: string[]): Promise<void> {
-    const sid = await this.findOldestSessionSid(sids);
-    await this.deleteSession(sid);
+  private async parseSession(data: string): Promise<SessionPayload | null> {
+    const parsed = await SessionPayloadSchema.safeParseAsync(JSON.parse(data));
+    return parsed.success ? parsed.data : null;
   }
 
-  private async findOldestSessionSid(sids: string[]): Promise<string> {
-    let minTtl = Infinity;
-    let leastTtlSid: string = sids[0];
-
-    for (const sid of sids) {
-      const ttl = await this.redis.ttl(this.sessionKey(sid));
-      if (ttl < minTtl) {
-        minTtl = ttl;
-        leastTtlSid = sid;
-      }
-    }
-
-    return leastTtlSid;
-  }
-
-  private async getSidsByUserId(userId: string): Promise<string[]> {
-    const pattern = this.userSessionKey(userId, '*');
-    const sids: string[] = [];
-
-    let cursor = '0';
-    do {
-      const [nextCursor, keys] = await this.redis.scan(cursor, pattern, 10);
-      for (const key of keys) {
-        sids.push(this.extractSid(key));
-      }
-      cursor = nextCursor;
-    } while (cursor !== '0');
-    return sids;
-  }
-
-  private sessionKey(sid: string): string {
-    return `${SESSION_PREFIX}${sid}`;
-  }
-
-  private userSessionKey(userId: string, sid: string): string {
-    return `${USER_SESSIONS_PREFIX}${userId}:${sid}`;
-  }
-
-  private extractSid(key: string): string {
-    const idx = key.lastIndexOf(':');
-    return key.substring(idx + 1);
-  }
+  private readonly k = {
+    session: (sid: string) => `${SESSION_PREFIX}${sid}`,
+    userSessions: (userId: string) => `${USER_SESSIONS_PREFIX}:${userId}`,
+  };
 }

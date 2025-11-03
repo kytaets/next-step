@@ -36,4 +36,23 @@ export class EmailService {
       },
     });
   }
+
+  async sendCompanyInvitation(
+    email: string,
+    token: string,
+    companyName: string,
+  ): Promise<void> {
+    const clientUrl = this.config.getOrThrow<string>('client.url');
+    const invitationLink = `${clientUrl}/company-invitation?token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Company Invitation',
+      template: 'company-invitation',
+      context: {
+        invitationLink,
+        companyName,
+      },
+    });
+  }
 }

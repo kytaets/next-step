@@ -1,21 +1,23 @@
 import { Module } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CompanyController } from './company.controller';
-import { CompanyGuard } from './guards/company.guard';
-import { PrismaModule } from '../prisma/prisma.module';
-import { AuthModule } from '../auth/auth.module';
 import { CompanyRepository } from './company.repository';
-import { CreateCompanyGuard } from './guards/create-company.guard';
+import { EmailModule } from '../email/email.module';
+import { TokenModule } from '../token/token.module';
+import { RecruiterModule } from '../recruiter/recruiter.module';
+import { UserModule } from '../user/user.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
-  controllers: [CompanyController],
-  providers: [
-    CompanyService,
-    CompanyGuard,
-    CreateCompanyGuard,
-    CompanyRepository,
+  imports: [
+    UserModule,
+    SessionModule,
+    EmailModule,
+    TokenModule,
+    RecruiterModule,
   ],
-  exports: [CompanyService, CompanyGuard],
+  controllers: [CompanyController],
+  providers: [CompanyService, CompanyRepository],
+  exports: [CompanyService],
 })
 export class CompanyModule {}

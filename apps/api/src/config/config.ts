@@ -37,6 +37,11 @@ export default () => ({
         process.env.TOKEN_RESET_TTL &&
         parseInt(process.env.TOKEN_RESET_TTL, 10),
     },
+    invite: {
+      ttl:
+        process.env.TOKEN_INVITE_TTL &&
+        parseInt(process.env.TOKEN_INVITE_TTL, 10),
+    },
   },
 
   email: {

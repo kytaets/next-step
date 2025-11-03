@@ -24,7 +24,7 @@ export class UserService {
 
   async update(
     where: Prisma.UserWhereUniqueInput,
-    data: Omit<Prisma.UserUpdateInput, 'type'>,
+    data: Prisma.UserUpdateInput,
   ): Promise<UserWithoutPassword> {
     await this.findOneOrThrow(where);
 
@@ -51,5 +51,9 @@ export class UserService {
   async assertNotExists(where: Prisma.UserWhereUniqueInput): Promise<void> {
     const user = await this.repository.findOne(where);
     if (user) throw new BadRequestException('User already exists');
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.repository.delete({ id });
   }
 }

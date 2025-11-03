@@ -14,7 +14,7 @@ class OrderBy {
   createdAt?: Prisma.SortOrder;
 }
 
-export class SearchApplicationDto {
+export class FindManyApplicationDto {
   @IsOptional()
   @IsEnum(ApplicationStatus)
   status?: ApplicationStatus;

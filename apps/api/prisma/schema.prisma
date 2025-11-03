@@ -15,12 +15,11 @@ enum ApplicationStatus {
   @@map("application_status")
 }
 
-enum UserType {
-  JOB_SEEKER
-  COMPANY
+enum CompanyRole {
   ADMIN
+  MEMBER
 
-  @@map("user_type")
+  @@map("company_role")
 }
 
 enum SeniorityLevel {
@@ -65,20 +64,18 @@ model User {
   id              String   @id @default(uuid())
   email           String   @unique
   password        String
-  type            UserType
   isEmailVerified Boolean  @default(false) @map("is_email_verified")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   jobSeeker JobSeeker?
-  company   Company?
+  recruiter Recruiter?
 
   @@map("users")
 }
 
 model JobSeeker {
   id             String    @id @default(uuid())
-  userId         String    @unique @map("user_id")
   firstName      String    @map("first_name")
   lastName       String    @map("last_name")
   location       String?
@@ -92,7 +89,8 @@ model JobSeeker {
 
   seniorityLevel SeniorityLevel? @map("seniority_level")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   contacts    JobSeekerContacts?
   languages   JobSeekerLanguage[]
@@ -159,9 +157,27 @@ model Skill {
   @@map("skills")
 }
 
+model Recruiter {
+  id        String   @id @default(uuid())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  role CompanyRole @default(MEMBER) @map("company_role")
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  companyId String?  @map("company_id")
+  company   Company? @relation(fields: [companyId], references: [id], onUpdate: Cascade)
+
+  @@map("recruiters")
+}
+
 model Company {
   id          String   @id @default(uuid())
-  userId      String   @unique @map("user_id")
   name        String
   description String?
   url         String?
@@ -170,15 +186,14 @@ model Company {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  vacancies Vacancy[]
+  vacancies  Vacancy[]
+  recruiters Recruiter[]
 
   @@map("companies")
 }
 
 model Vacancy {
   id                 String   @id @default(uuid())
-  companyId          String   @map("company_id")
   title              String
   description        String
   salaryMin          Int      @map("salary_min")
@@ -189,15 +204,15 @@ model Vacancy {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   workFormat        WorkFormat[]
   employmentType    EmploymentType[]
   requiredSkills    VacancySkill[]
   requiredLanguages VacancyLanguage[]
-
-  seniorityLevel SeniorityLevel @map("seniority_level")
-
-  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Application Application[]
+  seniorityLevel    SeniorityLevel
+  Application       Application[]
 
   @@map("vacancies")
 }
@@ -226,15 +241,16 @@ model VacancySkill {
 
 model Application {
   id          String            @id @default(uuid())
-  jobSeekerId String            @map("job_seeker_id")
-  vacancyId   String            @map("vacancy_id")
   status      ApplicationStatus @default(SUBMITTED)
   coverLetter String?           @map("cover_letter")
   createdAt   DateTime          @default(now()) @map("created_at")
   updatedAt   DateTime          @updatedAt @map("updated_at")
 
-  jobSeeker JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  vacancy   Vacancy   @relation(fields: [vacancyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  jobSeekerId String    @map("job_seeker_id")
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  vacancyId String  @map("vacancy_id")
+  vacancy   Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([jobSeekerId, vacancyId])
   @@map("applications")

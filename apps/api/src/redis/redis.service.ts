@@ -25,10 +25,6 @@ export class RedisService implements OnModuleDestroy {
     return this.redis.mget(keys);
   }
 
-  async zadd(key: string, score: number, member: string): Promise<number> {
-    return this.redis.zadd(key, score, member);
-  }
-
   async zcard(key: string): Promise<number> {
     return this.redis.zcard(key);
   }
@@ -41,20 +37,12 @@ export class RedisService implements OnModuleDestroy {
     return this.redis.zrem(key, members);
   }
 
-  async zpopmin(key: string, count: number): Promise<string[]> {
-    return this.redis.zpopmin(key, count);
-  }
-
   async del(key: string): Promise<number> {
     return this.redis.del(key);
   }
 
   async exists(key: string): Promise<number> {
     return this.redis.exists(key);
-  }
-
-  async expire(key: string, seconds: number): Promise<number> {
-    return this.redis.expire(key, seconds);
   }
 
   pipeline(): ChainableCommander {

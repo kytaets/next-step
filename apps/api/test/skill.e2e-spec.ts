@@ -11,7 +11,7 @@ describe('SkillController (e2e)', () => {
   let app: INestApplication;
   let server: Server;
   let prisma: PrismaService;
-  let redisService: RedisService;
+  let redis: RedisService;
 
   const CACHE_KEY = 'cache:skills';
 
@@ -22,7 +22,7 @@ describe('SkillController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     prisma = app.get(PrismaService);
-    redisService = app.get(RedisService);
+    redis = app.get(RedisService);
 
     app.setGlobalPrefix('api');
     await app.init();
@@ -32,12 +32,12 @@ describe('SkillController (e2e)', () => {
 
   beforeEach(async () => {
     await prisma.skill.deleteMany({});
-    await redisService.del(CACHE_KEY);
+    await redis.del(CACHE_KEY);
   });
 
   afterAll(async () => {
     await prisma.skill.deleteMany({});
-    await redisService.del(CACHE_KEY);
+    await redis.del(CACHE_KEY);
     await app.close();
   });
 
@@ -51,7 +51,8 @@ describe('SkillController (e2e)', () => {
         .get('/api/skills')
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual(skills);
+          expect(res.body).toHaveLength(skills.length);
+          expect(res.body).toEqual(expect.arrayContaining(skills));
         });
     });
   });

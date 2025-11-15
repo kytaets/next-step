@@ -5,11 +5,14 @@ import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { Skill } from '@prisma/client';
 import { RedisService } from '../src/redis/redis.service';
+import { Server } from 'node:http';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
+  let server: Server;
   let prisma: PrismaService;
   let redisService: RedisService;
+
   const CACHE_KEY = 'cache:skills';
 
   beforeAll(async () => {
@@ -23,6 +26,8 @@ describe('SkillController (e2e)', () => {
 
     app.setGlobalPrefix('api');
     await app.init();
+
+    server = app.getHttpServer() as Server;
   });
 
   beforeEach(async () => {
@@ -42,7 +47,7 @@ describe('SkillController (e2e)', () => {
         data: [{ name: 'React' }, { name: 'Vue.js' }, { name: 'Angular' }],
       });
 
-      return request(app.getHttpServer())
+      return request(server)
         .get('/api/skills')
         .expect(200)
         .then((res) => {
@@ -61,7 +66,7 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(app.getHttpServer())
+      return request(server)
         .get(`/api/skills/${skill.id}`)
         .expect(200)
         .then((res) => {
@@ -75,9 +80,7 @@ describe('SkillController (e2e)', () => {
     it('should return 404 if skill does not exist', async () => {
       const skillId = '123e4567-e89b-12d3-a456-426614174000';
 
-      return request(app.getHttpServer())
-        .get(`/api/skills/${skillId}`)
-        .expect(404);
+      return request(server).get(`/api/skills/${skillId}`).expect(404);
     });
   });
 
@@ -85,7 +88,7 @@ describe('SkillController (e2e)', () => {
     const skillName = 'Vue.js';
 
     it('should create a new skill', async () => {
-      return request(app.getHttpServer())
+      return request(server)
         .post('/api/skills')
         .send({
           name: skillName,
@@ -106,7 +109,7 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(app.getHttpServer())
+      return request(server)
         .post('/api/skills')
         .send({
           name: skillName,
@@ -125,17 +128,13 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(app.getHttpServer())
-        .delete(`/api/skills/${skill.id}`)
-        .expect(200);
+      return request(server).delete(`/api/skills/${skill.id}`).expect(200);
     });
 
     it('should return 404 if skill does not exist', async () => {
       const skillId = '123e4567-e89b-12d3-a456-426614174000';
 
-      return request(app.getHttpServer())
-        .delete(`/api/skills/${skillId}`)
-        .expect(404);
+      return request(server).delete(`/api/skills/${skillId}`).expect(404);
     });
   });
 });

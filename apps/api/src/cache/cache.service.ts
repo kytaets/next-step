@@ -6,7 +6,7 @@ export class CacheService {
   constructor(private readonly redis: RedisService) {}
 
   async cache(key: string, value: unknown, ttl: number): Promise<void> {
-    return this.redis.setex(key, JSON.stringify(value), ttl);
+    return this.redis.setex(key, ttl, JSON.stringify(value));
   }
 
   async getCache<T>(key: string): Promise<T | null> {

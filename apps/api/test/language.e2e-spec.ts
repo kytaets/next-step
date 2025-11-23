@@ -13,8 +13,6 @@ describe('LanguageController (e2e)', () => {
   let prisma: PrismaService;
   let redis: RedisService;
 
-  const CACHE_KEY = 'cache:languages';
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -32,23 +30,25 @@ describe('LanguageController (e2e)', () => {
 
   beforeEach(async () => {
     await prisma.language.deleteMany({});
-    await redis.del(CACHE_KEY);
+    await redis.flushall();
   });
 
   afterAll(async () => {
     await prisma.language.deleteMany({});
-    await redis.del(CACHE_KEY);
+    await redis.flushall();
     await app.close();
   });
 
   describe('GET /languages', () => {
+    const url = '/api/languages';
+
     it('should return all languages', async () => {
       const languages = await prisma.language.createManyAndReturn({
         data: [{ name: 'English' }, { name: 'Spanish' }, { name: 'French' }],
       });
 
       return request(server)
-        .get('/api/languages')
+        .get(url)
         .expect(200)
         .then((res) => {
           expect(res.body).toHaveLength(languages.length);
@@ -58,6 +58,7 @@ describe('LanguageController (e2e)', () => {
   });
 
   describe('GET /languages/:id', () => {
+    const url = '/api/languages';
     const languageName = 'English';
 
     it('should return a language by id', async () => {
@@ -68,7 +69,7 @@ describe('LanguageController (e2e)', () => {
       });
 
       return request(server)
-        .get(`/api/languages/${language.id}`)
+        .get(`${url}/${language.id}`)
         .expect(200)
         .then((res) => {
           const language = res.body as Language;
@@ -81,16 +82,18 @@ describe('LanguageController (e2e)', () => {
     it('should return 404 if language does not exist', async () => {
       const languageId = '123e4567-e89b-12d3-a456-426614174000';
 
-      return request(server).get(`/api/languages/${languageId}`).expect(404);
+      return request(server).get(`${url}/${languageId}`).expect(404);
     });
   });
 
   describe('POST /languages', () => {
+    const url = '/api/languages';
+
     const languageName = 'English';
 
     it('should create a new language', async () => {
       return request(server)
-        .post('/api/languages')
+        .post(url)
         .send({
           name: languageName,
         })
@@ -111,7 +114,7 @@ describe('LanguageController (e2e)', () => {
       });
 
       return request(server)
-        .post('/api/languages')
+        .post(url)
         .send({
           name: languageName,
         })
@@ -120,6 +123,7 @@ describe('LanguageController (e2e)', () => {
   });
 
   describe('DELETE /languages/:id', () => {
+    const url = '/api/languages';
     const languageName = 'English';
 
     it('should delete a language by id', async () => {
@@ -129,15 +133,13 @@ describe('LanguageController (e2e)', () => {
         },
       });
 
-      return request(server)
-        .delete(`/api/languages/${language.id}`)
-        .expect(200);
+      return request(server).delete(`${url}/${language.id}`).expect(200);
     });
 
     it('should return 404 if language does not exist', async () => {
       const languageId = '123e4567-e89b-12d3-a456-426614174000';
 
-      return request(server).delete(`/api/languages/${languageId}`).expect(404);
+      return request(server).delete(`${url}/${languageId}`).expect(404);
     });
   });
 });

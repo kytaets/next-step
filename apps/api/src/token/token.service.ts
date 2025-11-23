@@ -19,7 +19,7 @@ export class TokenService {
     const token = randomUUID();
     const key = this.tokenKey(type, token);
     const ttl = this.tokenTtl(type);
-    await this.redis.setex(key, JSON.stringify(payload), ttl);
+    await this.redis.setex(key, ttl, JSON.stringify(payload));
     return token;
   }
 

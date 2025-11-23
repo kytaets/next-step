@@ -9,7 +9,7 @@ export class RedisService implements OnModuleDestroy {
     this.redis.disconnect();
   }
 
-  async setex(key: string, value: string, seconds: number): Promise<void> {
+  async setex(key: string, seconds: number, value: string): Promise<void> {
     await this.redis.setex(key, seconds, value);
   }
 
@@ -41,8 +41,16 @@ export class RedisService implements OnModuleDestroy {
     return this.redis.del(key);
   }
 
+  async zadd(key: string, ...members: (string | number)[]): Promise<number> {
+    return this.redis.zadd(key, ...members);
+  }
+
   async exists(key: string): Promise<number> {
     return this.redis.exists(key);
+  }
+
+  async flushall(): Promise<void> {
+    await this.redis.flushall();
   }
 
   pipeline(): ChainableCommander {

@@ -11,6 +11,10 @@
   "workspaces": [
     "apps/*"
   ],
+  "overrides": {
+    "nodemailer": "^7.0.7",
+    "glob": "^11.0.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

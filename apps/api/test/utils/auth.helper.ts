@@ -6,26 +6,24 @@ import {
   SESSION_PREFIX,
   USER_SESSIONS_PREFIX,
 } from '../../src/session/constants/session.constants';
+import { UserWithoutPassword } from '../../src/user/types/user-without-password.type';
 
 export async function createAuthenticatedUser(
   prisma: PrismaService,
   redis: RedisService,
-  overrides: {
-    email?: string;
-    isEmailVerified?: boolean;
-    password?: string;
-  } = {},
-) {
-  const email = overrides.email || `test@example.com`;
-  const rawPassword = overrides.password || 'password123';
-  const hashedPassword = await argon2.hash(rawPassword);
+): Promise<{ user: UserWithoutPassword; sid: string }> {
+  const email: string = `email${randomUUID()}@example.com`;
+  const password: string = 'password123';
+
+  const hashedPassword = await argon2.hash(password);
 
   const user = await prisma.user.create({
     data: {
       email,
       password: hashedPassword,
-      isEmailVerified: overrides.isEmailVerified ?? true,
+      isEmailVerified: true,
     },
+    omit: { password: true },
   });
 
   const sid = randomUUID();

@@ -38,6 +38,7 @@ describe('AuthController (e2e)', () => {
 
     app.use(cookieParser());
     app.setGlobalPrefix('api');
+
     await app.init();
 
     server = app.getHttpServer() as Server;
@@ -53,6 +54,7 @@ describe('AuthController (e2e)', () => {
     await prisma.user.deleteMany({});
     await redis.flushall();
     await app.close();
+    server.close();
   });
 
   const userData = {

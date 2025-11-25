@@ -11,5 +11,6 @@
   "moduleNameMapper": {
     "^@common/(.*)$": "<rootDir>/src/common/$1",
     "^@/(.*)$": "<rootDir>/src/$1"
-  }
+  },
+  "coverageProvider": "v8"
 }

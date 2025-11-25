@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { Skill } from '@prisma/client';
 import { RedisService } from '../src/redis/redis.service';
 import { Server } from 'node:http';
+import * as cookieParser from 'cookie-parser';
+import { AppModule } from '../src/app.module';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
@@ -19,10 +19,13 @@ describe('SkillController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
     prisma = app.get(PrismaService);
     redis = app.get(RedisService);
 
+    app.use(cookieParser());
     app.setGlobalPrefix('api');
+
     await app.init();
 
     server = app.getHttpServer() as Server;
@@ -37,6 +40,7 @@ describe('SkillController (e2e)', () => {
     await prisma.skill.deleteMany({});
     await redis.flushall();
     await app.close();
+    server.close();
   });
 
   describe('GET /skills', () => {
@@ -72,10 +76,10 @@ describe('SkillController (e2e)', () => {
         .get(`${url}/${skill.id}`)
         .expect(200)
         .then((res) => {
-          const skill = res.body as Skill;
-
-          expect(skill.id).toEqual(skill.id);
-          expect(skill.name).toEqual(skillName);
+          expect(res.body).toEqual({
+            id: skill.id,
+            name: skillName,
+          });
         });
     });
 
@@ -98,10 +102,10 @@ describe('SkillController (e2e)', () => {
         })
         .expect(201)
         .then((res) => {
-          const skill = res.body as Skill;
-
-          expect(skill).toHaveProperty('id');
-          expect(skill.name).toEqual(skillName);
+          expect(res.body).toEqual({
+            id: expect.any(String) as unknown as string,
+            name: skillName,
+          });
         });
     });
 

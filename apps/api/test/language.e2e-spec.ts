@@ -4,8 +4,8 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { RedisService } from '../src/redis/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
-import { Language } from '@prisma/client';
 
 describe('LanguageController (e2e)', () => {
   let app: INestApplication;
@@ -19,10 +19,13 @@ describe('LanguageController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
     prisma = app.get(PrismaService);
     redis = app.get(RedisService);
 
+    app.use(cookieParser());
     app.setGlobalPrefix('api');
+
     await app.init();
 
     server = app.getHttpServer() as Server;
@@ -37,6 +40,7 @@ describe('LanguageController (e2e)', () => {
     await prisma.language.deleteMany({});
     await redis.flushall();
     await app.close();
+    server.close();
   });
 
   describe('GET /languages', () => {
@@ -72,10 +76,7 @@ describe('LanguageController (e2e)', () => {
         .get(`${url}/${language.id}`)
         .expect(200)
         .then((res) => {
-          const language = res.body as Language;
-
-          expect(language.id).toEqual(language.id);
-          expect(language.name).toEqual(languageName);
+          expect(res.body).toEqual({ id: language.id, name: languageName });
         });
     });
 
@@ -99,10 +100,10 @@ describe('LanguageController (e2e)', () => {
         })
         .expect(201)
         .then((res) => {
-          const language = res.body as Language;
-
-          expect(language).toHaveProperty('id');
-          expect(language.name).toEqual(languageName);
+          expect(res.body).toEqual({
+            id: expect.any(String) as unknown as string,
+            name: languageName,
+          });
         });
     });
 

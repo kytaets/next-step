@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -8,66 +9,93 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
-import { Company } from '@prisma/client';
+import { Company, Recruiter } from '@prisma/client';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserWithoutPassword } from '../user/types/user-without-password.type';
-import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
-import { CompanyGuard } from './guards/company.guard';
+import { SessionAuthGuard } from '../user/guards/session-auth.guard';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SearchCompanyDto } from './dto/search-company.dto';
-import { CreateCompanyGuard } from './guards/create-company.guard';
-import { CurrentCompany } from './decorators/current-company.decorator';
-import { CompanySwagger } from '../../docs/swagger/company.swagger';
+import { MessageResponse, PagedDataResponse } from '@common/responses';
+import { InviteDto } from './dto/invite.dto';
+import { RecruiterWithoutCompanyGuard } from '../recruiter/guards/recruiter-without-company.guard';
+import { CurrentRecruiter } from '../recruiter/decorators/current-recruiter.decorator';
+import { RecruiterAdminGuard } from '../recruiter/guards/recruiter-admin.guard';
+import { CurrentRecruiterWithCompany } from '../recruiter/decorators/current-recruiter-with-company.decorator';
+import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
+import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
 
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly service: CompanyService) {}
 
   @Post()
-  @UseGuards(SessionAuthGuard, CreateCompanyGuard)
-  @HttpCode(HttpStatus.CREATED)
-  @CompanySwagger.create()
+  @UseGuards(SessionAuthGuard, RecruiterWithoutCompanyGuard)
   async create(
     @Body() dto: CreateCompanyDto,
-    @CurrentUser() user: UserWithoutPassword,
+    @CurrentRecruiter() recruiter: Recruiter,
   ): Promise<Company> {
-    return this.service.create(user.id, dto);
+    return this.service.create(recruiter.id, dto);
   }
 
-  @Post('search')
+  @Post('invite')
   @HttpCode(HttpStatus.OK)
-  @CompanySwagger.search()
-  async search(@Body() dto: SearchCompanyDto): Promise<Company[]> {
+  @UseGuards(SessionAuthGuard, RecruiterAdminGuard)
+  async invite(
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
+    @Body() dto: InviteDto,
+  ): Promise<MessageResponse> {
+    await this.service.invite(recruiter.companyId, dto);
+    return { message: 'Invite sent successfully' };
+  }
+
+  @Get('search')
+  async search(
+    @Query() dto: SearchCompanyDto,
+  ): Promise<PagedDataResponse<Company[]>> {
     return this.service.search(dto);
   }
 
-  @Get('me')
-  @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
-  @CompanySwagger.getMyProfile()
-  async getMyProfile(@CurrentCompany() company: Company): Promise<Company> {
-    return this.service.findOneOrThrow({ id: company.id });
+  @Get('my')
+  @UseGuards(SessionAuthGuard, RecruiterWithCompanyGuard)
+  async getMy(
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
+  ): Promise<Company> {
+    return this.service.findOneOrThrow({ id: recruiter.companyId });
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  @CompanySwagger.getProfile()
-  async getProfile(@Param('id', ParseUUIDPipe) id: string): Promise<Company> {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Company> {
     return this.service.findOneOrThrow({ id });
   }
 
-  @Patch('me')
-  @UseGuards(SessionAuthGuard, CompanyGuard)
-  @HttpCode(HttpStatus.OK)
-  @CompanySwagger.update()
+  @Delete('recruiters/:recruiterId')
+  @UseGuards(SessionAuthGuard, RecruiterAdminGuard)
+  async removeRecruiter(
+    @Param('recruiterId', ParseUUIDPipe) recruiterId: string,
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
+  ): Promise<MessageResponse> {
+    await this.service.removeRecruiter(recruiter.companyId, recruiterId);
+    return { message: 'Recruiter removed successfully' };
+  }
+
+  @Patch('my')
+  @UseGuards(SessionAuthGuard, RecruiterAdminGuard)
   async update(
     @Body() dto: UpdateCompanyDto,
-    @CurrentCompany() company: Company,
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
   ): Promise<Company> {
-    return this.service.update(company.id, dto);
+    return this.service.update(recruiter.companyId, dto);
+  }
+
+  @Delete('my')
+  @UseGuards(SessionAuthGuard, RecruiterAdminGuard)
+  async delete(
+    @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
+  ): Promise<MessageResponse> {
+    await this.service.delete(recruiter);
+    return { message: 'Company deleted successfully' };
   }
 }

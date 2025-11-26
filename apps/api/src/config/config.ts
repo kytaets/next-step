@@ -37,6 +37,11 @@ export default () => ({
         process.env.TOKEN_RESET_TTL &&
         parseInt(process.env.TOKEN_RESET_TTL, 10),
     },
+    invite: {
+      ttl:
+        process.env.TOKEN_INVITE_TTL &&
+        parseInt(process.env.TOKEN_INVITE_TTL, 10),
+    },
   },
 
   email: {
@@ -68,6 +73,11 @@ export default () => ({
       pageSize:
         process.env.SEARCH_VACANCY_PAGE_SIZE &&
         parseInt(process.env.SEARCH_VACANCY_PAGE_SIZE, 10),
+    },
+    application: {
+      pageSize:
+        process.env.SEARCH_APPLICATION_PAGE_SIZE &&
+        parseInt(process.env.SEARCH_APPLICATION_PAGE_SIZE, 10),
     },
   },
 });

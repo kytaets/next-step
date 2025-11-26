@@ -55,11 +55,15 @@ export class VacancyRepository {
   }
 
   async findMany(
-    params: Prisma.VacancyFindManyArgs,
+    where: Prisma.VacancyWhereInput,
+    orderBy: Prisma.VacancyOrderByWithRelationInput,
+    pagination: { skip: number; take: number },
     includeRelations?: boolean,
   ): Promise<Vacancy[]> {
     return this.prisma.vacancy.findMany({
-      ...params,
+      where,
+      orderBy,
+      ...pagination,
       include: includeRelations ? this.vacancyRelations : null,
     });
   }
@@ -118,5 +122,9 @@ export class VacancyRepository {
       },
       include: includeRelations ? this.vacancyRelations : null,
     });
+  }
+
+  async count(where: Prisma.VacancyWhereInput): Promise<number> {
+    return this.prisma.vacancy.count({ where });
   }
 }

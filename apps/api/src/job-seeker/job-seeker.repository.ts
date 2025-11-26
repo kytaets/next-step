@@ -54,10 +54,17 @@ export class JobSeekerRepository {
     });
   }
 
-  async findMany(params: Prisma.JobSeekerFindManyArgs): Promise<JobSeeker[]> {
+  async findMany(
+    where: Prisma.JobSeekerWhereInput,
+    orderBy: Prisma.JobSeekerOrderByWithRelationInput,
+    pagination: { skip: number; take: number },
+    includeRelations?: boolean,
+  ): Promise<JobSeeker[]> {
     return this.prisma.jobSeeker.findMany({
-      ...params,
-      include: params.include ?? this.jobSeekerRelations,
+      where,
+      orderBy,
+      ...pagination,
+      include: includeRelations ? this.jobSeekerRelations : null,
     });
   }
 
@@ -71,6 +78,10 @@ export class JobSeekerRepository {
       data,
       include: includeRelations ? this.jobSeekerRelations : null,
     });
+  }
+
+  async delete(where: Prisma.JobSeekerWhereUniqueInput): Promise<JobSeeker> {
+    return this.prisma.jobSeeker.delete({ where });
   }
 
   async setSkills(
@@ -130,5 +141,9 @@ export class JobSeekerRepository {
       },
       include: includeRelations ? this.jobSeekerRelations : undefined,
     });
+  }
+
+  async count(where: Prisma.JobSeekerWhereInput): Promise<number> {
+    return this.prisma.jobSeeker.count({ where });
   }
 }

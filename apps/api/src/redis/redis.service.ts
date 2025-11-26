@@ -25,16 +25,24 @@ export class RedisService implements OnModuleDestroy {
     return this.redis.mget(keys);
   }
 
-  async scan(
-    cursor: string,
-    pattern: string,
-    count: number,
-  ): Promise<[cursor: string, elements: string[]]> {
-    return this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', count);
+  async zcard(key: string): Promise<number> {
+    return this.redis.zcard(key);
   }
 
-  async ttl(key: string): Promise<number> {
-    return this.redis.ttl(key);
+  async zrange(key: string, start: number, end: number): Promise<string[]> {
+    return this.redis.zrange(key, start, end);
+  }
+
+  async zrem(key: string, members: string[]): Promise<number> {
+    return this.redis.zrem(key, members);
+  }
+
+  async del(key: string): Promise<number> {
+    return this.redis.del(key);
+  }
+
+  async exists(key: string): Promise<number> {
+    return this.redis.exists(key);
   }
 
   pipeline(): ChainableCommander {

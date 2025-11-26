@@ -6,39 +6,46 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SkillService } from './skill.service';
 import { Skill } from '@prisma/client';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { MessageResponse } from '@common/responses';
-import { SkillSwagger } from '../../docs/swagger/skill.swagger';
+import { CacheInterceptor } from '../cache/interceptors/cache.Interceptor';
+import { CacheTTL } from '../cache/decorators/cache-ttl';
+import { CacheKey } from '../cache/decorators/cache-key';
+import { InvalidateCacheInterceptor } from '../cache/interceptors/invalidate-cache.interceptor';
 
 @Controller('skills')
 export class SkillController {
   constructor(private readonly service: SkillService) {}
 
   @Get()
-  @SkillSwagger.findAll()
+  @UseInterceptors(CacheInterceptor<Skill[]>)
+  @CacheTTL(3600)
+  @CacheKey('cache:skills')
   async findAll(): Promise<Skill[]> {
     return this.service.findAll();
   }
 
   @Get(':id')
-  @SkillSwagger.findOne()
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Skill> {
     return this.service.findOneOrThrow({ id });
   }
 
   // ADMIN GUARD
   @Post()
-  @SkillSwagger.create()
+  @UseInterceptors(InvalidateCacheInterceptor)
+  @CacheKey('cache:skills')
   async create(@Body() dto: CreateSkillDto): Promise<Skill> {
     return this.service.create(dto);
   }
 
   // ADMIN GUARD
   @Delete(':id')
-  @SkillSwagger.delete()
+  @UseInterceptors(InvalidateCacheInterceptor)
+  @CacheKey('cache:skills')
   async delete(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<MessageResponse> {

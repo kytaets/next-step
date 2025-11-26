@@ -1,38 +1,37 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { VacancyRepository } from './vacancy.repository';
 import { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { Prisma, Vacancy } from '@prisma/client';
 import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { SearchVacancyDto } from './dto/search-vacancy.dto';
+import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
 import { LanguageService } from '../language/language.service';
 import { SkillService } from '../skill/skill.service';
 import { SetLanguagesDto } from './dto/set-languages.dto';
 import { SetSkillsDto } from './dto/set-skills.dto';
-import { VacancySearchService } from './vacancy-search.service';
 import { CompanyService } from '../company/company.service';
+import { PagedDataResponse } from '@common/responses';
+import { VacancyQueryBuilder } from './builders/vacancy-query.builder';
+import { createPaginationMeta, getPaginationByPage } from '@common/utils';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class VacancyService {
+  private readonly searchPageSize: number;
+
   constructor(
     private readonly repository: VacancyRepository,
     private readonly languageService: LanguageService,
     private readonly skillService: SkillService,
-    private readonly searchService: VacancySearchService,
     private readonly companyService: CompanyService,
-  ) {}
+    private readonly config: ConfigService,
+  ) {
+    this.searchPageSize = this.config.getOrThrow<number>(
+      'search.vacancy.pageSize',
+    );
+  }
 
   async create(companyId: string, dto: CreateVacancyDto): Promise<Vacancy> {
     return this.repository.create(companyId, dto, true);
-  }
-
-  async findOne(
-    where: Prisma.VacancyWhereUniqueInput,
-  ): Promise<Vacancy | null> {
-    return this.repository.findOne(where, true);
   }
 
   async findOneOrThrow(
@@ -43,14 +42,45 @@ export class VacancyService {
     return vacancy;
   }
 
-  async findByCompanyId(companyId: string): Promise<Vacancy[]> {
-    const company = await this.companyService.findOne({ id: companyId });
-    if (!company) throw new BadRequestException('Company not found');
-    return this.repository.findMany({ where: { companyId } }, true);
-  }
+  async findMany(
+    dto: FindManyVacanciesDto,
+  ): Promise<PagedDataResponse<Vacancy[]>> {
+    if (dto.requiredSkillIds?.length) {
+      await this.skillService.assertExists(dto.requiredSkillIds);
+    }
+    if (dto.requiredLanguages?.length) {
+      const languageIds = dto.requiredLanguages.map((lang) => lang.languageId);
+      await this.languageService.assertExists(languageIds);
+    }
+    if (dto.companyId) {
+      await this.companyService.findOneOrThrow({ id: dto.companyId });
+    }
 
-  async search(dto: SearchVacancyDto): Promise<Vacancy[]> {
-    return this.searchService.search(dto);
+    const where = new VacancyQueryBuilder()
+      .withTitle(dto.title)
+      .withSalaryMin(dto.salaryMin)
+      .withExperience(dto.experienceRequired)
+      .withWorkFormats(dto.workFormats)
+      .withEmploymentTypes(dto.employmentTypes)
+      .withSeniorityLevels(dto.seniorityLevels)
+      .withRequiredSkillIds(dto.requiredSkillIds)
+      .withRequiredLanguages(dto.requiredLanguages)
+      .withCompanyId(dto.companyId, true)
+      .build();
+
+    const pagination = getPaginationByPage(dto.page, this.searchPageSize);
+    const data = await this.repository.findMany(
+      where,
+      dto.orderBy ?? { createdAt: 'desc' },
+      pagination,
+      true,
+    );
+
+    const total = await this.repository.count(where);
+
+    const meta = createPaginationMeta(total, dto.page, this.searchPageSize);
+
+    return { data, meta };
   }
 
   async update(

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import config from './config/config';
 import { RedisModule } from './redis/redis.module';
@@ -13,6 +12,10 @@ import { CompanyModule } from './company/company.module';
 import { SkillModule } from './skill/skill.module';
 import { LanguageModule } from './language/language.module';
 import { VacancyModule } from './vacancy/vacancy.module';
+import { ApplicationModule } from './application/application.module';
+import { RecruiterModule } from './recruiter/recruiter.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -20,8 +23,8 @@ import { VacancyModule } from './vacancy/vacancy.module';
       load: [config],
       isGlobal: true,
     }),
+    PrismaModule,
     UserModule,
-    AuthModule,
     RedisModule,
     SessionModule,
     EmailModule,
@@ -32,6 +35,9 @@ import { VacancyModule } from './vacancy/vacancy.module';
     SkillModule,
     LanguageModule,
     VacancyModule,
+    ApplicationModule,
+    RecruiterModule,
+    CacheModule,
   ],
   controllers: [],
   providers: [],

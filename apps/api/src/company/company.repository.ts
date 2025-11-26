@@ -7,15 +7,15 @@ export class CompanyRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(
-    userId: string,
-    data: Prisma.CompanyCreateWithoutUserInput,
+    recruiterId: string,
+    data: Prisma.CompanyCreateWithoutRecruitersInput,
   ): Promise<Company> {
     return this.prisma.company.create({
       data: {
         ...data,
-        user: {
+        recruiters: {
           connect: {
-            id: userId,
+            id: recruiterId,
           },
         },
       },
@@ -37,5 +37,13 @@ export class CompanyRepository {
     data: Prisma.CompanyUpdateInput,
   ): Promise<Company> {
     return this.prisma.company.update({ where, data });
+  }
+
+  async count(where: Prisma.CompanyWhereInput) {
+    return this.prisma.company.count({ where });
+  }
+
+  async delete(where: Prisma.CompanyWhereUniqueInput): Promise<Company> {
+    return this.prisma.company.delete({ where });
   }
 }

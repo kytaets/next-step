@@ -128,6 +128,52 @@
 
 /* General form styles */
 
+Role Form .role-form-container {
+  margin: auto;
+  padding: 10px 15px;
+  background-color: #1f1f21;
+}
+
+.role-form-container h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 2rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.role-form {
+  display: flex;
+  gap: 30px;
+}
+
+.role-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: white;
+  border: 0;
+  border-radius: 5px;
+}
+
+.role-btn span {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1f1f21;
+}
+
+.role-btn:hover {
+  cursor: pointer;
+}
+
+.role-btn input[type='radio'] {
+  display: none;
+}
+
+/* Role Form */
+
 /* Profile Container */
 .profile-form-container .link {
   padding: 10px 20px;

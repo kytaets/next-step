@@ -39,7 +39,7 @@ export default function CompanyProfilePage() {
       openModal(<ProfileForm role="company" />, true);
     }
     if (companyData) {
-      Cookies.set('role', 'COMPANY');
+      Cookies.set('role', 'RECRUITER');
       Cookies.set('company-id', companyData.id);
       closeModal();
     }

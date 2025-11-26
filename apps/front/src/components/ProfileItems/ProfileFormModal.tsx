@@ -5,13 +5,13 @@ import { motion } from 'framer-motion';
 import JobSeekerProfileForm from './JobSeekerProfileForm';
 
 import classes from './Profile.module.css';
-import CompanyProfileForm from '../CompanyProfileItems/CompanyProfileForm';
+import RecruiterProfileForm from './RecruiterProfileForm';
 
 interface Props {
-  role: 'job-seeker' | 'company';
+  role: 'job-seeker' | 'recruiter';
 }
 
-export default function ProfileForm({ role }: Props) {
+export default function ProfileFormModal({ role }: Props) {
   return (
     <motion.div
       className={classes['profile-form-container']}
@@ -22,7 +22,7 @@ export default function ProfileForm({ role }: Props) {
       {role === 'job-seeker' ? (
         <JobSeekerProfileForm />
       ) : (
-        <CompanyProfileForm />
+        <RecruiterProfileForm />
       )}
     </motion.div>
   );

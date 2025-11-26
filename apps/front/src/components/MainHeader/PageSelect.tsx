@@ -20,7 +20,7 @@ export default function PageSelect() {
     { label: 'Search for Companies', value: '/companies' },
   ];
 
-  if (role === 'COMPANY') {
+  if (role === 'RECRUITER') {
     pages.push({ label: 'Search for Job Seekers', value: '/job-seekers' });
   }
 

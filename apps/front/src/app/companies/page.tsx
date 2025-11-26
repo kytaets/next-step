@@ -72,7 +72,7 @@ export default function CompaniesPage() {
         <Link href="/vacancies">
           <div className={classes['link-to-companies']}>
             {role === 'JOB_SEEKER' && <span>Search for vacancies</span>}
-            {role === 'COMPANY' && <span>Search for job-seekers</span>}
+            {role === 'RECRUITER' && <span>Search for job-seekers</span>}
             <div className="align-center">
               <FontAwesomeIcon icon={faArrowRight} />
             </div>

@@ -101,7 +101,7 @@ export default function MainHeader() {
             >
               Log Out
             </motion.button>
-            {role === 'COMPANY' && (
+            {role === 'RECRUITER' && (
               <motion.div
                 className={classes['no-border-btn']}
                 whileHover={{

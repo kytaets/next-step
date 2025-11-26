@@ -7,30 +7,26 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AnimatedIcon from '../HoveredItem/HoveredItem';
 import MessageBox from '../MessageBox/MessageBox';
 
-import classes from '../ProfileItems/Profile.module.css';
+import classes from './Profile.module.css';
 
-import { MainInfoData } from '@/types/companyProfile';
+import { RecruiterProfileData } from '@/types/recruiter';
 import { useModalStore } from '@/store/modalSlice';
-import {
-  removeEmpty,
-  validateCompanyInfoData,
-} from '@/utils/companyProfileValidation';
-import { createCompanyProfile } from '@/services/companyProfileService';
+import { createRecruiterProfile } from '@/services/recruiterProfileService';
+import { validateRecruiterProfileForm } from '@/utils/recruiterValidation';
 
-const initialValues: MainInfoData = {
-  name: '',
-  url: '',
+const initialValues: RecruiterProfileData = {
+  firstName: '',
+  lastName: '',
 };
 
-export default function CompanyProfileForm() {
+export default function RecruiterProfileForm() {
   const [requestErrors, setRequestErrors] = useState<string[]>([]);
   const router = useRouter();
-  const closeModal = useModalStore((state) => state.closeModal);
-
   const queryClient = useQueryClient();
 
+  const closeModal = useModalStore((state) => state.closeModal);
   const { mutate: createProfile, isPending } = useMutation({
-    mutationFn: createCompanyProfile,
+    mutationFn: createRecruiterProfile,
     onSuccess: async (result) => {
       if (result.status === 'error') {
         setRequestErrors([result.error]);
@@ -38,42 +34,41 @@ export default function CompanyProfileForm() {
       }
 
       setRequestErrors([]);
-      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['profile'] });
       closeModal();
-      router.refresh();
+      router.push('/my-profile/job-seeker');
     },
   });
-
   return (
     <Formik
       initialValues={initialValues}
-      validate={validateCompanyInfoData}
+      validate={validateRecruiterProfileForm}
       onSubmit={(values) => {
-        createProfile(removeEmpty(values));
+        createProfile(values);
       }}
     >
       {({ errors }) => (
         <Form>
-          <h1>Add Your Amazing Company</h1>
-          <h2>Tell us about it</h2>
+          <h1>Create Your Recruiter Profile</h1>
+          <h2>Tell us about yourself</h2>
 
           <div className={classes['profile-form']}>
             <div>
-              <p>1. Company Name</p>
+              <p>1. First Name</p>
               <Field
                 className={classes['form-input']}
-                name="name"
-                placeholder="Cool Company"
+                name="firstName"
+                placeholder="Bob"
                 type="text"
               />
             </div>
 
             <div>
-              <p>2. Website Url</p>
+              <p>2. Last Name</p>
               <Field
                 className={classes['form-input']}
-                name="url"
-                placeholder="https://cool-company.url"
+                name="lastName"
+                placeholder="Coolman"
                 type="text"
               />
             </div>
@@ -101,8 +96,8 @@ export default function CompanyProfileForm() {
           </h5>
           <div className="row-space-between">
             <div className="align-center">
-              <Link href="/my-profile" className={classes['link']}>
-                I am not a Company
+              <Link href="/my-company" className={classes['link']}>
+                I am not a Job Seeker
               </Link>
             </div>
 

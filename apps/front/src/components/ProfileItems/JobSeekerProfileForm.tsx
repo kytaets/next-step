@@ -37,7 +37,7 @@ export default function JobSeekerProfileForm() {
       setRequestErrors([]);
       await queryClient.invalidateQueries({ queryKey: ['profile'] });
       closeModal();
-      router.refresh();
+      router.push('/my-profile/job-seeker');
     },
   });
   return (
@@ -50,7 +50,7 @@ export default function JobSeekerProfileForm() {
     >
       {({ errors }) => (
         <Form>
-          <h1>Create Your Professional Profile</h1>
+          <h1>Create Your Job-Seeker Profile</h1>
           <h2>Tell us about yourself</h2>
 
           <div className={classes['profile-form']}>

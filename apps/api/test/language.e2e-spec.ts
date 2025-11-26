@@ -6,6 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
+import { CreateLanguageDto } from '../src/language/dto/create-language.dto';
 
 describe('LanguageController (e2e)', () => {
   let app: INestApplication;
@@ -93,11 +94,11 @@ describe('LanguageController (e2e)', () => {
     const languageName = 'English';
 
     it('should create a new language', async () => {
+      const body: CreateLanguageDto = { name: languageName };
+
       return request(server)
         .post(url)
-        .send({
-          name: languageName,
-        })
+        .send(body)
         .expect(201)
         .then((res) => {
           expect(res.body).toEqual({
@@ -108,18 +109,15 @@ describe('LanguageController (e2e)', () => {
     });
 
     it('should return 400 if language already exists', async () => {
+      const body: CreateLanguageDto = { name: languageName };
+
       await prisma.language.create({
         data: {
           name: languageName,
         },
       });
 
-      return request(server)
-        .post(url)
-        .send({
-          name: languageName,
-        })
-        .expect(400);
+      return request(server).post(url).send(body).expect(400);
     });
   });
 

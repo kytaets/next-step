@@ -6,6 +6,7 @@ import { RedisService } from '../src/redis/redis.service';
 import { Server } from 'node:http';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
+import { CreateSkillDto } from '../src/skill/dto/create-skill.dto';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
@@ -92,19 +93,17 @@ describe('SkillController (e2e)', () => {
 
   describe('POST /skills', () => {
     const url = '/api/skills';
-    const skillName = 'Vue.js';
+    const body: CreateSkillDto = { name: 'Vue.js' };
 
     it('should create a new skill', async () => {
       return request(server)
         .post(url)
-        .send({
-          name: skillName,
-        })
+        .send(body)
         .expect(201)
         .then((res) => {
           expect(res.body).toEqual({
             id: expect.any(String) as unknown as string,
-            name: skillName,
+            name: body.name,
           });
         });
     });
@@ -112,16 +111,11 @@ describe('SkillController (e2e)', () => {
     it('should return 400 if skill already exists', async () => {
       await prisma.skill.create({
         data: {
-          name: skillName,
+          name: body.name,
         },
       });
 
-      return request(server)
-        .post(url)
-        .send({
-          name: skillName,
-        })
-        .expect(400);
+      return request(server).post(url).send(body).expect(400);
     });
   });
 

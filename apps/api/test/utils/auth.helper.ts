@@ -12,8 +12,8 @@ export async function createAuthenticatedUser(
   prisma: PrismaService,
   redis: RedisService,
 ): Promise<{ user: UserWithoutPassword; sid: string }> {
-  const email: string = `email${randomUUID()}@example.com`;
-  const password: string = 'password123';
+  const email = `email${randomUUID()}@example.com`;
+  const password = 'password123';
 
   const hashedPassword = await argon2.hash(password);
 

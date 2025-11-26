@@ -8,7 +8,13 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateJobSeekerDto } from '../src/job-seeker/dto/create-job-seeker.dto';
 import { createAuthenticatedUser } from './utils/auth.helper';
-import { SeniorityLevel } from '@prisma/client';
+import { JobSeeker, LanguageLevel, SeniorityLevel } from '@prisma/client';
+import { FindManyJobSeekersDto } from '../src/job-seeker/dto/find-many-job-seekers.dto';
+import {
+  assertJobSeekerMatches,
+  createJobSeekerWithProps,
+} from './utils/job-seeker.helper';
+import { PagedDataResponse } from '@common/responses';
 
 describe('JobSeekerController (e2e)', () => {
   let app: INestApplication;
@@ -37,12 +43,16 @@ describe('JobSeekerController (e2e)', () => {
   beforeEach(async () => {
     await prisma.jobSeeker.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.language.deleteMany({});
+    await prisma.skill.deleteMany({});
     await redis.flushall();
   });
 
   afterAll(async () => {
     await prisma.jobSeeker.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.language.deleteMany({});
+    await prisma.skill.deleteMany({});
     await redis.flushall();
     await app.close();
     server.close();
@@ -111,49 +121,141 @@ describe('JobSeekerController (e2e)', () => {
   describe('GET /job-seekers/me', () => {
     const url = '/api/job-seekers/me';
 
-    const createJobSeekerDto: CreateJobSeekerDto = {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      location: 'Location',
-      bio: 'biography',
-      avatarUrl: 'https://example.com/avatar.jpg',
-      expectedSalary: 5000,
-      dateOfBirth: new Date('1990-01-01'),
-      isOpenToWork: true,
-      seniorityLevel: SeniorityLevel.SENIOR,
-    };
-
     it('should return the authenticated user job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      const jobSeeker = await prisma.jobSeeker.create({
-        data: { ...createJobSeekerDto, user: { connect: { id: user.id } } },
-      });
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
 
       return request(server)
         .get(url)
         .set('Cookie', [`sid=${sid}`])
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({
-            id: jobSeeker.id,
-            userId: user.id,
-            firstName: jobSeeker.firstName,
-            lastName: jobSeeker.lastName,
-            location: jobSeeker.location,
-            bio: jobSeeker.bio,
-            avatarUrl: jobSeeker.avatarUrl,
-            expectedSalary: jobSeeker.expectedSalary,
-            dateOfBirth: jobSeeker.dateOfBirth,
-            isOpenToWork: jobSeeker.isOpenToWork,
-            seniorityLevel: jobSeeker.seniorityLevel,
-            createdAt: jobSeeker.createdAt,
-            updatedAt: jobSeeker.updatedAt,
-            languages: [],
-            skills: [],
-            contacts: null,
-          });
+          const resBody = res.body as JobSeeker;
+          assertJobSeekerMatches(resBody, jobSeeker);
         });
+    });
+  });
+
+  describe('GET /job-seekers/:id', () => {
+    const url = '/api/job-seekers';
+
+    it('should return a job seeker by id', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .get(`${url}/${jobSeeker.id}`)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as JobSeeker;
+          assertJobSeekerMatches(resBody, jobSeeker);
+        });
+    });
+
+    it('should return 404 if job seeker does not exist', async () => {
+      const { sid } = await createAuthenticatedUser(prisma, redis);
+      const jobSeekerId = '123e4567-e89b-12d3-a456-426614174000';
+
+      return request(server)
+        .get(`${url}/${jobSeekerId}`)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(404);
+    });
+  });
+
+  describe('POST /job-seekers/search', () => {
+    const url = '/api/job-seekers/search';
+
+    it('should filter by skills, languages and sort results', async () => {
+      const javaSkill = await prisma.skill.create({ data: { name: 'Java' } });
+      const sqlSkill = await prisma.skill.create({
+        data: { name: 'SQL' },
+      });
+
+      const engLang = await prisma.language.create({
+        data: { name: 'English' },
+      });
+
+      const targetUserJobSeeker = await createJobSeekerWithProps(prisma, {
+        seniority: SeniorityLevel.SENIOR,
+        skillIds: [javaSkill.id],
+        languages: [{ languageId: engLang.id, level: LanguageLevel.NATIVE }],
+        expectedSalary: 6000,
+      });
+
+      await createJobSeekerWithProps(prisma, {
+        seniority: SeniorityLevel.SENIOR,
+        skillIds: [sqlSkill.id],
+        languages: [{ languageId: engLang.id, level: LanguageLevel.NATIVE }],
+        expectedSalary: 5500,
+      });
+
+      await createJobSeekerWithProps(prisma, {
+        seniority: SeniorityLevel.SENIOR,
+        skillIds: [javaSkill.id],
+        languages: [
+          { languageId: engLang.id, level: LanguageLevel.ELEMENTARY },
+        ],
+        expectedSalary: 4000,
+      });
+
+      const { sid } = await createAuthenticatedUser(prisma, redis);
+
+      const searchDto: FindManyJobSeekersDto = {
+        skillIds: [javaSkill.id],
+        languages: [
+          { languageId: engLang.id, level: LanguageLevel.UPPER_INTERMEDIATE },
+        ],
+        orderBy: { expectedSalary: 'desc' },
+        page: 1,
+      };
+
+      return request(server)
+        .post(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(searchDto)
+        .expect(200)
+        .then((res) => {
+          const { data, meta } = res.body as PagedDataResponse<JobSeeker[]>;
+
+          expect(data).toHaveLength(1);
+          assertJobSeekerMatches(data[0], targetUserJobSeeker);
+          expect(meta.total).toBe(1);
+        });
+    });
+
+    it('should return 400 if skills are not found', async () => {
+      const body = { skillIds: ['123e4567-e89b-12d3-a456-426614174000'] };
+
+      const { sid } = await createAuthenticatedUser(prisma, redis);
+
+      return request(server)
+        .post(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(400);
+    });
+
+    it('should return 400 if languages are not found', async () => {
+      const body = {
+        languages: [
+          {
+            languageId: '123e4567-e89b-12d3-a456-426614174000',
+            level: LanguageLevel.INTERMEDIATE,
+          },
+        ],
+      };
+
+      const { sid } = await createAuthenticatedUser(prisma, redis);
+
+      return request(server)
+        .post(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(400);
     });
   });
 });

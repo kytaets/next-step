@@ -17,7 +17,7 @@ import { Company, Recruiter } from '@prisma/client';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { SessionAuthGuard } from '../user/guards/session-auth.guard';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { SearchCompanyDto } from './dto/search-company.dto';
+import { FindManyCompaniesDto } from './dto/find-many-companies.dto';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
 import { InviteDto } from './dto/invite.dto';
 import { RecruiterWithoutCompanyGuard } from '../recruiter/guards/recruiter-without-company.guard';
@@ -53,7 +53,7 @@ export class CompanyController {
 
   @Get('search')
   async search(
-    @Query() dto: SearchCompanyDto,
+    @Query() dto: FindManyCompaniesDto,
   ): Promise<PagedDataResponse<Company[]>> {
     return this.service.search(dto);
   }

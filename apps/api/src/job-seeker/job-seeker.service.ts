@@ -97,7 +97,7 @@ export class JobSeekerService {
   }
 
   async setLanguages(id: string, dto: SetLanguagesDto): Promise<JobSeeker> {
-    const languageIds = dto.languages.map((language) => language.languageId);
+    const languageIds = dto.languages.map((lang) => lang.languageId);
     await this.languageService.assertExists(languageIds);
     return this.repository.setLanguages(id, dto.languages, true);
   }

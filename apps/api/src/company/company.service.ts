@@ -7,7 +7,7 @@ import {
 import { Company, CompanyRole, Prisma } from '@prisma/client';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { SearchCompanyDto } from './dto/search-company.dto';
+import { FindManyCompaniesDto } from './dto/find-many-companies.dto';
 import { CompanyRepository } from './company.repository';
 import { ConfigService } from '@nestjs/config';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
@@ -60,7 +60,9 @@ export class CompanyService {
     if (company) throw new BadRequestException('Company already exists');
   }
 
-  async search(dto: SearchCompanyDto): Promise<PagedDataResponse<Company[]>> {
+  async search(
+    dto: FindManyCompaniesDto,
+  ): Promise<PagedDataResponse<Company[]>> {
     const where: Prisma.CompanyWhereInput = {};
     const pagination = getPaginationByPage(dto.page, this.searchPageSize);
 

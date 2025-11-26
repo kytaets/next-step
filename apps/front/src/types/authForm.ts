@@ -1,5 +1,4 @@
 interface RegistrationFormData {
-  role: string;
   email: string;
   password: string;
   confirm: string;

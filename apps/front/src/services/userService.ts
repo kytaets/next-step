@@ -5,7 +5,6 @@ import { ApiResponse } from '@/types/authForm';
 export async function registerUser(data: {
   email: string;
   password: string;
-  type: string;
 }): Promise<ApiResponse> {
   try {
     await api.post('/auth/register', data);

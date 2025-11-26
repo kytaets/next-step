@@ -53,13 +53,10 @@ export async function resetPass(data: {
   password: string | undefined;
 }) {
   try {
-    const response = await api.post(
-      '/auth/reset-password',
-      { password: data.password },
-      {
-        params: { token: data.token },
-      }
-    );
+    const response = await api.post('/auth/reset-password', {
+      password: data.password,
+      token: data.token,
+    });
     return !!response.data.confirmed;
   } catch {
     throw new Error('Failed to reset password');

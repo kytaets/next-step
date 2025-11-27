@@ -5,6 +5,7 @@ export type RecruiterProfileData = {
   role: 'ADMIN' | 'MEMBER';
   avatarUrl: string | null;
   createdAt: string;
+  companyId: string | null;
 };
 
 export type RecruiterProfileFormData = Pick<

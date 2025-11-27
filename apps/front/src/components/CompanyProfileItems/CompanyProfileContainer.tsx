@@ -56,7 +56,11 @@ export default function CompanyProfileContainer({
         data={companyData.description}
         type="description"
       />
-      <BottomRow isEditable={isEditable} data={companyData.createdAt} />
+      <BottomRow
+        isEditable={isEditable}
+        data={companyData.createdAt}
+        type="company"
+      />
     </div>
   );
 }

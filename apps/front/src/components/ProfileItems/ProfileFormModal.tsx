@@ -6,9 +6,10 @@ import JobSeekerProfileForm from './JobSeekerProfileForm';
 
 import classes from './Profile.module.css';
 import RecruiterProfileForm from './RecruiterProfileForm';
+import CompanyProfileForm from '../CompanyProfileItems/CompanyProfileForm';
 
 interface Props {
-  role: 'job-seeker' | 'recruiter';
+  role: 'job-seeker' | 'recruiter' | 'company';
 }
 
 export default function ProfileFormModal({ role }: Props) {
@@ -21,8 +22,10 @@ export default function ProfileFormModal({ role }: Props) {
     >
       {role === 'job-seeker' ? (
         <JobSeekerProfileForm />
-      ) : (
+      ) : role === 'recruiter' ? (
         <RecruiterProfileForm />
+      ) : (
+        <CompanyProfileForm />
       )}
     </motion.div>
   );

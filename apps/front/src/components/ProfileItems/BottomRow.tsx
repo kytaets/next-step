@@ -10,7 +10,7 @@ import HoveredItem from '../HoveredItem/HoveredItem';
 interface Props {
   isEditable: boolean;
   data: string;
-  type?: 'recruiter' | 'job-seeker';
+  type?: 'recruiter' | 'job-seeker' | 'company';
 }
 
 export default function BottomRow({ isEditable, data, type }: Props) {
@@ -49,27 +49,34 @@ export default function BottomRow({ isEditable, data, type }: Props) {
     <div>
       <div className="row-space-between">
         <h3 className={classes['created-at']}>
-          With us from: <span>{isoToDate(data)}</span>
+          {type === 'company' ? 'Created at' : 'With us from'}:{' '}
+          <span>{isoToDate(data)}</span>
         </h3>
-        {isEditable && (
-          <HoveredItem scale={1.05}>
-            <button
-              className={classes['change-btn']}
-              onClick={handleChangeAccount}
-            >
-              Change to {type === 'recruiter' ? 'job-seeker' : 'recruiter'}{' '}
-              account
-            </button>
-          </HoveredItem>
+        {type !== 'company' && (
+          <>
+            {isEditable && (
+              <HoveredItem scale={1.05}>
+                <button
+                  className={classes['change-btn']}
+                  onClick={handleChangeAccount}
+                >
+                  Change to {type === 'recruiter' ? 'job-seeker' : 'recruiter'}{' '}
+                  account
+                </button>
+              </HoveredItem>
+            )}
+          </>
         )}
       </div>
-      <div className={classes['logout-btn-container']}>
-        <HoveredItem scale={1.05}>
-          <button className={classes['logout-btn']} onClick={handleLogoutAll}>
-            Log out from all devices
-          </button>
-        </HoveredItem>
-      </div>
+      {type !== 'company' && (
+        <div className={classes['logout-btn-container']}>
+          <HoveredItem scale={1.05}>
+            <button className={classes['logout-btn']} onClick={handleLogoutAll}>
+              Log out from all devices
+            </button>
+          </HoveredItem>
+        </div>
+      )}
     </div>
   );
 }

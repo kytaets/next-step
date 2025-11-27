@@ -27,14 +27,13 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
 
   const { mutate: updateInfo, isPending } = useMutation({
     mutationFn: updateCompanyProfile,
-    onSuccess: async (result) => {
-      if (result.status === 'error') {
-        setRequestError(result.error);
-        return;
-      }
+    onSuccess: async () => {
       setRequestError(null);
       await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
       setIsChanging(false);
+    },
+    onError: (error) => {
+      setRequestError(error.message);
     },
   });
 

@@ -101,8 +101,8 @@ export default function CompanyProfileForm() {
           </h5>
           <div className="row-space-between">
             <div className="align-center">
-              <Link href="/my-profile" className={classes['link']}>
-                I am not a Company
+              <Link href="/my-profile/recruiter" className={classes['link']}>
+                ← Go back
               </Link>
             </div>
 

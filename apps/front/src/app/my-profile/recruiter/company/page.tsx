@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 import CompanyProfileContainer from '@/components/CompanyProfileItems/CompanyProfileContainer';
-import ProfileForm from '@/components/ProfileItems/ProfileForm';
+import ProfileFormModal from '@/components/ProfileItems/ProfileFormModal';
 import MessageBox from '@/components/MessageBox/MessageBox';
 
 import classes from './page.module.css';
@@ -36,7 +36,7 @@ export default function CompanyProfilePage() {
       router.push('/sign-in');
     }
     if (isError && error?.status === 403) {
-      openModal(<ProfileForm role="company" />, true);
+      openModal(<ProfileFormModal role="company" />, true);
     }
     if (companyData) {
       Cookies.set('role', 'RECRUITER');

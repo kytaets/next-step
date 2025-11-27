@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import * as argon2 from 'argon2';
 import { JobSeekerWithRelations } from '../../src/job-seeker/types/job-seeker-with-relations.type';
 import { jobSeekerInclude } from '../../src/job-seeker/repositories/includes/job-seeker.include';
+import { CreateJobSeekerDto } from '../../src/job-seeker/dto/create-job-seeker.dto';
 
 export async function createJobSeekerWithProps(
   prisma: PrismaService,
@@ -30,7 +31,7 @@ export async function createJobSeekerWithProps(
     targetUserId = user.id;
   }
 
-  const createJobSeekerDto = {
+  const createJobSeekerDto: CreateJobSeekerDto = {
     firstName: `First Name`,
     lastName: 'Last Name',
     location: 'Ukraine, Kiev',

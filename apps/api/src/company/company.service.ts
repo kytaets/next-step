@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
 import { PagedDataResponse } from '@common/responses';
 import { InviteDto } from './dto/invite.dto';
-import { RecruiterService } from '../recruiter/recruiter.service';
+import { RecruiterService } from '../recruiter/services/recruiter.service';
 import { EmailService } from '../email/email.service';
 import { TokenService } from '../token/token.service';
 import { TokenType } from '../token/enums/token-type.enum';

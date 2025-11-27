@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { RecruiterController } from './recruiter.controller';
-import { RecruiterService } from './recruiter.service';
-import { RecruiterRepository } from './recruiter.repository';
+import { RecruiterController } from './controllers/recruiter.controller';
+import { RecruiterService } from './services/recruiter.service';
+import { RecruiterRepository } from './repositories/recruiter.repository';
 import { TokenModule } from '../token/token.module';
 import { RecruiterGuard } from './guards/recruiter.guard';
 import { RecruiterWithoutCompanyGuard } from './guards/recruiter-without-company.guard';

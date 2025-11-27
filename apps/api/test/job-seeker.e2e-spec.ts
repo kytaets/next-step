@@ -126,7 +126,7 @@ describe('JobSeekerController (e2e)', () => {
   describe('GET /job-seekers/me', () => {
     const url = '/api/job-seekers/me';
 
-    it('should return the authenticated user job seeker profile', async () => {
+    it('should return the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
@@ -289,7 +289,7 @@ describe('JobSeekerController (e2e)', () => {
       firstName: 'Updated First Name',
     };
 
-    it('should update the authenticated user job seeker profile', async () => {
+    it('should update the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
@@ -312,7 +312,7 @@ describe('JobSeekerController (e2e)', () => {
   describe('DELETE /job-seekers/me', () => {
     const url = '/api/job-seekers/me';
 
-    it('should delete the authenticated user job seeker profile', async () => {
+    it('should delete the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       await createJobSeekerWithProps(prisma, {}, user.id);
@@ -327,7 +327,7 @@ describe('JobSeekerController (e2e)', () => {
   describe('PUT /job-seekers/me/skills', () => {
     const url = '/api/job-seekers/me/skills';
 
-    it('should put skills to the authenticated user job seeker profile', async () => {
+    it('should put skills to the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
@@ -380,7 +380,7 @@ describe('JobSeekerController (e2e)', () => {
   describe('PUT /job-seekers/me/languages', () => {
     const url = '/api/job-seekers/me/languages';
 
-    it('should put languages to the authenticated user job seeker profile', async () => {
+    it('should put languages to the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
@@ -451,7 +451,7 @@ describe('JobSeekerController (e2e)', () => {
       linkedinUrl: 'https://linkedin.com/in/user',
     };
 
-    it('should put contacts to the authenticated user job seeker profile', async () => {
+    it('should put contacts to the authenticated job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);

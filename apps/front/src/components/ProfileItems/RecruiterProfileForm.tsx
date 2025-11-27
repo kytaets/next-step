@@ -27,16 +27,15 @@ export default function RecruiterProfileForm() {
   const closeModal = useModalStore((state) => state.closeModal);
   const { mutate: createProfile, isPending } = useMutation({
     mutationFn: createRecruiterProfile,
-    onSuccess: async (result) => {
-      if (result.status === 'error') {
-        setRequestErrors([result.error]);
-        return;
-      }
-
+    onSuccess: async () => {
       setRequestErrors([]);
       await queryClient.invalidateQueries({ queryKey: ['recruiter-profile'] });
       closeModal();
       router.push('/my-profile/recruiter');
+    },
+
+    onError: (error) => {
+      setRequestErrors([error.message]);
     },
   });
   return (

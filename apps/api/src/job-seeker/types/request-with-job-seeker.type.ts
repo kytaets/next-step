@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { JobSeeker } from '@prisma/client';
+import { JobSeekerWithRelations } from './job-seeker-with-relations.type';
 
 export interface RequestWithJobSeeker extends Request {
-  jobSeeker: JobSeeker;
+  jobSeeker: JobSeekerWithRelations;
 }

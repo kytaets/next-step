@@ -1,13 +1,10 @@
 import { PrismaService } from '../../src/prisma/prisma.service';
-import {
-  JobSeeker,
-  JobSeekerLanguage,
-  JobSeekerSkill,
-  SeniorityLevel,
-} from '@prisma/client';
+import { SeniorityLevel } from '@prisma/client';
 import { JobSeekerLanguageDto } from '../../src/job-seeker/dto/job-seeker-language.dto';
 import { randomUUID } from 'node:crypto';
 import * as argon2 from 'argon2';
+import { JobSeekerWithRelations } from '../../src/job-seeker/types/job-seeker-with-relations.type';
+import { jobSeekerInclude } from '../../src/job-seeker/repositories/includes/job-seeker.include';
 
 export async function createJobSeekerWithProps(
   prisma: PrismaService,
@@ -18,7 +15,7 @@ export async function createJobSeekerWithProps(
     expectedSalary?: number;
   },
   userId?: string,
-): Promise<JobSeeker> {
+): Promise<JobSeekerWithRelations> {
   let targetUserId = userId;
 
   if (!targetUserId) {
@@ -64,29 +61,6 @@ export async function createJobSeekerWithProps(
       },
       user: { connect: { id: targetUserId } },
     },
+    include: jobSeekerInclude,
   });
 }
-
-export const assertJobSeekerMatches = (
-  actualResponse: JobSeeker,
-  databaseEntity: JobSeeker,
-): void => {
-  expect(actualResponse).toEqual({
-    id: databaseEntity.id,
-    userId: databaseEntity.userId,
-    firstName: databaseEntity.firstName,
-    lastName: databaseEntity.lastName,
-    location: databaseEntity.location,
-    bio: databaseEntity.bio,
-    avatarUrl: databaseEntity.avatarUrl,
-    expectedSalary: databaseEntity.expectedSalary,
-    dateOfBirth: databaseEntity.dateOfBirth?.toISOString(),
-    isOpenToWork: databaseEntity.isOpenToWork,
-    seniorityLevel: databaseEntity.seniorityLevel,
-    createdAt: databaseEntity.createdAt.toISOString(),
-    updatedAt: databaseEntity.updatedAt.toISOString(),
-    languages: expect.any(Array) as unknown as JobSeekerLanguage[],
-    skills: expect.any(Array) as unknown as JobSeekerSkill[],
-    contacts: null,
-  });
-};

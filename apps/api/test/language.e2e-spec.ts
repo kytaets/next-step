@@ -7,6 +7,7 @@ import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateLanguageDto } from '../src/language/dto/create-language.dto';
+import { randomUUID } from 'node:crypto';
 
 describe('LanguageController (e2e)', () => {
   let app: INestApplication;
@@ -82,7 +83,7 @@ describe('LanguageController (e2e)', () => {
     });
 
     it('should return 404 if language does not exist', async () => {
-      const languageId = '123e4567-e89b-12d3-a456-426614174000';
+      const languageId = randomUUID();
 
       return request(server).get(`${url}/${languageId}`).expect(404);
     });
@@ -136,7 +137,7 @@ describe('LanguageController (e2e)', () => {
     });
 
     it('should return 404 if language does not exist', async () => {
-      const languageId = '123e4567-e89b-12d3-a456-426614174000';
+      const languageId = randomUUID();
 
       return request(server).delete(`${url}/${languageId}`).expect(404);
     });

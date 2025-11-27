@@ -1,56 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { JobSeeker, Prisma } from '@prisma/client';
+import { JobSeekerWithRelations } from '../types/job-seeker-with-relations.type';
+import { jobSeekerInclude } from './includes/job-seeker.include';
 
 @Injectable()
 export class JobSeekerRepository {
-  private readonly jobSeekerRelations: Prisma.JobSeekerInclude;
-
-  constructor(private readonly prisma: PrismaService) {
-    this.jobSeekerRelations = {
-      languages: {
-        select: {
-          level: true,
-          language: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      skills: {
-        select: {
-          skill: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      contacts: true,
-    };
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     userId: string,
     data: Prisma.JobSeekerCreateWithoutUserInput,
-    includeRelations?: boolean,
-  ): Promise<JobSeeker> {
+  ): Promise<JobSeekerWithRelations> {
     return this.prisma.jobSeeker.create({
       data: { ...data, user: { connect: { id: userId } } },
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
   async findOne(
     where: Prisma.JobSeekerWhereUniqueInput,
-    includeRelations?: boolean,
-  ): Promise<JobSeeker | null> {
+  ): Promise<JobSeekerWithRelations | null> {
     return this.prisma.jobSeeker.findUnique({
       where,
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
@@ -58,25 +31,23 @@ export class JobSeekerRepository {
     where: Prisma.JobSeekerWhereInput,
     orderBy: Prisma.JobSeekerOrderByWithRelationInput,
     pagination: { skip: number; take: number },
-    includeRelations?: boolean,
-  ): Promise<JobSeeker[]> {
+  ): Promise<JobSeekerWithRelations[]> {
     return this.prisma.jobSeeker.findMany({
       where,
       orderBy,
       ...pagination,
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
   async update(
     where: Prisma.JobSeekerWhereUniqueInput,
     data: Prisma.JobSeekerUpdateInput,
-    includeRelations?: boolean,
-  ): Promise<JobSeeker> {
+  ): Promise<JobSeekerWithRelations> {
     return this.prisma.jobSeeker.update({
       where,
       data,
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
@@ -87,8 +58,7 @@ export class JobSeekerRepository {
   async setSkills(
     id: string,
     data: Prisma.JobSeekerSkillCreateManyJobSeekerInput[],
-    includeRelations?: boolean,
-  ): Promise<JobSeeker> {
+  ): Promise<JobSeekerWithRelations> {
     return this.prisma.jobSeeker.update({
       where: { id },
       data: {
@@ -100,15 +70,14 @@ export class JobSeekerRepository {
           },
         },
       },
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
   async setLanguages(
     id: string,
     data: Prisma.JobSeekerLanguageCreateManyJobSeekerInput[],
-    includeRelations?: boolean,
-  ): Promise<JobSeeker> {
+  ): Promise<JobSeekerWithRelations> {
     return this.prisma.jobSeeker.update({
       where: { id },
       data: {
@@ -120,15 +89,14 @@ export class JobSeekerRepository {
           },
         },
       },
-      include: includeRelations ? this.jobSeekerRelations : null,
+      include: jobSeekerInclude,
     });
   }
 
   async setContacts(
     id: string,
     data: Prisma.JobSeekerContactsCreateWithoutJobSeekerInput,
-    includeRelations?: boolean,
-  ): Promise<JobSeeker> {
+  ): Promise<JobSeekerWithRelations> {
     return this.prisma.jobSeeker.update({
       where: { id },
       data: {
@@ -139,7 +107,7 @@ export class JobSeekerRepository {
           },
         },
       },
-      include: includeRelations ? this.jobSeekerRelations : undefined,
+      include: jobSeekerInclude,
     });
   }
 

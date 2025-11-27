@@ -1,8 +1,8 @@
 import { Controller, Delete, Get, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
-import { SessionAuthGuard } from './guards/session-auth.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { UserWithoutPassword } from './types/user-without-password.type';
+import { UserService } from '../services/user.service';
+import { SessionAuthGuard } from '../guards/session-auth.guard';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { UserWithoutPassword } from '../types/user-without-password.type';
 import { MessageResponse } from '@common/responses';
 
 @Controller('users')

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { LanguageService } from './language.service';
-import { LanguageController } from './language.controller';
-import { LanguageRepository } from './language.repository';
+import { LanguageService } from './services/language.service';
+import { LanguageController } from './controllers/language.controller';
+import { LanguageRepository } from './repositories/language.repository';
 import { CacheModule } from '../cache/cache.module';
 
 @Module({

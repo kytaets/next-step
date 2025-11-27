@@ -11,7 +11,7 @@ import { VacancyService } from '../vacancy/vacancy.service';
 import { getPaginationByPage, createPaginationMeta } from '@common/utils';
 import { ConfigService } from '@nestjs/config';
 import { FindManyApplicationDto } from './dto/search-application';
-import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { JobSeekerService } from '../job-seeker/services/job-seeker.service';
 import { SetStatusDto } from './dto/set-status.dto';
 import { PagedDataResponse } from '@common/responses';
 

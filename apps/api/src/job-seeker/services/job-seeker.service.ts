@@ -3,20 +3,21 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
+import { CreateJobSeekerDto } from '../dto/create-job-seeker.dto';
 import { JobSeeker, Prisma } from '@prisma/client';
-import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
-import { FindManyJobSeekersDto } from './dto/find-many-job-seekers.dto';
-import { SetSkillsDto } from './dto/set-skills.dto';
-import { SetLanguagesDto } from './dto/set-languages.dto';
-import { JobSeekerRepository } from './job-seeker.repository';
-import { SkillService } from '../skill/skill.service';
-import { LanguageService } from '../language/language.service';
-import { SetContactsDto } from './dto/set-contacts.dto';
+import { UpdateJobSeekerDto } from '../dto/update-job-seeker.dto';
+import { FindManyJobSeekersDto } from '../dto/find-many-job-seekers.dto';
+import { SetSkillsDto } from '../dto/set-skills.dto';
+import { SetLanguagesDto } from '../dto/set-languages.dto';
+import { JobSeekerRepository } from '../repositories/job-seeker.repository';
+import { SkillService } from '../../skill/services/skill.service';
+import { LanguageService } from '../../language/services/language.service';
+import { SetContactsDto } from '../dto/set-contacts.dto';
 import { PagedDataResponse } from '@common/responses';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
-import { JobSeekerQueryBuilder } from './builders/job-seeker-query.builder';
+import { JobSeekerQueryBuilder } from '../builders/job-seeker-query.builder';
 import { ConfigService } from '@nestjs/config';
+import { JobSeekerWithRelations } from '../types/job-seeker-with-relations.type';
 
 @Injectable()
 export class JobSeekerService {
@@ -33,24 +34,27 @@ export class JobSeekerService {
     );
   }
 
-  async create(userId: string, dto: CreateJobSeekerDto): Promise<JobSeeker> {
+  async create(
+    userId: string,
+    dto: CreateJobSeekerDto,
+  ): Promise<JobSeekerWithRelations> {
     const jobSeeker = await this.repository.findOne({ userId });
     if (jobSeeker) throw new BadRequestException('Job seeker already exists');
 
-    return this.repository.create(userId, dto, true);
+    return this.repository.create(userId, dto);
   }
 
   async findOneOrThrow(
     where: Prisma.JobSeekerWhereUniqueInput,
-  ): Promise<JobSeeker> {
-    const jobSeeker = await this.repository.findOne(where, true);
+  ): Promise<JobSeekerWithRelations> {
+    const jobSeeker = await this.repository.findOne(where);
     if (!jobSeeker) throw new NotFoundException('Job seeker not found');
     return jobSeeker;
   }
 
   async findMany(
     dto: FindManyJobSeekersDto,
-  ): Promise<PagedDataResponse<JobSeeker[]>> {
+  ): Promise<PagedDataResponse<JobSeekerWithRelations[]>> {
     if (dto.skillIds?.length) {
       await this.skillService.assertExists(dto.skillIds);
     }
@@ -68,12 +72,7 @@ export class JobSeekerService {
     const pagination = getPaginationByPage(dto.page, this.searchPageSize);
     const orderBy = dto.orderBy ?? { updatedAt: 'desc' };
 
-    const data = await this.repository.findMany(
-      where,
-      orderBy,
-      pagination,
-      true,
-    );
+    const data = await this.repository.findMany(where, orderBy, pagination);
 
     const total = await this.repository.count(where);
 
@@ -82,27 +81,39 @@ export class JobSeekerService {
     return { data, meta };
   }
 
-  async update(id: string, dto: UpdateJobSeekerDto): Promise<JobSeeker> {
-    return this.repository.update({ id }, dto, true);
+  async update(
+    id: string,
+    dto: UpdateJobSeekerDto,
+  ): Promise<JobSeekerWithRelations> {
+    return this.repository.update({ id }, dto);
   }
 
   async delete(id: string): Promise<JobSeeker> {
     return this.repository.delete({ id });
   }
 
-  async setSkills(id: string, dto: SetSkillsDto): Promise<JobSeeker> {
+  async setSkills(
+    id: string,
+    dto: SetSkillsDto,
+  ): Promise<JobSeekerWithRelations> {
     await this.skillService.assertExists(dto.skillIds);
     const skillIds = dto.skillIds.map((skillId) => ({ skillId }));
-    return this.repository.setSkills(id, skillIds, true);
+    return this.repository.setSkills(id, skillIds);
   }
 
-  async setLanguages(id: string, dto: SetLanguagesDto): Promise<JobSeeker> {
+  async setLanguages(
+    id: string,
+    dto: SetLanguagesDto,
+  ): Promise<JobSeekerWithRelations> {
     const languageIds = dto.languages.map((lang) => lang.languageId);
     await this.languageService.assertExists(languageIds);
-    return this.repository.setLanguages(id, dto.languages, true);
+    return this.repository.setLanguages(id, dto.languages);
   }
 
-  async setContacts(id: string, dto: SetContactsDto): Promise<JobSeeker> {
-    return this.repository.setContacts(id, dto, true);
+  async setContacts(
+    id: string,
+    dto: SetContactsDto,
+  ): Promise<JobSeekerWithRelations> {
+    return this.repository.setContacts(id, dto);
   }
 }

@@ -11,20 +11,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CookieOptions, Response } from 'express';
-import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { SessionId } from './decorators/session-id.decorator';
-import { SessionAuthGuard } from './guards/session-auth.guard';
+import { AuthService } from '../services/auth.service';
+import { RegisterDto } from '../dto/register.dto';
+import { LoginDto } from '../dto/login.dto';
+import { SessionId } from '../decorators/session-id.decorator';
+import { SessionAuthGuard } from '../guards/session-auth.guard';
 import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { UserWithoutPassword } from './types/user-without-password.type';
-import { UserAgent } from './decorators/user-agent.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { UserWithoutPassword } from '../types/user-without-password.type';
+import { UserAgent } from '../decorators/user-agent.decorator';
 import { MessageResponse } from '@common/responses';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResendVerificationDto } from './dto/resend-verification.dto';
-import { SessionPayload } from '../session/schemas/session-payload.schema';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
+import { ResendVerificationDto } from '../dto/resend-verification.dto';
+import { SessionPayload } from '../../session/schemas/session-payload.schema';
 
 @Controller('auth')
 export class AuthController {

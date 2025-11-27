@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { UserWithoutPassword } from './types/user-without-password.type';
-import { UserRepository } from './user.repository';
+import { UserWithoutPassword } from '../types/user-without-password.type';
+import { UserRepository } from '../repositories/user.repository';
 
 @Injectable()
 export class UserService {

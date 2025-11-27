@@ -8,13 +8,20 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateJobSeekerDto } from '../src/job-seeker/dto/create-job-seeker.dto';
 import { createAuthenticatedUser } from './utils/auth.helper';
-import { JobSeeker, LanguageLevel, SeniorityLevel } from '@prisma/client';
-import { FindManyJobSeekersDto } from '../src/job-seeker/dto/find-many-job-seekers.dto';
 import {
-  assertJobSeekerMatches,
-  createJobSeekerWithProps,
-} from './utils/job-seeker.helper';
+  JobSeekerLanguage,
+  JobSeekerSkill,
+  LanguageLevel,
+  SeniorityLevel,
+} from '@prisma/client';
+import { FindManyJobSeekersDto } from '../src/job-seeker/dto/find-many-job-seekers.dto';
+import { createJobSeekerWithProps } from './utils/job-seeker.helper';
 import { PagedDataResponse } from '@common/responses';
+import { UpdateJobSeekerDto } from '../src/job-seeker/dto/update-job-seeker.dto';
+import { JobSeekerWithRelations } from '../src/job-seeker/types/job-seeker-with-relations.type';
+import { SetLanguagesDto } from '../src/job-seeker/dto/set-languages.dto';
+import { SetContactsDto } from '../src/job-seeker/dto/set-contacts.dto';
+import { randomUUID } from 'node:crypto';
 
 describe('JobSeekerController (e2e)', () => {
   let app: INestApplication;
@@ -106,9 +113,7 @@ describe('JobSeekerController (e2e)', () => {
     it('should return 400 if the user already has a job seeker profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      await prisma.jobSeeker.create({
-        data: { ...body, user: { connect: { id: user.id } } },
-      });
+      await createJobSeekerWithProps(prisma, {}, user.id);
 
       return request(server)
         .post(url)
@@ -131,8 +136,9 @@ describe('JobSeekerController (e2e)', () => {
         .set('Cookie', [`sid=${sid}`])
         .expect(200)
         .then((res) => {
-          const resBody = res.body as JobSeeker;
-          assertJobSeekerMatches(resBody, jobSeeker);
+          const resBody = res.body as JobSeekerWithRelations;
+          expect(resBody.id).toBe(jobSeeker.id);
+          expect(resBody.userId).toBe(jobSeeker.userId);
         });
     });
   });
@@ -150,14 +156,30 @@ describe('JobSeekerController (e2e)', () => {
         .set('Cookie', [`sid=${sid}`])
         .expect(200)
         .then((res) => {
-          const resBody = res.body as JobSeeker;
-          assertJobSeekerMatches(resBody, jobSeeker);
+          expect(res.body).toEqual({
+            id: jobSeeker.id,
+            userId: jobSeeker.userId,
+            firstName: jobSeeker.firstName,
+            lastName: jobSeeker.lastName,
+            location: jobSeeker.location,
+            bio: jobSeeker.bio,
+            avatarUrl: jobSeeker.avatarUrl,
+            expectedSalary: jobSeeker.expectedSalary,
+            dateOfBirth: jobSeeker.dateOfBirth?.toISOString(),
+            isOpenToWork: jobSeeker.isOpenToWork,
+            seniorityLevel: jobSeeker.seniorityLevel,
+            createdAt: jobSeeker.createdAt.toISOString(),
+            updatedAt: jobSeeker.updatedAt.toISOString(),
+            languages: expect.any(Array) as unknown as JobSeekerLanguage[],
+            skills: expect.any(Array) as unknown as JobSeekerSkill[],
+            contacts: null,
+          });
         });
     });
 
     it('should return 404 if job seeker does not exist', async () => {
       const { sid } = await createAuthenticatedUser(prisma, redis);
-      const jobSeekerId = '123e4567-e89b-12d3-a456-426614174000';
+      const jobSeekerId = randomUUID();
 
       return request(server)
         .get(`${url}/${jobSeekerId}`)
@@ -219,16 +241,18 @@ describe('JobSeekerController (e2e)', () => {
         .send(searchDto)
         .expect(200)
         .then((res) => {
-          const { data, meta } = res.body as PagedDataResponse<JobSeeker[]>;
+          const { data, meta } = res.body as PagedDataResponse<
+            JobSeekerWithRelations[]
+          >;
 
           expect(data).toHaveLength(1);
-          assertJobSeekerMatches(data[0], targetUserJobSeeker);
+          expect(data[0].id).toBe(targetUserJobSeeker.id);
           expect(meta.total).toBe(1);
         });
     });
 
     it('should return 400 if skills are not found', async () => {
-      const body = { skillIds: ['123e4567-e89b-12d3-a456-426614174000'] };
+      const body = { skillIds: [randomUUID()] };
 
       const { sid } = await createAuthenticatedUser(prisma, redis);
 
@@ -243,7 +267,7 @@ describe('JobSeekerController (e2e)', () => {
       const body = {
         languages: [
           {
-            languageId: '123e4567-e89b-12d3-a456-426614174000',
+            languageId: randomUUID(),
             level: LanguageLevel.INTERMEDIATE,
           },
         ],
@@ -256,6 +280,192 @@ describe('JobSeekerController (e2e)', () => {
         .set('Cookie', [`sid=${sid}`])
         .send(body)
         .expect(400);
+    });
+  });
+
+  describe('PATCH /job-seekers/me', () => {
+    const url = '/api/job-seekers/me';
+    const body: UpdateJobSeekerDto = {
+      firstName: 'Updated First Name',
+    };
+
+    it('should update the authenticated user job seeker profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .patch(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as JobSeekerWithRelations;
+
+          expect(resBody.firstName).toBe(body.firstName);
+          expect(resBody.id).toBe(jobSeeker.id);
+          expect(resBody.updatedAt).not.toBe(jobSeeker.updatedAt.toISOString());
+        });
+    });
+  });
+
+  describe('DELETE /job-seekers/me', () => {
+    const url = '/api/job-seekers/me';
+
+    it('should delete the authenticated user job seeker profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .delete(url)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(200);
+    });
+  });
+
+  describe('PUT /job-seekers/me/skills', () => {
+    const url = '/api/job-seekers/me/skills';
+
+    it('should put skills to the authenticated user job seeker profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      const skills = await prisma.skill.createManyAndReturn({
+        data: [{ name: 'Java' }, { name: 'SQL' }],
+      });
+
+      const expectedSkills = skills.map((skill) => ({
+        skill: {
+          id: skill.id,
+          name: skill.name,
+        },
+      }));
+
+      return request(server)
+        .put(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send({
+          skillIds: [skills[0].id, skills[1].id],
+        })
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as JobSeekerWithRelations;
+
+          expect(resBody.id).toBe(jobSeeker.id);
+          expect(resBody.skills).toHaveLength(2);
+
+          expect(resBody.skills).toEqual(
+            expect.arrayContaining(expectedSkills),
+          );
+        });
+    });
+
+    it('should return 400 if skills are not found', async () => {
+      const body = { skillIds: [randomUUID()] };
+
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .put(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(400);
+    });
+  });
+
+  describe('PUT /job-seekers/me/languages', () => {
+    const url = '/api/job-seekers/me/languages';
+
+    it('should put languages to the authenticated user job seeker profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      const languages = await prisma.language.createManyAndReturn({
+        data: [{ name: 'English' }, { name: 'Ukrainian' }],
+      });
+
+      const expectedLanguages = [
+        {
+          language: { id: languages[0].id, name: languages[0].name },
+          level: LanguageLevel.NATIVE,
+        },
+        {
+          language: { id: languages[1].id, name: languages[1].name },
+          level: LanguageLevel.INTERMEDIATE,
+        },
+      ];
+
+      return request(server)
+        .put(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send({
+          languages: [
+            { languageId: languages[0].id, level: LanguageLevel.NATIVE },
+            { languageId: languages[1].id, level: LanguageLevel.INTERMEDIATE },
+          ],
+        })
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as JobSeekerWithRelations;
+
+          expect(resBody.id).toBe(jobSeeker.id);
+          expect(resBody.languages).toHaveLength(2);
+
+          expect(resBody.languages).toEqual(
+            expect.arrayContaining(expectedLanguages),
+          );
+        });
+    });
+
+    it('should return 400 if languages are not found', async () => {
+      const body: SetLanguagesDto = {
+        languages: [
+          {
+            languageId: randomUUID(),
+            level: LanguageLevel.NATIVE,
+          },
+        ],
+      };
+
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .put(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(400);
+    });
+  });
+
+  describe('PUT /job-seekers/me/contacts', () => {
+    const url = '/api/job-seekers/me/contacts';
+    const body: SetContactsDto = {
+      githubUrl: 'https://github.com/user',
+      linkedinUrl: 'https://linkedin.com/in/user',
+    };
+
+    it('should put contacts to the authenticated user job seeker profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .put(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as JobSeekerWithRelations;
+          expect(resBody.id).toBe(jobSeeker.id);
+          expect(resBody.contacts).toMatchObject(body);
+        });
     });
   });
 });

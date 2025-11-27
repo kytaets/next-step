@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateLanguageDto } from './dto/create-language.dto';
+import { CreateLanguageDto } from '../dto/create-language.dto';
 import { Language, Prisma, Skill } from '@prisma/client';
-import { LanguageRepository } from './language.repository';
+import { LanguageRepository } from '../repositories/language.repository';
 
 @Injectable()
 export class LanguageService {

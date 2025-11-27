@@ -17,7 +17,7 @@ import { RecruiterService } from '../recruiter/recruiter.service';
 import { EmailService } from '../email/email.service';
 import { TokenService } from '../token/token.service';
 import { TokenType } from '../token/enums/token-type.enum';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/services/user.service';
 import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
 
 @Injectable()

@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { SessionService } from '../../session/session.service';
 import { RequestWithUser } from '../types/request-with-user.type';
 import { RequestWithSessionId } from '../types/request-with-session-id.type';

@@ -1,21 +1,21 @@
-import { SkillService } from './skill.service';
-import { SkillRepository } from './skill.repository';
-import { Prisma, Skill } from '@prisma/client';
+import { LanguageService } from './language.service';
+import { LanguageRepository } from '../repositories/language.repository';
+import { Language, Prisma } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { CreateSkillDto } from './dto/create-skill.dto';
+import { CreateLanguageDto } from '../dto/create-language.dto';
 
-describe('SkillService', () => {
-  let service: SkillService;
-  let repository: jest.Mocked<SkillRepository>;
+describe('LanguageService', () => {
+  let service: LanguageService;
+  let repository: jest.Mocked<LanguageRepository>;
 
-  const mockSkill: Skill = {
+  const mockLanguage: Language = {
     id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Nest.js',
+    name: 'English',
   };
 
   beforeEach(async () => {
-    const mockSkillRepository = {
+    const mockLanguageRepository = {
       count: jest.fn(),
       create: jest.fn(),
       findOne: jest.fn(),
@@ -25,16 +25,16 @@ describe('SkillService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SkillService,
+        LanguageService,
         {
-          provide: SkillRepository,
-          useValue: mockSkillRepository,
+          provide: LanguageRepository,
+          useValue: mockLanguageRepository,
         },
       ],
     }).compile();
 
-    service = module.get<SkillService>(SkillService);
-    repository = module.get(SkillRepository);
+    service = module.get<LanguageService>(LanguageService);
+    repository = module.get(LanguageRepository);
 
     jest.clearAllMocks();
   });
@@ -44,57 +44,57 @@ describe('SkillService', () => {
   });
 
   describe('assertExists', () => {
-    const skillIds: string[] = [
+    const languageIds: string[] = [
       '123e4567-e89b-12d3-a456-426614174000',
       '123e4567-e89b-12d3-a456-426614174001',
       '123e4567-e89b-12d3-a456-426614174002',
     ];
 
-    it('should not throw error if all skills are found', async () => {
-      repository.count.mockResolvedValue(skillIds.length);
+    it('should not throw error if all languages are found', async () => {
+      repository.count.mockResolvedValue(languageIds.length);
 
-      const result = await service.assertExists(skillIds);
+      const result = await service.assertExists(languageIds);
 
       expect(repository.count).toHaveBeenCalledWith({
-        id: { in: skillIds },
+        id: { in: languageIds },
       });
       expect(result).toBeUndefined();
     });
 
-    it('should throw error if not all skills are found', async () => {
-      repository.count.mockResolvedValue(skillIds.length - 1);
+    it('should throw error if not all languages are found', async () => {
+      repository.count.mockResolvedValue(languageIds.length - 1);
 
-      await expect(service.assertExists(skillIds)).rejects.toThrow(
-        new BadRequestException('Skill not found'),
+      await expect(service.assertExists(languageIds)).rejects.toThrow(
+        new BadRequestException('Language not found'),
       );
 
       expect(repository.count).toHaveBeenCalledWith({
-        id: { in: skillIds },
+        id: { in: languageIds },
       });
     });
   });
 
   describe('create', () => {
-    const dto: CreateSkillDto = {
-      name: 'Nest.js',
+    const dto: CreateLanguageDto = {
+      name: 'English',
     };
 
-    it('should create a skill', async () => {
+    it('should create a language', async () => {
       repository.findOne.mockResolvedValue(null);
-      repository.create.mockResolvedValue(mockSkill);
+      repository.create.mockResolvedValue(mockLanguage);
 
       const result = await service.create(dto);
 
       expect(repository.findOne).toHaveBeenCalledWith({ name: dto.name });
       expect(repository.create).toHaveBeenCalledWith(dto);
-      expect(result).toEqual(mockSkill);
+      expect(result).toEqual(mockLanguage);
     });
 
-    it('should throw BadRequestException if skill already exists', async () => {
-      repository.findOne.mockResolvedValue(mockSkill);
+    it('should throw BadRequestException if language already exists', async () => {
+      repository.findOne.mockResolvedValue(mockLanguage);
 
       await expect(service.create(dto)).rejects.toThrow(
-        new BadRequestException('Skill already exists'),
+        new BadRequestException('Language already exists'),
       );
 
       expect(repository.findOne).toHaveBeenCalledWith({ name: dto.name });
@@ -103,35 +103,35 @@ describe('SkillService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all skills', async () => {
-      repository.findAll.mockResolvedValue([mockSkill, mockSkill]);
+    it('should return all languages', async () => {
+      repository.findAll.mockResolvedValue([mockLanguage, mockLanguage]);
 
       const result = await service.findAll();
 
-      expect(repository.findAll).toHaveBeenCalled();
-      expect(result).toEqual([mockSkill, mockSkill]);
+      expect(repository.findAll).toHaveBeenCalledWith({ name: 'asc' });
+      expect(result).toEqual([mockLanguage, mockLanguage]);
     });
   });
 
   describe('findOneOrThrow', () => {
-    const where: Prisma.SkillWhereUniqueInput = {
+    const where: Prisma.LanguageWhereUniqueInput = {
       id: '123e4567-e89b-12d3-a456-426614174000',
     };
 
-    it('should find a skill', async () => {
-      repository.findOne.mockResolvedValue(mockSkill);
+    it('should find a language', async () => {
+      repository.findOne.mockResolvedValue(mockLanguage);
 
       const result = await service.findOneOrThrow(where);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
-      expect(result).toEqual(mockSkill);
+      expect(result).toEqual(mockLanguage);
     });
 
-    it('should throw NotFoundException if skill does not exist', async () => {
+    it('should throw NotFoundException if language does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
       await expect(service.findOneOrThrow(where)).rejects.toThrow(
-        new NotFoundException('Skill not found'),
+        new NotFoundException('Language not found'),
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -139,11 +139,11 @@ describe('SkillService', () => {
   });
 
   describe('assertNotExists', () => {
-    const where: Prisma.SkillWhereUniqueInput = {
+    const where: Prisma.LanguageWhereUniqueInput = {
       id: '123e4567-e89b-12d3-a456-426614174000',
     };
 
-    it('should not throw if skill does not exist', async () => {
+    it('should not throw if language does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
       const result = await service.assertNotExists(where);
@@ -152,11 +152,11 @@ describe('SkillService', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should throw BadRequestException if skill exists', async () => {
-      repository.findOne.mockResolvedValue(mockSkill);
+    it('should throw BadRequestException if language exists', async () => {
+      repository.findOne.mockResolvedValue(mockLanguage);
 
       await expect(service.assertNotExists(where)).rejects.toThrow(
-        new BadRequestException('Skill already exists'),
+        new BadRequestException('Language already exists'),
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -164,26 +164,26 @@ describe('SkillService', () => {
   });
 
   describe('delete', () => {
-    const where: Prisma.SkillWhereUniqueInput = {
+    const where: Prisma.LanguageWhereUniqueInput = {
       id: '123e4567-e89b-12d3-a456-426614174000',
     };
 
-    it('should delete a skill', async () => {
-      repository.findOne.mockResolvedValue(mockSkill);
-      repository.delete.mockResolvedValue(mockSkill);
+    it('should delete a language', async () => {
+      repository.findOne.mockResolvedValue(mockLanguage);
+      repository.delete.mockResolvedValue(mockLanguage);
 
       const result = await service.delete(where);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
       expect(repository.delete).toHaveBeenCalledWith(where);
-      expect(result).toEqual(mockSkill);
+      expect(result).toEqual(mockLanguage);
     });
 
-    it('should throw NotFoundException if skill does not exist', async () => {
+    it('should throw NotFoundException if language does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
       await expect(service.delete(where)).rejects.toThrow(
-        new NotFoundException('Skill not found'),
+        new NotFoundException('Language not found'),
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);

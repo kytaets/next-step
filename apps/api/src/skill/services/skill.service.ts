@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, Skill } from '@prisma/client';
-import { CreateSkillDto } from './dto/create-skill.dto';
-import { SkillRepository } from './skill.repository';
+import { CreateSkillDto } from '../dto/create-skill.dto';
+import { SkillRepository } from '../repositories/skill.repository';
 
 @Injectable()
 export class SkillService {

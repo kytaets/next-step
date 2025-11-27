@@ -5,18 +5,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RegisterDto } from './dto/register.dto';
-import { UserWithoutPassword } from './types/user-without-password.type';
+import { RegisterDto } from '../dto/register.dto';
+import { UserWithoutPassword } from '../types/user-without-password.type';
 import * as argon2 from 'argon2';
-import { LoginDto } from './dto/login.dto';
-import { SessionService } from '../session/session.service';
-import { EmailService } from '../email/email.service';
-import { TokenService } from '../token/token.service';
-import { TokenType } from '../token/enums/token-type.enum';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResendVerificationDto } from './dto/resend-verification.dto';
-import { SessionPayload } from '../session/schemas/session-payload.schema';
+import { LoginDto } from '../dto/login.dto';
+import { SessionService } from '../../session/session.service';
+import { EmailService } from '../../email/email.service';
+import { TokenService } from '../../token/token.service';
+import { TokenType } from '../../token/enums/token-type.enum';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
+import { ResendVerificationDto } from '../dto/resend-verification.dto';
+import { SessionPayload } from '../../session/schemas/session-payload.schema';
 
 @Injectable()
 export class AuthService {

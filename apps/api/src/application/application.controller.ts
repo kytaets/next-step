@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
-import { Application, JobSeeker } from '@prisma/client';
+import { Application } from '@prisma/client';
 import { CurrentJobSeeker } from '../job-seeker/decorators/current-job-seeker.decorator';
 import { SessionAuthGuard } from '../user/guards/session-auth.guard';
 import { JobSeekerGuard } from '../job-seeker/guards/job-seeker.guard';
@@ -22,6 +22,7 @@ import { PagedDataResponse } from '@common/responses';
 import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
 import { CurrentRecruiter } from '../recruiter/decorators/current-recruiter.decorator';
 import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
+import { JobSeekerWithRelations } from '../job-seeker/types/job-seeker-with-relations.type';
 
 @Controller('applications')
 export class ApplicationController {
@@ -31,7 +32,7 @@ export class ApplicationController {
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
   async create(
     @Body() dto: CreateApplicationDto,
-    @CurrentJobSeeker() jobSeeker: JobSeeker,
+    @CurrentJobSeeker() jobSeeker: JobSeekerWithRelations,
   ): Promise<Application> {
     return this.service.create(dto, jobSeeker.id);
   }
@@ -55,7 +56,7 @@ export class ApplicationController {
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
   async findMy(
     @Query() dto: FindManyApplicationDto,
-    @CurrentJobSeeker() jobSeeker: JobSeeker,
+    @CurrentJobSeeker() jobSeeker: JobSeekerWithRelations,
   ): Promise<PagedDataResponse<Application[]>> {
     return this.service.findManyByJobSeekerId(jobSeeker.id, dto);
   }

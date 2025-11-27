@@ -7,6 +7,7 @@ import { Server } from 'node:http';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateSkillDto } from '../src/skill/dto/create-skill.dto';
+import { randomUUID } from 'node:crypto';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
@@ -85,7 +86,7 @@ describe('SkillController (e2e)', () => {
     });
 
     it('should return 404 if skill does not exist', async () => {
-      const skillId = '123e4567-e89b-12d3-a456-426614174000';
+      const skillId = randomUUID();
 
       return request(server).get(`${url}/${skillId}`).expect(404);
     });
@@ -134,7 +135,7 @@ describe('SkillController (e2e)', () => {
     });
 
     it('should return 404 if skill does not exist', async () => {
-      const skillId = '123e4567-e89b-12d3-a456-426614174000';
+      const skillId = randomUUID();
 
       return request(server).delete(`${url}/${skillId}`).expect(404);
     });

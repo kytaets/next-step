@@ -11,6 +11,7 @@ import { CompanyRole, Recruiter } from '@prisma/client';
 import { CreateRecruiterDto } from '../src/recruiter/dto/create-recruiter.dto';
 import { createRecruiter } from './utils/recruiter.helper';
 import { randomUUID } from 'node:crypto';
+import { createCompany } from './utils/company.helper';
 
 describe('RecruiterController (e2e)', () => {
   let app: INestApplication;
@@ -38,11 +39,15 @@ describe('RecruiterController (e2e)', () => {
 
   beforeEach(async () => {
     await prisma.recruiter.deleteMany({});
+    await prisma.company.deleteMany({});
+    await prisma.user.deleteMany({});
     await redis.flushall();
   });
 
   afterAll(async () => {
     await prisma.recruiter.deleteMany({});
+    await prisma.company.deleteMany({});
+    await prisma.user.deleteMany({});
     await redis.flushall();
     await app.close();
     server.close();
@@ -101,7 +106,7 @@ describe('RecruiterController (e2e)', () => {
     it('should return the authenticated recruiter profile', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      const recruiter = await createRecruiter(prisma, user.id);
+      const recruiter = await createRecruiter(prisma, {}, user.id);
 
       return request(server)
         .get(url)
@@ -119,7 +124,7 @@ describe('RecruiterController (e2e)', () => {
     const url = '/api/recruiters';
 
     it('should return a recruiter profile by id', async () => {
-      const recruiter = await createRecruiter(prisma);
+      const recruiter = await createRecruiter(prisma, {});
 
       return request(server)
         .get(`${url}/${recruiter.id}`)
@@ -143,6 +148,30 @@ describe('RecruiterController (e2e)', () => {
       const recruiterId = randomUUID();
 
       return request(server).get(`${url}/${recruiterId}`).expect(404);
+    });
+  });
+
+  describe('GET /recruiters', () => {
+    const url = '/api/recruiters';
+
+    it('should return recruiters by company', async () => {
+      const company = await createCompany(prisma);
+      const targetRecruiter = await createRecruiter(prisma, {
+        companyId: company.id,
+      });
+
+      await createRecruiter(prisma, {});
+
+      return request(server)
+        .get(url)
+        .query({ companyId: company.id })
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as Recruiter[];
+
+          expect(res.body).toHaveLength(1);
+          expect(resBody[0].id).toBe(targetRecruiter.id);
+        });
     });
   });
 });

@@ -1,11 +1,15 @@
 import { PrismaService } from '../../src/prisma/prisma.service';
-import { Recruiter } from '@prisma/client';
+import { CompanyRole, Recruiter } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import * as argon2 from 'argon2';
 import { CreateRecruiterDto } from '../../src/recruiter/dto/create-recruiter.dto';
 
 export async function createRecruiter(
   prisma: PrismaService,
+  data: {
+    companyId?: string;
+    role?: CompanyRole;
+  },
   userId?: string,
 ): Promise<Recruiter> {
   let targetUserId = userId;
@@ -29,6 +33,11 @@ export async function createRecruiter(
   };
 
   return prisma.recruiter.create({
-    data: { ...createRecruiterDto, user: { connect: { id: targetUserId } } },
+    data: {
+      ...createRecruiterDto,
+      role: data.role,
+      user: { connect: { id: targetUserId } },
+      company: data.companyId ? { connect: { id: data.companyId } } : undefined,
+    },
   });
 }

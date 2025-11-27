@@ -5,8 +5,9 @@
 }
 
 .create-btn {
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 10px 20px;
   font-size: 1.5rem;
-  border: 2px solid #fff !important;
+  font-weight: 500;
+  border: 3px solid #fff !important;
 }

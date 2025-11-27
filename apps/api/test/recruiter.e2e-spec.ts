@@ -12,6 +12,7 @@ import { CreateRecruiterDto } from '../src/recruiter/dto/create-recruiter.dto';
 import { createRecruiter } from './utils/recruiter.helper';
 import { randomUUID } from 'node:crypto';
 import { createCompany } from './utils/company.helper';
+import { UpdateJobSeekerDto } from '../src/job-seeker/dto/update-job-seeker.dto';
 
 describe('RecruiterController (e2e)', () => {
   let app: INestApplication;
@@ -172,6 +173,88 @@ describe('RecruiterController (e2e)', () => {
           expect(res.body).toHaveLength(1);
           expect(resBody[0].id).toBe(targetRecruiter.id);
         });
+    });
+  });
+
+  describe('PATCH /recruiters/me', () => {
+    const url = '/api/recruiters/me';
+    const body: UpdateJobSeekerDto = {
+      firstName: 'Updated First Name',
+    };
+
+    it('should update the authenticated recruiter profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const recruiter = await createRecruiter(prisma, {}, user.id);
+
+      return request(server)
+        .patch(url)
+        .set('Cookie', [`sid=${sid}`])
+        .send(body)
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as Recruiter;
+
+          expect(resBody.firstName).toBe(body.firstName);
+          expect(resBody.id).toBe(recruiter.id);
+          expect(resBody.updatedAt).not.toBe(recruiter.updatedAt.toISOString());
+        });
+    });
+  });
+
+  describe('DELETE /recruiters/me/company', () => {
+    const url = '/api/recruiters/me/company';
+
+    it('should delete the authenticated recruiter company', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const company = await createCompany(prisma);
+      await createRecruiter(
+        prisma,
+        {
+          companyId: company.id,
+        },
+        user.id,
+      );
+
+      return request(server)
+        .delete(url)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(200);
+    });
+
+    it('should return 403 if the recruiter is a company admin', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const company = await createCompany(prisma);
+      await createRecruiter(
+        prisma,
+        {
+          companyId: company.id,
+          role: CompanyRole.ADMIN,
+        },
+        user.id,
+      );
+
+      return request(server)
+        .delete(url)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(403);
+    });
+  });
+
+  describe('DELETE /recruiters/me', () => {
+    const url = '/api/recruiters/me';
+
+    it('should delete the authenticated recruiter profile', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      await createRecruiter(prisma, {}, user.id);
+
+      return request(server)
+        .delete(url)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(200);
     });
   });
 });

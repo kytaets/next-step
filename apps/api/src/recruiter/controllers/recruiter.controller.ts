@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -23,7 +21,6 @@ import { RecruiterGuard } from '../guards/recruiter.guard';
 import { CurrentRecruiter } from '../decorators/current-recruiter.decorator';
 import { FindManyRecruitersDto } from '../dto/find-many-recruiters.dto';
 import { UpdateRecruiterDto } from '../dto/update-recruiter.dto';
-import { RecruiterWithoutCompanyGuard } from '../guards/recruiter-without-company.guard';
 import { RecruiterWithCompanyGuard } from '../guards/recruiter-with-company.guard';
 import { CurrentRecruiterWithCompany } from '../decorators/current-recruiter-with-company.decorator';
 

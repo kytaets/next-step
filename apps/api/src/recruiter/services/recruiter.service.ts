@@ -9,16 +9,10 @@ import { CreateRecruiterDto } from '../dto/create-recruiter.dto';
 import { CompanyRole, Prisma, Recruiter } from '@prisma/client';
 import { FindManyRecruitersDto } from '../dto/find-many-recruiters.dto';
 import { UpdateRecruiterDto } from '../dto/update-recruiter.dto';
-import { TokenService } from '../../token/token.service';
-import { TokenType } from '../../token/enums/token-type.enum';
-import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 
 @Injectable()
 export class RecruiterService {
-  constructor(
-    private readonly repository: RecruiterRepository,
-    private readonly tokenService: TokenService,
-  ) {}
+  constructor(private readonly repository: RecruiterRepository) {}
 
   async create(userId: string, dto: CreateRecruiterDto): Promise<Recruiter> {
     const recruiter = await this.repository.findOne({ userId });

@@ -8,6 +8,7 @@ import profileClasses from '../ProfileItems/Profile.module.css';
 import CompanyMainInfo from './CompanyMainInfo';
 import Bio from '../ProfileItems/Description';
 import BottomRow from '../ProfileItems/BottomRow';
+import InviteBtn from './InviteBtn';
 
 interface Props {
   isEditable?: boolean;
@@ -41,12 +42,13 @@ export default function CompanyProfileContainer({
         <div className="align-center">
           <div className={classes['main-info-side']}>
             <CompanyMainInfo isEditable={isEditable} data={mainInfoData} />
-            <div className={profileClasses['skills-open-container']}>
+            <div className={classes['verified-invite-container']}>
               <IsVerified
                 isEditable={isEditable}
                 isTrue={companyData.isVerified}
                 type="isVerified"
               />
+              <InviteBtn />
             </div>
           </div>
         </div>

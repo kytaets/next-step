@@ -8,10 +8,10 @@ import AnimatedIcon from '@/components/HoveredItem/HoveredItem';
 
 import classes from './Profile.module.css';
 import { updatePersonalData } from '@/services/jobseekerService';
-import RequestError from '../RequestErrors/RequestErrors';
 import { validateAvatarUrl } from '@/utils/profileValidation';
 import { updateCompanyProfile } from '@/services/companyProfileService';
 import { updateRecruiterProfile } from '@/services/recruiterProfileService';
+import MessageBox from '../MessageBox/MessageBox';
 
 interface Props {
   url: string;
@@ -37,13 +37,13 @@ export default function AvatarModal({ url, type }: Props) {
   const { mutate: updateCompanyAvatar, isPending: isCompanyPending } =
     useMutation({
       mutationFn: updateCompanyProfile,
-      onSuccess: async (result) => {
-        if (result.status === 'error') {
-          setRequestError(result.error);
-          return;
-        }
+      onSuccess: async () => {
         setRequestError(null);
         await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      },
+
+      onError: (error) => {
+        setRequestError(error.message);
       },
     });
 
@@ -108,7 +108,11 @@ export default function AvatarModal({ url, type }: Props) {
           {errors.url && touched.url && (
             <div className={classes['validation-error']}>{errors.url}</div>
           )}
-          {requestError && <RequestError error={requestError} />}
+          {requestError && (
+            <div className={classes['request-error']}>
+              <MessageBox type="error">{requestError}</MessageBox>
+            </div>
+          )}
         </Form>
       )}
     </Formik>

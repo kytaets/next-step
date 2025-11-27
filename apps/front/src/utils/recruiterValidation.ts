@@ -24,3 +24,23 @@ export function validateCreateRecruiterForm(
 
   return errors;
 }
+
+export function validateInvitationForm(values: { email: string }) {
+  console.log(values);
+  const errors: { email?: string } = {};
+
+  const email = values.email?.trim();
+
+  if (!email) {
+    errors.email = 'Email is required';
+    return errors;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    errors.email = 'Invalid email format';
+  }
+
+  return errors;
+}

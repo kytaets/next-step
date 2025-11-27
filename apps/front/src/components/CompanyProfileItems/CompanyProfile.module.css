@@ -73,6 +73,26 @@
   font-size: 2rem;
 }
 
+.verified-invite-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.verified-invite-container .invite-btn {
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.invitation-container {
+  display: flex;
+  gap: 10px;
+}
+
 /* Main info */
 
 /* Company Invitation */
@@ -117,6 +137,62 @@
 .image-container img {
   width: 100%;
   height: auto;
+}
+
+.invitation-modal {
+  padding: 5px 10px;
+}
+
+.invitation-modal h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.invitation-form-container > input {
+  width: 30vw;
+  padding: 10px;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+}
+
+.invitation-form-container > button {
+  width: 100%;
+  padding: 10px;
+  background-color: #37aa9c;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.validation-error {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.info-form-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.info-form-btn {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  border: 0;
+}
+
+.info-form-btn div {
+  padding: 8px 12px;
+  border: 2px solid white;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 /* Company Invitation */

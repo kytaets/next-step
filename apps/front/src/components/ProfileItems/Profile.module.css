@@ -269,6 +269,10 @@ Role Form .role-form-container {
   margin-top: 20px;
 }
 
+.avatar-form .request-error {
+  margin-top: 20px;
+}
+
 .avatar-form-container {
   display: flex;
   gap: 3%;

@@ -26,6 +26,9 @@ import { RecruiterAdminGuard } from '../recruiter/guards/recruiter-admin.guard';
 import { CurrentRecruiterWithCompany } from '../recruiter/decorators/current-recruiter-with-company.decorator';
 import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
 import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
+import { CurrentUser } from '../user/decorators/current-user.decorator';
+import { UserWithoutPassword } from '../user/types/user-without-password.type';
+import { AcceptInviteDto } from './dto/accept-invite.dto';
 
 @Controller('companies')
 export class CompanyController {
@@ -69,6 +72,17 @@ export class CompanyController {
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Company> {
     return this.service.findOneOrThrow({ id });
+  }
+
+  @Get('invitations/accept')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(SessionAuthGuard, RecruiterWithoutCompanyGuard)
+  async acceptInvite(
+    @Body() dto: AcceptInviteDto,
+    @CurrentUser() user: UserWithoutPassword,
+  ): Promise<MessageResponse> {
+    await this.service.addRecruiter(user, dto);
+    return { message: 'Invite accepted successfully' };
   }
 
   @Delete('recruiters/:recruiterId')

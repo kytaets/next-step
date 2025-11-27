@@ -39,19 +39,6 @@ export class RecruiterService {
     return recruiter;
   }
 
-  async acceptInvite(user: UserWithoutPassword, token: string): Promise<void> {
-    const data = await this.tokenService.consumeToken(TokenType.INVITE, token);
-    if (!data || !data.companyId || !data.email || data.email !== user.email) {
-      throw new BadRequestException('Invalid or expired invite token');
-    }
-
-    await this.setCompany(
-      { userId: user.id },
-      data.companyId,
-      CompanyRole.MEMBER,
-    );
-  }
-
   async setCompany(
     where: Prisma.RecruiterWhereUniqueInput,
     companyId: string,

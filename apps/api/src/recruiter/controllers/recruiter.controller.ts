@@ -56,17 +56,6 @@ export class RecruiterController {
     return this.service.findMany(dto);
   }
 
-  @Post('invite/accept')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(SessionAuthGuard, RecruiterWithoutCompanyGuard)
-  async acceptInvite(
-    @Query('token') token: string,
-    @CurrentUser() user: UserWithoutPassword,
-  ): Promise<MessageResponse> {
-    await this.service.acceptInvite(user, token);
-    return { message: 'Invite accepted successfully' };
-  }
-
   @Patch('me')
   @UseGuards(SessionAuthGuard, RecruiterGuard)
   async update(

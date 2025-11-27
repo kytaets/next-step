@@ -223,9 +223,9 @@ describe('AuthController (e2e)', () => {
       });
 
       const verifyToken = randomUUID();
-      const data = JSON.stringify({ email: user.email });
+      const payload = JSON.stringify({ email: user.email });
 
-      await redis.setex(`${TokenType.VERIFY}:${verifyToken}`, 3000, data);
+      await redis.setex(`${TokenType.VERIFY}:${verifyToken}`, 3000, payload);
 
       return request(server).get(url).query(`token=${verifyToken}`).expect(200);
     });

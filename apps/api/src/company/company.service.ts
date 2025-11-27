@@ -19,6 +19,8 @@ import { TokenService } from '../token/token.service';
 import { TokenType } from '../token/enums/token-type.enum';
 import { UserService } from '../user/services/user.service';
 import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
+import { UserWithoutPassword } from '../user/types/user-without-password.type';
+import { AcceptInviteDto } from './dto/accept-invite.dto';
 
 @Injectable()
 export class CompanyService {
@@ -92,6 +94,26 @@ export class CompanyService {
       companyId,
     });
     await this.email.sendCompanyInvitation(dto.email, token, company.name);
+  }
+
+  async addRecruiter(
+    user: UserWithoutPassword,
+    dto: AcceptInviteDto,
+  ): Promise<void> {
+    const data = await this.tokenService.consumeToken(
+      TokenType.INVITE,
+      dto.token,
+    );
+
+    if (!data || !data.companyId || !data.email || data.email !== user.email) {
+      throw new BadRequestException('Invalid or expired invite token');
+    }
+
+    await this.recruiterService.setCompany(
+      { userId: user.id },
+      data.companyId,
+      CompanyRole.MEMBER,
+    );
   }
 
   async removeRecruiter(companyId: string, recruiterId: string): Promise<void> {

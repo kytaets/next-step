@@ -9,12 +9,12 @@ import MessageBox from '../MessageBox/MessageBox';
 
 import classes from './Profile.module.css';
 
-import { RecruiterProfileData } from '@/types/recruiter';
+import { RecruiterProfileFormData } from '@/types/recruiter';
 import { useModalStore } from '@/store/modalSlice';
 import { createRecruiterProfile } from '@/services/recruiterProfileService';
-import { validateRecruiterProfileForm } from '@/utils/recruiterValidation';
+import { validateCreateRecruiterForm } from '@/utils/recruiterValidation';
 
-const initialValues: RecruiterProfileData = {
+const initialValues: RecruiterProfileFormData = {
   firstName: '',
   lastName: '',
 };
@@ -42,7 +42,7 @@ export default function RecruiterProfileForm() {
   return (
     <Formik
       initialValues={initialValues}
-      validate={validateRecruiterProfileForm}
+      validate={validateCreateRecruiterForm}
       onSubmit={(values) => {
         createProfile(values);
       }}

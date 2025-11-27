@@ -213,6 +213,20 @@ Role Form .role-form-container {
   width: 100%;
 }
 
+.change-btn {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 3px solid white !important;
+  border-radius: 10px;
+  font-size: 1.5rem;
+}
+
+.logout-btn-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+}
+
 .logout-btn {
   padding: 10px 20px;
   background-color: transparent;

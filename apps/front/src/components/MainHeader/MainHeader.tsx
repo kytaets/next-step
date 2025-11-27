@@ -124,7 +124,11 @@ export default function MainHeader() {
               }
             >
               <Link
-                href={role === 'JOB_SEEKER' ? '/my-profile' : '/my-company'}
+                href={
+                  role === 'JOB_SEEKER'
+                    ? '/my-profile/job-seeker'
+                    : '/my-profile/recruiter'
+                }
               >
                 Profile
               </Link>

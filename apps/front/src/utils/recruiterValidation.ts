@@ -1,7 +1,12 @@
-import { RecruiterProfileData } from '@/types/recruiter';
+import {
+  RecruiterProfileFormData,
+  UpdateRecruiterData,
+} from '@/types/recruiter';
 
-export function validateRecruiterProfileForm(values: RecruiterProfileData) {
-  const errors: Partial<RecruiterProfileData> = {};
+export function validateCreateRecruiterForm(
+  values: RecruiterProfileFormData | UpdateRecruiterData
+) {
+  const errors: Partial<RecruiterProfileFormData> = {};
 
   if (!values.firstName?.trim()) {
     errors.firstName = 'First name is required';

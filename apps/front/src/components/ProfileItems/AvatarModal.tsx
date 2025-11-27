@@ -11,10 +11,11 @@ import { updatePersonalData } from '@/services/jobseekerService';
 import RequestError from '../RequestErrors/RequestErrors';
 import { validateAvatarUrl } from '@/utils/profileValidation';
 import { updateCompanyProfile } from '@/services/companyProfileService';
+import { updateRecruiterProfile } from '@/services/recruiterProfileService';
 
 interface Props {
   url: string;
-  type?: 'job-seeker' | 'company';
+  type?: 'job-seeker' | 'company' | 'recruiter';
 }
 
 export default function AvatarModal({ url, type }: Props) {
@@ -46,6 +47,20 @@ export default function AvatarModal({ url, type }: Props) {
       },
     });
 
+  const { mutate: updateRecruiterAvatar, isPending: isRecruiterPending } =
+    useMutation({
+      mutationFn: updateRecruiterProfile,
+      onSuccess: async () => {
+        setRequestError(null);
+        await queryClient.invalidateQueries({
+          queryKey: ['recruiter-profile'],
+        });
+      },
+      onError: (error) => {
+        setRequestError(error.message ?? 'Unexpected error');
+      },
+    });
+
   return (
     <Formik
       initialValues={{ url: url ?? '' }}
@@ -55,10 +70,16 @@ export default function AvatarModal({ url, type }: Props) {
           updateAvatar({
             avatarUrl: values.url?.trim() === '' ? null : values.url?.trim(),
           });
-        else
+        if (type === 'company')
           updateCompanyAvatar({
             logoUrl: values.url?.trim() === '' ? null : values.url?.trim(),
           });
+
+        if (type === 'recruiter') {
+          updateRecruiterAvatar({
+            avatarUrl: values.url?.trim() === '' ? null : values.url?.trim(),
+          });
+        }
       }}
     >
       {({ errors, touched }) => (
@@ -74,10 +95,12 @@ export default function AvatarModal({ url, type }: Props) {
             <button
               type="submit"
               className={classes['info-form-btn']}
-              disabled={isPending || isCompanyPending}
+              disabled={isPending || isCompanyPending || isRecruiterPending}
             >
               <AnimatedIcon scale={1.07}>
-                {!isPending || !isCompanyPending ? 'Save changes' : 'Saving...'}
+                {!isPending || !isCompanyPending || isRecruiterPending
+                  ? 'Save changes'
+                  : 'Saving...'}
               </AnimatedIcon>
             </button>
           </div>

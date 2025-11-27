@@ -7,8 +7,9 @@ import classes from './CompanyProfile.module.css';
 import profileClasses from '../ProfileItems/Profile.module.css';
 import CompanyMainInfo from './CompanyMainInfo';
 import Bio from '../ProfileItems/Description';
-import BottomRow from '../ProfileItems/BottomRow';
 import InviteBtn from './InviteBtn';
+import CompanyBottomRow from './CompanyBottomRow';
+import Cookies from 'js-cookie';
 
 interface Props {
   isEditable?: boolean;
@@ -20,6 +21,8 @@ export default function CompanyProfileContainer({
   companyData,
 }: Props) {
   console.log(companyData);
+
+  const recruiterRole = Cookies.get('recruiter-role');
 
   const mainInfoData = {
     id: companyData.id,
@@ -48,7 +51,7 @@ export default function CompanyProfileContainer({
                 isTrue={companyData.isVerified}
                 type="isVerified"
               />
-              <InviteBtn />
+              {recruiterRole === 'admin' && <InviteBtn />}
             </div>
           </div>
         </div>
@@ -58,10 +61,10 @@ export default function CompanyProfileContainer({
         data={companyData.description}
         type="description"
       />
-      <BottomRow
+      <CompanyBottomRow
         isEditable={isEditable}
-        data={companyData.createdAt}
-        type="company"
+        companyId={companyData.id}
+        createdAt={companyData.createdAt}
       />
     </div>
   );

@@ -40,6 +40,7 @@ export default function RecruiterProfilePage() {
     }
     if (recruiterData) {
       Cookies.set('role', 'RECRUITER');
+      Cookies.set('recruiter-role', recruiterData?.role);
       closeModal();
     }
   }, [isError, error, recruiterData, openModal, closeModal, router]);

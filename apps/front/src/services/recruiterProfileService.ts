@@ -18,6 +18,10 @@ export async function updateRecruiterProfile(data: UpdateRecruiterData) {
   return apiRequest<void>('patch', '/recruiters/me', data);
 }
 
+export async function leaveCompany() {
+  return apiRequest<void>('delete', '/recruiters/me/company');
+}
+
 export async function acceptInvite(token: string | null) {
   try {
     const response = await api.post(

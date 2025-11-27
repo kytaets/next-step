@@ -29,7 +29,9 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
     mutationFn: updateCompanyProfile,
     onSuccess: async () => {
       setRequestError(null);
-      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['company-profile'],
+      });
       setIsChanging(false);
     },
     onError: (error) => {

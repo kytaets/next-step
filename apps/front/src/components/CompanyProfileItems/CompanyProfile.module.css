@@ -154,7 +154,8 @@
   padding: 10px;
   font-size: 1.25rem;
   margin-bottom: 10px;
-  border: 2px solid #ccc;
+  background-color: transparent;
+  border: 3px solid #ccc;
   border-radius: 5px;
 }
 
@@ -196,3 +197,21 @@
 }
 
 /* Company Invitation */
+
+/* Bottom Row */
+
+.logout-btn-container {
+  display: flex;
+  justify-content: end;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 3px solid #f37199 !important;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  color: #f37199;
+}
+
+/* Bottom Row */

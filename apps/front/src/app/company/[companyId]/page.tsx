@@ -22,7 +22,7 @@ export default function CompanyPage() {
     isError,
     error,
   } = useQuery<CompanyProfileData | null, ApiError>({
-    queryKey: ['company-profile-' + id],
+    queryKey: ['company-profile'],
     queryFn: () => getCompanyProfileById(id),
     staleTime: 1000,
     retry: false,

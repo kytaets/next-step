@@ -16,8 +16,10 @@ import {
   validateCompanyInfoData,
 } from '@/utils/companyProfileValidation';
 import { createCompanyProfile } from '@/services/companyProfileService';
+import Cookies from 'js-cookie';
 
 const initialValues: MainInfoData = {
+  id: '',
   name: '',
   url: '',
 };
@@ -33,8 +35,11 @@ export default function CompanyProfileForm() {
     mutationFn: createCompanyProfile,
     onSuccess: async () => {
       setRequestErrors([]);
-      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['company-profile'],
+      });
       closeModal();
+      Cookies.set('recruiter-role', 'true');
       router.refresh();
     },
 

@@ -52,7 +52,7 @@ export default function JobSeekerProfilePage() {
   if (isError && error?.status !== 403)
     return (
       <div className={classes['profile-message-box']}>
-        <MessageBox type="error">
+        <MessageBox type="info">
           <p>Error loading profile: {error?.message || 'Unexpected error'}</p>
         </MessageBox>
       </div>

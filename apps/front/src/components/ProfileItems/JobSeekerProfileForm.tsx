@@ -105,8 +105,8 @@ export default function JobSeekerProfileForm() {
           </h5>
           <div className="row-space-between">
             <div className="align-center">
-              <Link href="/my-company" className={classes['link']}>
-                I am not a Job Seeker
+              <Link href="/my-profile/recruiter" className={classes['link']}>
+                I am not a job seeker
               </Link>
             </div>
 

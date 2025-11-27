@@ -42,7 +42,7 @@ export default function BottomRow({ isEditable, data, type }: Props) {
   };
 
   const handleChangeAccount = () => {
-    router.push('recruiter');
+    router.push(type === 'recruiter' ? 'job-seeker' : 'recruiter');
   };
 
   return (
@@ -57,7 +57,7 @@ export default function BottomRow({ isEditable, data, type }: Props) {
               className={classes['change-btn']}
               onClick={handleChangeAccount}
             >
-              Change to {type === 'job-seeker' ? 'recruiter' : 'job-seeker'}{' '}
+              Change to {type === 'recruiter' ? 'job-seeker' : 'recruiter'}{' '}
               account
             </button>
           </HoveredItem>

@@ -26,7 +26,9 @@ export default function RecruiterProfileContainer({
   return (
     <div className={profileClasses['profile-container']}>
       {isEditable && (
-        <h1 className={profileClasses['page-header']}>Your Amazing Company</h1>
+        <h1 className={profileClasses['page-header']}>
+          Your Recruiter Profile
+        </h1>
       )}
       <div className={profileClasses['main-info']}>
         <Avatar

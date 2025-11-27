@@ -34,9 +34,9 @@ export default function RecruiterProfileForm() {
       }
 
       setRequestErrors([]);
-      await queryClient.invalidateQueries({ queryKey: ['profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['recruiter-profile'] });
       closeModal();
-      router.push('/my-profile/job-seeker');
+      router.push('/my-profile/recruiter');
     },
   });
   return (
@@ -96,8 +96,8 @@ export default function RecruiterProfileForm() {
           </h5>
           <div className="row-space-between">
             <div className="align-center">
-              <Link href="/my-company" className={classes['link']}>
-                I am not a Job Seeker
+              <Link href="/my-profile/job-seeker" className={classes['link']}>
+                I am not a recruiter
               </Link>
             </div>
 

@@ -14,10 +14,8 @@ export default function ChooseRoleForm() {
   const stepUpHandler = (role: string) => {
     Cookies.set('role', role);
 
-    if (role === 'JOB_SEEKER')
-      router.push('/my-profile/job-seeker/create-job-seeker');
-    if (role === 'RECRUITER')
-      router.push('/my-profile/recruiter/create-recruiter');
+    if (role === 'JOB_SEEKER') router.push('/my-profile/job-seeker');
+    if (role === 'RECRUITER') router.push('/my-profile/recruiter');
   };
 
   return (

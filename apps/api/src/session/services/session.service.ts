@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis/redis.service';
+import { RedisService } from '../../redis/services/redis.service';
 import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import {
   SessionPayloadSchema,
   SessionPayload,
-} from './schemas/session-payload.schema';
+} from '../schemas/session-payload.schema';
 import {
   SESSION_PREFIX,
   USER_SESSIONS_PREFIX,
-} from './constants/session.constants';
+} from '../constants/session.constants';
 
 @Injectable()
 export class SessionService {

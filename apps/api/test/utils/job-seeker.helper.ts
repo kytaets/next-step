@@ -1,4 +1,4 @@
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
 import { SeniorityLevel } from '@prisma/client';
 import { JobSeekerLanguageDto } from '../../src/job-seeker/dto/job-seeker-language.dto';
 import { randomUUID } from 'node:crypto';

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CompanyService } from './company.service';
-import { CompanyController } from './company.controller';
-import { CompanyRepository } from './company.repository';
+import { CompanyService } from './services/company.service';
+import { CompanyController } from './controllers/company.controller';
+import { CompanyRepository } from './repositories/company.repository';
 import { EmailModule } from '../email/email.module';
 import { TokenModule } from '../token/token.module';
 import { RecruiterModule } from '../recruiter/recruiter.module';

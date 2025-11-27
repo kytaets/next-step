@@ -12,23 +12,23 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CompanyService } from './company.service';
+import { CompanyService } from '../services/company.service';
 import { Company, Recruiter } from '@prisma/client';
-import { CreateCompanyDto } from './dto/create-company.dto';
-import { SessionAuthGuard } from '../user/guards/session-auth.guard';
-import { UpdateCompanyDto } from './dto/update-company.dto';
-import { FindManyCompaniesDto } from './dto/find-many-companies.dto';
+import { CreateCompanyDto } from '../dto/create-company.dto';
+import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { UpdateCompanyDto } from '../dto/update-company.dto';
+import { FindManyCompaniesDto } from '../dto/find-many-companies.dto';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
-import { InviteDto } from './dto/invite.dto';
-import { RecruiterWithoutCompanyGuard } from '../recruiter/guards/recruiter-without-company.guard';
-import { CurrentRecruiter } from '../recruiter/decorators/current-recruiter.decorator';
-import { RecruiterAdminGuard } from '../recruiter/guards/recruiter-admin.guard';
-import { CurrentRecruiterWithCompany } from '../recruiter/decorators/current-recruiter-with-company.decorator';
-import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
-import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
-import { CurrentUser } from '../user/decorators/current-user.decorator';
-import { UserWithoutPassword } from '../user/types/user-without-password.type';
-import { AcceptInviteDto } from './dto/accept-invite.dto';
+import { InviteDto } from '../dto/invite.dto';
+import { RecruiterWithoutCompanyGuard } from '../../recruiter/guards/recruiter-without-company.guard';
+import { CurrentRecruiter } from '../../recruiter/decorators/current-recruiter.decorator';
+import { RecruiterAdminGuard } from '../../recruiter/guards/recruiter-admin.guard';
+import { CurrentRecruiterWithCompany } from '../../recruiter/decorators/current-recruiter-with-company.decorator';
+import { RecruiterWithCompany } from '../../recruiter/types/recruiter-with-company.type';
+import { RecruiterWithCompanyGuard } from '../../recruiter/guards/recruiter-with-company.guard';
+import { CurrentUser } from '../../user/decorators/current-user.decorator';
+import { UserWithoutPassword } from '../../user/types/user-without-password.type';
+import { AcceptInviteDto } from '../dto/accept-invite.dto';
 
 @Controller('companies')
 export class CompanyController {

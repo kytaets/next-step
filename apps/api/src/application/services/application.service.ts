@@ -4,15 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ApplicationRepository } from './application.repository';
+import { ApplicationRepository } from '../repositories/application.repository';
 import { Application, Prisma } from '@prisma/client';
-import { CreateApplicationDto } from './dto/create-application.dto';
-import { VacancyService } from '../vacancy/vacancy.service';
+import { CreateApplicationDto } from '../dto/create-application.dto';
+import { VacancyService } from '../../vacancy/services/vacancy.service';
 import { getPaginationByPage, createPaginationMeta } from '@common/utils';
 import { ConfigService } from '@nestjs/config';
-import { FindManyApplicationDto } from './dto/search-application';
-import { JobSeekerService } from '../job-seeker/services/job-seeker.service';
-import { SetStatusDto } from './dto/set-status.dto';
+import { FindManyApplicationDto } from '../dto/search-application';
+import { JobSeekerService } from '../../job-seeker/services/job-seeker.service';
+import { SetStatusDto } from '../dto/set-status.dto';
 import { PagedDataResponse } from '@common/responses';
 
 @Injectable()

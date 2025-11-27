@@ -5,22 +5,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Company, CompanyRole, Prisma } from '@prisma/client';
-import { CreateCompanyDto } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
-import { FindManyCompaniesDto } from './dto/find-many-companies.dto';
-import { CompanyRepository } from './company.repository';
+import { CreateCompanyDto } from '../dto/create-company.dto';
+import { UpdateCompanyDto } from '../dto/update-company.dto';
+import { FindManyCompaniesDto } from '../dto/find-many-companies.dto';
+import { CompanyRepository } from '../repositories/company.repository';
 import { ConfigService } from '@nestjs/config';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
 import { PagedDataResponse } from '@common/responses';
-import { InviteDto } from './dto/invite.dto';
-import { RecruiterService } from '../recruiter/services/recruiter.service';
-import { EmailService } from '../email/email.service';
-import { TokenService } from '../token/token.service';
-import { TokenType } from '../token/enums/token-type.enum';
-import { UserService } from '../user/services/user.service';
-import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
-import { UserWithoutPassword } from '../user/types/user-without-password.type';
-import { AcceptInviteDto } from './dto/accept-invite.dto';
+import { InviteDto } from '../dto/invite.dto';
+import { RecruiterService } from '../../recruiter/services/recruiter.service';
+import { EmailService } from '../../email/services/email.service';
+import { TokenService } from '../../token/services/token.service';
+import { TokenType } from '../../token/enums/token-type.enum';
+import { UserService } from '../../user/services/user.service';
+import { RecruiterWithCompany } from '../../recruiter/types/recruiter-with-company.type';
+import { UserWithoutPassword } from '../../user/types/user-without-password.type';
+import { AcceptInviteDto } from '../dto/accept-invite.dto';
 
 @Injectable()
 export class CompanyService {

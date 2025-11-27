@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { RedisService } from '../redis/redis.service';
+import { RedisService } from '../../redis/services/redis.service';
 import { ConfigService } from '@nestjs/config';
-import { TokenType } from './enums/token-type.enum';
+import { TokenType } from '../enums/token-type.enum';
 import {
   TokenPayload,
   TokenPayloadSchema,
-} from './schemas/token-payload.schema';
+} from '../schemas/token-payload.schema';
 
 @Injectable()
 export class TokenService {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/services/prisma.service';
 import { JobSeeker, Prisma } from '@prisma/client';
 import { JobSeekerWithRelations } from '../types/job-seeker-with-relations.type';
 import { jobSeekerInclude } from './includes/job-seeker.include';

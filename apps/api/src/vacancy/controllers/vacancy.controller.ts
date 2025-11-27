@@ -12,19 +12,19 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { VacancyService } from './vacancy.service';
+import { VacancyService } from '../services/vacancy.service';
 import { Vacancy } from '@prisma/client';
-import { CreateVacancyDto } from './dto/create-vacancy.dto';
-import { SessionAuthGuard } from '../user/guards/session-auth.guard';
+import { CreateVacancyDto } from '../dto/create-vacancy.dto';
+import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
-import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
-import { SetSkillsDto } from './dto/set-skills.dto';
-import { SetLanguagesDto } from './dto/set-languages.dto';
-import { VacancyOwnerGuard } from './guards/vacancy-owner.guard';
-import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
-import { CurrentRecruiterWithCompany } from '../recruiter/decorators/current-recruiter-with-company.decorator';
-import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
+import { UpdateVacancyDto } from '../dto/update-vacancy.dto';
+import { FindManyVacanciesDto } from '../dto/find-many-vacancies.dto';
+import { SetSkillsDto } from '../dto/set-skills.dto';
+import { SetLanguagesDto } from '../dto/set-languages.dto';
+import { VacancyOwnerGuard } from '../guards/vacancy-owner.guard';
+import { RecruiterWithCompanyGuard } from '../../recruiter/guards/recruiter-with-company.guard';
+import { CurrentRecruiterWithCompany } from '../../recruiter/decorators/current-recruiter-with-company.decorator';
+import { RecruiterWithCompany } from '../../recruiter/types/recruiter-with-company.type';
 
 @Controller('vacancies')
 export class VacancyController {

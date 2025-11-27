@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { VacancyRepository } from './vacancy.repository';
-import { CreateVacancyDto } from './dto/create-vacancy.dto';
+import { VacancyRepository } from '../repositories/vacancy.repository';
+import { CreateVacancyDto } from '../dto/create-vacancy.dto';
 import { Prisma, Vacancy } from '@prisma/client';
-import { UpdateVacancyDto } from './dto/update-vacancy.dto';
-import { FindManyVacanciesDto } from './dto/find-many-vacancies.dto';
-import { LanguageService } from '../language/services/language.service';
-import { SkillService } from '../skill/services/skill.service';
-import { SetLanguagesDto } from './dto/set-languages.dto';
-import { SetSkillsDto } from './dto/set-skills.dto';
-import { CompanyService } from '../company/company.service';
+import { UpdateVacancyDto } from '../dto/update-vacancy.dto';
+import { FindManyVacanciesDto } from '../dto/find-many-vacancies.dto';
+import { LanguageService } from '../../language/services/language.service';
+import { SkillService } from '../../skill/services/skill.service';
+import { SetLanguagesDto } from '../dto/set-languages.dto';
+import { SetSkillsDto } from '../dto/set-skills.dto';
+import { CompanyService } from '../../company/services/company.service';
 import { PagedDataResponse } from '@common/responses';
-import { VacancyQueryBuilder } from './builders/vacancy-query.builder';
+import { VacancyQueryBuilder } from '../builders/vacancy-query.builder';
 import { createPaginationMeta, getPaginationByPage } from '@common/utils';
 import { ConfigService } from '@nestjs/config';
 

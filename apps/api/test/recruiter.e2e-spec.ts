@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/prisma.service';
-import { RedisService } from '../src/redis/redis.service';
+import { PrismaService } from '../src/prisma/services/prisma.service';
+import { RedisService } from '../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';

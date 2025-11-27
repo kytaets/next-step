@@ -1,4 +1,4 @@
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
 import { CompanyRole, Recruiter } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import * as argon2 from 'argon2';

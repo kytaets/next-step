@@ -9,20 +9,20 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApplicationService } from './application.service';
+import { ApplicationService } from '../services/application.service';
 import { Application } from '@prisma/client';
-import { CurrentJobSeeker } from '../job-seeker/decorators/current-job-seeker.decorator';
-import { SessionAuthGuard } from '../user/guards/session-auth.guard';
-import { JobSeekerGuard } from '../job-seeker/guards/job-seeker.guard';
-import { CreateApplicationDto } from './dto/create-application.dto';
-import { FindManyApplicationDto } from './dto/search-application';
-import { SetStatusDto } from './dto/set-status.dto';
-import { VacancyOwnerGuard } from '../vacancy/guards/vacancy-owner.guard';
+import { CurrentJobSeeker } from '../../job-seeker/decorators/current-job-seeker.decorator';
+import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { JobSeekerGuard } from '../../job-seeker/guards/job-seeker.guard';
+import { CreateApplicationDto } from '../dto/create-application.dto';
+import { FindManyApplicationDto } from '../dto/search-application';
+import { SetStatusDto } from '../dto/set-status.dto';
+import { VacancyOwnerGuard } from '../../vacancy/guards/vacancy-owner.guard';
 import { PagedDataResponse } from '@common/responses';
-import { RecruiterWithCompanyGuard } from '../recruiter/guards/recruiter-with-company.guard';
-import { CurrentRecruiter } from '../recruiter/decorators/current-recruiter.decorator';
-import { RecruiterWithCompany } from '../recruiter/types/recruiter-with-company.type';
-import { JobSeekerWithRelations } from '../job-seeker/types/job-seeker-with-relations.type';
+import { RecruiterWithCompanyGuard } from '../../recruiter/guards/recruiter-with-company.guard';
+import { CurrentRecruiter } from '../../recruiter/decorators/current-recruiter.decorator';
+import { RecruiterWithCompany } from '../../recruiter/types/recruiter-with-company.type';
+import { JobSeekerWithRelations } from '../../job-seeker/types/job-seeker-with-relations.type';
 
 @Controller('applications')
 export class ApplicationController {

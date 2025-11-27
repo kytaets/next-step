@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../src/prisma/services/prisma.service';
 import { Server } from 'node:http';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import * as argon2 from 'argon2';
 import * as request from 'supertest';
-import { RedisService } from '../src/redis/redis.service';
-import { EmailService } from '../src/email/email.service';
+import { RedisService } from '../src/redis/services/redis.service';
+import { EmailService } from '../src/email/services/email.service';
 import * as cookieParser from 'cookie-parser';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { randomUUID } from 'node:crypto';

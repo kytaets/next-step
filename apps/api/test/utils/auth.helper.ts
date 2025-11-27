@@ -1,7 +1,7 @@
 import * as argon2 from 'argon2';
 import { randomUUID } from 'node:crypto';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { RedisService } from '../../src/redis/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import {
   SESSION_PREFIX,
   USER_SESSIONS_PREFIX,

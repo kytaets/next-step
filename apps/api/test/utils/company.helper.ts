@@ -1,6 +1,6 @@
 import { Company } from '@prisma/client';
 import { CreateCompanyDto } from '../../src/company/dto/create-company.dto';
-import { PrismaService } from '../../src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
 
 export async function createCompany(prisma: PrismaService): Promise<Company> {
   const createCompanyDto: CreateCompanyDto = {

@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { VacancyService } from '../vacancy.service';
+import { VacancyService } from '../services/vacancy.service';
 import { RecruiterRequest } from '../../recruiter/types/recruiter-request.type';
 
 @Injectable()

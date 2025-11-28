@@ -92,11 +92,9 @@ describe('LanguageController (e2e)', () => {
   describe('POST /languages', () => {
     const url = '/api/languages';
 
-    const languageName = 'English';
+    const body: CreateLanguageDto = { name: 'English' };
 
     it('should create a new language', async () => {
-      const body: CreateLanguageDto = { name: languageName };
-
       return request(server)
         .post(url)
         .send(body)
@@ -104,17 +102,15 @@ describe('LanguageController (e2e)', () => {
         .then((res) => {
           expect(res.body).toEqual({
             id: expect.any(String) as unknown as string,
-            name: languageName,
+            name: body.name,
           });
         });
     });
 
     it('should return 400 if language already exists', async () => {
-      const body: CreateLanguageDto = { name: languageName };
-
       await prisma.language.create({
         data: {
-          name: languageName,
+          name: body.name,
         },
       });
 

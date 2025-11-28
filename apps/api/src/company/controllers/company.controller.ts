@@ -54,11 +54,11 @@ export class CompanyController {
     return { message: 'Invite sent successfully' };
   }
 
-  @Get('search')
-  async search(
+  @Get()
+  async findMany(
     @Query() dto: FindManyCompaniesDto,
   ): Promise<PagedDataResponse<Company[]>> {
-    return this.service.search(dto);
+    return this.service.findMany(dto);
   }
 
   @Get('my')
@@ -78,7 +78,7 @@ export class CompanyController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(SessionAuthGuard, RecruiterWithoutCompanyGuard)
   async acceptInvite(
-    @Body() dto: AcceptInviteDto,
+    @Query() dto: AcceptInviteDto,
     @CurrentUser() user: UserWithoutPassword,
   ): Promise<MessageResponse> {
     await this.service.addRecruiter(user, dto);

@@ -62,7 +62,7 @@ export class CompanyService {
     if (company) throw new BadRequestException('Company already exists');
   }
 
-  async search(
+  async findMany(
     dto: FindManyCompaniesDto,
   ): Promise<PagedDataResponse<Company[]>> {
     const where: Prisma.CompanyWhereInput = {};

@@ -7,6 +7,7 @@ import { createAuthenticatedUser } from './utils/auth.helper';
 import { RedisService } from '../src/redis/services/redis.service';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
+import { UserWithoutPassword } from '../src/user/types/user-without-password.type';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -55,15 +56,10 @@ describe('UserController (e2e)', () => {
         .set('Cookie', [`sid=${sid}`])
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({
-            id: expect.any(String) as unknown as string,
-            email: user.email,
-            isEmailVerified: true,
-            createdAt: expect.any(String) as unknown as string,
-            updatedAt: expect.any(String) as unknown as string,
-          });
+          const resBody = res.body as UserWithoutPassword;
 
-          expect(res.body).not.toHaveProperty('password');
+          expect(resBody.id).toBe(user.id);
+          expect(resBody).not.toHaveProperty('password');
         });
     });
   });

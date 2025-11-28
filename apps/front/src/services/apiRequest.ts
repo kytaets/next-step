@@ -4,13 +4,15 @@ import { AxiosError, Method } from 'axios';
 export async function apiRequest<T>(
   method: Method,
   url: string,
-  data?: unknown
+  data?: unknown,
+  params?: unknown
 ): Promise<T> {
   try {
     const response = await api.request<T>({
       method,
       url,
       data,
+      params,
     });
 
     return response.data;

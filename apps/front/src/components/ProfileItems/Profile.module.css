@@ -128,7 +128,8 @@
 
 /* General form styles */
 
-Role Form .role-form-container {
+/* Role Form  */
+.role-form-container {
   margin: auto;
   padding: 10px 15px;
   background-color: #1f1f21;

@@ -5,6 +5,7 @@ import {
 } from '@/types/companyProfile';
 import api from './axios';
 import apiRequest from './apiRequest';
+import { RecruiterProfileData } from '@/types/recruiter';
 
 export async function getMyCompanyProfile() {
   return apiRequest<CompanyProfileData | null>('get', '/companies/my');
@@ -43,4 +44,17 @@ export async function sendInvite(data: { email: string | null }) {
 
 export async function deleteCompany() {
   return apiRequest<void>('delete', '/companies/my');
+}
+
+export async function getMyMembers(companyId: string | undefined) {
+  return apiRequest<RecruiterProfileData[] | null>(
+    'get',
+    '/recruiters',
+    {},
+    { companyId }
+  );
+}
+
+export async function removeRecruiter(recruiterId: string) {
+  return apiRequest<void>('delete', `/companies/recruiters/${recruiterId}`);
 }

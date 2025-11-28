@@ -1,3 +1,4 @@
+'use client';
 import HoveredItem from '../HoveredItem/HoveredItem';
 
 import classes from './CompanyProfile.module.css';
@@ -9,14 +10,12 @@ export default function InviteBtn() {
 
   return (
     <>
-      <HoveredItem>
-        <button
-          className={classes['invite-btn']}
-          onClick={() => openModal(<InvitationModal />)}
-        >
-          Invite +
-        </button>
-      </HoveredItem>
+      <button
+        className={classes['invite-btn']}
+        onClick={() => openModal(<InvitationModal />)}
+      >
+        <HoveredItem>Invite + </HoveredItem>
+      </button>
     </>
   );
 }

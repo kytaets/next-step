@@ -79,9 +79,25 @@
   align-items: center;
 }
 
-.verified-invite-container .invite-btn {
+.company-members-link {
   color: #fff;
   border: 2px solid #fff;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.invite-btn {
+  margin-bottom: 30px;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.invite-btn div {
+  color: #fff;
+  border: 3px solid #fff;
   border-radius: 5px;
   padding: 10px 15px;
   font-size: 1.5rem;
@@ -94,6 +110,40 @@
 }
 
 /* Main info */
+
+/* Company Members */
+
+.company-member {
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  background-color: #1f1f21;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+.company-member .member-p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.form-del-btn {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.form-del-btn div {
+  padding: 8px 10px;
+  background-color: #f37199;
+  border: 2px solid #f37199;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+}
+
+/* Company Members */
 
 /* Company Invitation */
 

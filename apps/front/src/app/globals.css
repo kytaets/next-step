@@ -129,3 +129,8 @@ input[type='range'] {
 .underline-link {
   text-decoration: underline;
 }
+
+.page-header {
+  margin-bottom: 40px;
+  font-size: 3rem;
+}

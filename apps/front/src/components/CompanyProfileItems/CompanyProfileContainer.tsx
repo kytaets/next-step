@@ -7,9 +7,10 @@ import classes from './CompanyProfile.module.css';
 import profileClasses from '../ProfileItems/Profile.module.css';
 import CompanyMainInfo from './CompanyMainInfo';
 import Bio from '../ProfileItems/Description';
-import InviteBtn from './InviteBtn';
 import CompanyBottomRow from './CompanyBottomRow';
 import Cookies from 'js-cookie';
+import Link from 'next/link';
+import HoveredItem from '../HoveredItem/HoveredItem';
 
 interface Props {
   isEditable?: boolean;
@@ -51,7 +52,16 @@ export default function CompanyProfileContainer({
                 isTrue={companyData.isVerified}
                 type="isVerified"
               />
-              {recruiterRole === 'admin' && <InviteBtn />}
+              {recruiterRole === 'ADMIN' && (
+                <HoveredItem>
+                  <Link
+                    href="/my-profile/recruiter/company/members"
+                    className={classes['company-members-link']}
+                  >
+                    Company Members
+                  </Link>
+                </HoveredItem>
+              )}
             </div>
           </div>
         </div>

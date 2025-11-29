@@ -54,7 +54,7 @@ export default function CompanyVacancies() {
         <div className={classes['vacancies-container']}>
           <div className={classes['add-vacancy-btn-container']}>
             <Link
-              href="/my-company/vacancies/new-vacancy"
+              href="/my-profile/recruiter/company/vacancies/new-vacancy"
               className={classes['add-vacancy-btn']}
             >
               <HoveredItem>Add Vacancy +</HoveredItem>

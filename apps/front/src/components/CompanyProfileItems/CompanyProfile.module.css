@@ -96,12 +96,12 @@
 }
 
 .invite-btn div {
-  color: #fff;
-  border: 3px solid #fff;
-  border-radius: 5px;
-  padding: 10px 15px;
-  font-size: 1.5rem;
+  padding: 15px 20px;
+  background-color: #37aa9c;
   font-weight: 500;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 1.5rem;
 }
 
 .invitation-container {

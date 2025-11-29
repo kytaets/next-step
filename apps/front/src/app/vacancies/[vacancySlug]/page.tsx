@@ -46,7 +46,9 @@ export default function VacancyPage() {
         return;
       }
       setRequestError(null);
-      router.push('/my-company/vacancies/');
+      router.push(
+        '/my-profile/recruiter/company/vacancies?companyId=' + companyId
+      );
     },
   });
 

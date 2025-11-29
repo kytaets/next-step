@@ -101,17 +101,6 @@ export default function MainHeader() {
             >
               Log Out
             </motion.button>
-            {role === 'RECRUITER' && (
-              <motion.div
-                className={classes['no-border-btn']}
-                whileHover={{
-                  scale: 1.1,
-                  borderColor: 'white',
-                }}
-              >
-                <Link href="/my-company/vacancies">My Vacancies</Link>
-              </motion.div>
-            )}
 
             <motion.div
               className={`${classes['border-btn']} ${

@@ -25,6 +25,7 @@ import {
   getSkills,
 } from '@/services/jobseekerService';
 import { VacancyFormValues } from '@/types/vacancy';
+import Cookies from 'js-cookie';
 
 interface Props {
   data?: VacancyFormValues | null;
@@ -34,6 +35,8 @@ interface Props {
 export default function VacancyForm({ data, type = 'CREATE' }: Props) {
   const [requestError, setRequestError] = useState<string | null>(null);
   const router = useRouter();
+
+  const companyId = Cookies.get('company-id');
 
   const { mutate: updateLanguages } = useMutation({
     mutationFn: updateVacancyLanguages,
@@ -80,7 +83,10 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
       }
 
       setRequestError(null);
-      router.push('/my-company/vacancies/');
+      console.log('Redirecting to vacancies list');
+      router.push(
+        '/my-profile/recruiter/company/vacancies?companyId=' + companyId
+      );
     },
   });
 

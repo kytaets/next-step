@@ -62,7 +62,11 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
 
           <Link
             className={classes['my-vacancies-btn']}
-            href={isEditable ? 'my-company/vacancies' : `${data.id}/vacancies`}
+            href={
+              isEditable
+                ? `company/vacancies?companyId=${data.id}`
+                : `${data.id}/vacancies`
+            }
           >
             <AnimatedIcon>
               {isEditable ? 'My Vacancies' : `Company Vacancies`}

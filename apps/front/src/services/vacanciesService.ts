@@ -1,20 +1,13 @@
 import { VacancyFormValues } from '@/types/vacancy';
 import api from './axios';
 import { UpdatedUserLanguages } from '@/types/profile';
-import { VacancySearchForm } from '@/types/vacancies';
+import { VacanciesResponse, VacancySearchForm } from '@/types/vacancies';
+import apiRequest from './apiRequest';
 
-export async function getMyVacancies() {
-  return api
-    .get('/vacancies/my')
-    .then((res) => res.data)
-    .catch((error) => {
-      const message =
-        error?.response?.data?.message || 'Failed to fetch profile';
-      throw {
-        status: error?.response?.status || 500,
-        message,
-      };
-    });
+export async function getMyVacancies(companyId: string | null) {
+  return apiRequest<VacanciesResponse>('post', '/vacancies/search', {
+    companyId,
+  });
 }
 
 export async function createVacancy(data: VacancyFormValues) {

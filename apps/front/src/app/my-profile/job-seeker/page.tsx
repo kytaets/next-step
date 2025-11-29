@@ -33,9 +33,6 @@ export default function JobSeekerProfilePage() {
   });
 
   useEffect(() => {
-    if (isError && error?.status === 401) {
-      router.push('/sign-in');
-    }
     if (isError && error?.status === 404) {
       openModal(<ProfileFormModal role="job-seeker" />, true);
     }

@@ -39,7 +39,7 @@ export default function CompanyProfileForm() {
         queryKey: ['company-profile'],
       });
       closeModal();
-      Cookies.set('recruiter-role', 'true');
+      Cookies.set('recruiter-role', 'ADMIN');
       router.refresh();
     },
 

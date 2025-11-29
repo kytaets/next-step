@@ -32,9 +32,6 @@ export default function CompanyProfilePage() {
   });
 
   useEffect(() => {
-    if (isError && error?.status === 401) {
-      router.push('/sign-in');
-    }
     if (isError && error?.status === 403) {
       openModal(<ProfileFormModal role="company" />, true);
     }

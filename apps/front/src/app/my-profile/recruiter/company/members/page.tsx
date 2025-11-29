@@ -1,16 +1,23 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+
 import CompanyMembersContainer from '@/components/CompanyProfileItems/CompanyMembersContainer';
 import MessageBox from '@/components/MessageBox/MessageBox';
 import { getMyMembers } from '@/services/companyProfileService';
 import { ApiError } from '@/types/authForm';
 import { RecruiterProfileData } from '@/types/recruiter';
-import { useQuery } from '@tanstack/react-query';
 
 import Cookies from 'js-cookie';
 
 export default function CompanyMembers() {
+  const router = useRouter();
+
   const companyId = Cookies.get('company-id');
+  if (!companyId) {
+    router.push('/my-profile/recruiter/company');
+  }
 
   const {
     data: myMembers,

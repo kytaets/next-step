@@ -2,7 +2,7 @@ name: API CI (Unit & E2E)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ api/testing/e2e, main ]
     paths:
       - 'apps/api/**'
       - '.github/workflows/api-ci.yml'

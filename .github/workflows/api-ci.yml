@@ -87,6 +87,8 @@ jobs:
 
       - name: Generate Prisma client
         run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
         working-directory: ./apps/api
 
       - name: Run E2E Tests

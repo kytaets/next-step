@@ -30,12 +30,14 @@ export class JobSeekerRepository {
   async findMany(
     where: Prisma.JobSeekerWhereInput,
     orderBy: Prisma.JobSeekerOrderByWithRelationInput,
-    pagination: { skip: number; take: number },
+    skip: number,
+    take: number,
   ): Promise<JobSeekerWithRelations[]> {
     return this.prisma.jobSeeker.findMany({
       where,
       orderBy,
-      ...pagination,
+      skip,
+      take,
       include: jobSeekerInclude,
     });
   }

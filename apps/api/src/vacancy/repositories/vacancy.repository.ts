@@ -1,82 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/services/prisma.service';
 import { Prisma, Vacancy } from '@prisma/client';
+import { vacancyInclude } from './includes/vacancy.include';
+import { VacancyWithRelations } from '../types/vacancy-with-relations.type';
 
 @Injectable()
 export class VacancyRepository {
-  private readonly vacancyRelations: Prisma.VacancyInclude;
-
-  constructor(private readonly prisma: PrismaService) {
-    this.vacancyRelations = {
-      company: true,
-      requiredSkills: {
-        select: {
-          skill: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      requiredLanguages: {
-        select: {
-          level: true,
-          language: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-    };
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     companyId: string,
     data: Prisma.VacancyCreateWithoutCompanyInput,
-    includeRelations?: boolean,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.prisma.vacancy.create({
       data: { ...data, company: { connect: { id: companyId } } },
-      include: includeRelations ? this.vacancyRelations : null,
+      include: vacancyInclude,
     });
   }
 
   async findOne(
     where: Prisma.VacancyWhereUniqueInput,
-    includeRelations?: boolean,
-  ): Promise<Vacancy | null> {
+  ): Promise<VacancyWithRelations | null> {
     return this.prisma.vacancy.findUnique({
       where,
-      include: includeRelations ? this.vacancyRelations : null,
+      include: vacancyInclude,
     });
   }
 
   async findMany(
     where: Prisma.VacancyWhereInput,
     orderBy: Prisma.VacancyOrderByWithRelationInput,
-    pagination: { skip: number; take: number },
-    includeRelations?: boolean,
-  ): Promise<Vacancy[]> {
+    skip: number,
+    take: number,
+  ): Promise<VacancyWithRelations[]> {
     return this.prisma.vacancy.findMany({
       where,
       orderBy,
-      ...pagination,
-      include: includeRelations ? this.vacancyRelations : null,
+      skip,
+      take,
+      include: vacancyInclude,
     });
   }
 
   async update(
     where: Prisma.VacancyWhereUniqueInput,
     data: Prisma.VacancyUpdateInput,
-    includeRelations?: boolean,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.prisma.vacancy.update({
       where,
       data,
-      include: includeRelations ? this.vacancyRelations : null,
+      include: vacancyInclude,
     });
   }
 
@@ -87,8 +60,7 @@ export class VacancyRepository {
   async setRequiredSkills(
     id: string,
     data: Prisma.VacancySkillCreateManyVacancyInput[],
-    includeRelations?: boolean,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.prisma.vacancy.update({
       where: { id },
       data: {
@@ -100,15 +72,14 @@ export class VacancyRepository {
           },
         },
       },
-      include: includeRelations ? this.vacancyRelations : null,
+      include: vacancyInclude,
     });
   }
 
   async setRequiredLanguages(
     id: string,
     data: Prisma.VacancyLanguageCreateManyVacancyInput[],
-    includeRelations?: boolean,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.prisma.vacancy.update({
       where: { id },
       data: {
@@ -120,7 +91,7 @@ export class VacancyRepository {
           },
         },
       },
-      include: includeRelations ? this.vacancyRelations : null,
+      include: vacancyInclude,
     });
   }
 

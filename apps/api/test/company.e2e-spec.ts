@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
 import { PrismaService } from '../src/prisma/services/prisma.service';
 import { RedisService } from '../src/redis/services/redis.service';
@@ -42,6 +42,13 @@ describe('CompanyController (e2e)', () => {
     redis = app.get(RedisService);
 
     app.use(cookieParser());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    );
     app.setGlobalPrefix('api');
 
     await app.init();
@@ -138,6 +145,7 @@ describe('CompanyController (e2e)', () => {
     const searchDto: FindManyCompaniesDto = {
       name: 'Targe',
       page: 1,
+      take: 10,
     };
 
     it('should return companies matching the search query', async () => {

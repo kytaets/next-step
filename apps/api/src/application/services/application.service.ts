@@ -5,40 +5,33 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ApplicationRepository } from '../repositories/application.repository';
-import { Application, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateApplicationDto } from '../dto/create-application.dto';
 import { VacancyService } from '../../vacancy/services/vacancy.service';
-import { getPaginationByPage, createPaginationMeta } from '@common/utils';
-import { ConfigService } from '@nestjs/config';
-import { FindManyApplicationDto } from '../dto/search-application';
+import { createPaginationMeta } from '@common/utils';
+import { FindManyApplicationsDto } from '../dto/find-many-applications.dto';
 import { JobSeekerService } from '../../job-seeker/services/job-seeker.service';
 import { SetStatusDto } from '../dto/set-status.dto';
 import { PagedDataResponse } from '@common/responses';
+import { ApplicationWithRelations } from '../types/application-with-relations.type';
 
 @Injectable()
 export class ApplicationService {
-  private readonly pageSize: number;
-
   constructor(
     private readonly repository: ApplicationRepository,
     private readonly vacancyService: VacancyService,
-    private readonly config: ConfigService,
     private readonly jobSeekerService: JobSeekerService,
-  ) {
-    this.pageSize = this.config.getOrThrow<number>(
-      'search.application.pageSize',
-    );
-  }
+  ) {}
 
   async create(
     dto: CreateApplicationDto,
     jobSeekerId: string,
-  ): Promise<Application> {
+  ): Promise<ApplicationWithRelations> {
     await this.assertNotExists({
       jobSeekerId_vacancyId: { jobSeekerId, vacancyId: dto.vacancyId },
     });
     await this.vacancyService.findOneOrThrow({ id: dto.vacancyId });
-    return this.repository.create(dto, jobSeekerId, true);
+    return this.repository.create(dto, jobSeekerId);
   }
 
   async assertNotExists(
@@ -51,53 +44,46 @@ export class ApplicationService {
 
   async findOneOrThrow(
     where: Prisma.ApplicationWhereUniqueInput,
-  ): Promise<Application> {
-    const application = await this.repository.findOne(where, true);
+  ): Promise<ApplicationWithRelations> {
+    const application = await this.repository.findOne(where);
     if (!application) throw new NotFoundException('Application not found');
     return application;
   }
 
   async findManyByVacancyId(
     vacancyId: string,
-    dto: FindManyApplicationDto,
-  ): Promise<PagedDataResponse<Application[]>> {
+    dto: FindManyApplicationsDto,
+  ): Promise<PagedDataResponse<ApplicationWithRelations[]>> {
     await this.vacancyService.findOneOrThrow({ id: vacancyId });
     return this.search(dto, { vacancyId });
   }
 
   async findManyByJobSeekerId(
     jobSeekerId: string,
-    dto: FindManyApplicationDto,
-  ): Promise<PagedDataResponse<Application[]>> {
+    dto: FindManyApplicationsDto,
+  ): Promise<PagedDataResponse<ApplicationWithRelations[]>> {
     await this.jobSeekerService.findOneOrThrow({ id: jobSeekerId });
     return this.search(dto, { jobSeekerId });
   }
 
   async search(
-    dto: FindManyApplicationDto,
+    dto: FindManyApplicationsDto,
     additionalWhereParams: Prisma.ApplicationWhereInput,
-  ): Promise<PagedDataResponse<Application[]>> {
+  ): Promise<PagedDataResponse<ApplicationWithRelations[]>> {
     const where: Prisma.ApplicationWhereInput = { ...additionalWhereParams };
-    const orderBy = dto.orderBy ?? { createdAt: 'desc' };
-
-    const pagination = getPaginationByPage(dto.page, this.pageSize);
 
     if (dto.status) {
       where.status = dto.status;
     }
 
-    const data = await this.repository.findMany(
-      {
-        where,
-        ...pagination,
-        orderBy,
-      },
-      true,
-    );
+    const skip = (dto.page - 1) * dto.take;
+    const orderBy = dto.orderBy ?? { createdAt: Prisma.SortOrder.desc };
+
+    const data = await this.repository.findMany(where, orderBy, skip, dto.take);
 
     const total = await this.repository.count(where);
 
-    const meta = createPaginationMeta(total, dto.page, this.pageSize);
+    const meta = createPaginationMeta(total, dto.page, dto.take);
 
     return { data, meta };
   }
@@ -106,7 +92,7 @@ export class ApplicationService {
     id: string,
     dto: SetStatusDto,
     recruiterCompanyId: string,
-  ): Promise<Application> {
+  ): Promise<ApplicationWithRelations> {
     const application = await this.findOneOrThrow({ id });
     const vacancy = await this.vacancyService.findOneOrThrow({
       id: application.vacancyId,
@@ -118,6 +104,6 @@ export class ApplicationService {
       );
     }
 
-    return this.repository.update({ id }, dto, true);
+    return this.repository.update({ id }, dto);
   }
 }

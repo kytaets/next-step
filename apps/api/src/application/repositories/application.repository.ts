@@ -1,51 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/services/prisma.service';
-import { Application, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateApplicationDto } from '../dto/create-application.dto';
+import { applicationInclude } from './includes/application.include';
+import { ApplicationWithRelations } from '../types/application-with-relations.type';
 
 @Injectable()
 export class ApplicationRepository {
-  private readonly applicationRelations: Prisma.ApplicationInclude;
-
-  constructor(private readonly prisma: PrismaService) {
-    this.applicationRelations = {
-      jobSeeker: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          contacts: true,
-          languages: {
-            select: {
-              level: true,
-              language: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
-          skills: {
-            select: {
-              skill: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    };
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     dto: CreateApplicationDto,
     jobSeekerId: string,
-    includeRelations?: boolean,
-  ): Promise<Application> {
+  ): Promise<ApplicationWithRelations> {
     const { vacancyId, ...data } = dto;
 
     return this.prisma.application.create({
@@ -62,39 +29,42 @@ export class ApplicationRepository {
           },
         },
       },
-      include: includeRelations ? this.applicationRelations : null,
+      include: applicationInclude,
     });
   }
 
   async findOne(
     where: Prisma.ApplicationWhereUniqueInput,
-    includeRelations?: boolean,
-  ): Promise<Application | null> {
+  ): Promise<ApplicationWithRelations | null> {
     return this.prisma.application.findUnique({
       where,
-      include: includeRelations ? this.applicationRelations : null,
+      include: applicationInclude,
     });
   }
 
   async findMany(
-    params: Prisma.ApplicationFindManyArgs,
-    includeRelations?: boolean,
-  ): Promise<Application[]> {
+    where: Prisma.ApplicationWhereInput,
+    orderBy: Prisma.ApplicationOrderByWithRelationInput,
+    skip: number,
+    take: number,
+  ): Promise<ApplicationWithRelations[]> {
     return this.prisma.application.findMany({
-      ...params,
-      include: includeRelations ? this.applicationRelations : null,
+      where,
+      orderBy,
+      skip,
+      take,
+      include: applicationInclude,
     });
   }
 
   async update(
     where: Prisma.ApplicationWhereUniqueInput,
     data: Prisma.ApplicationUpdateInput,
-    includeRelations?: boolean,
-  ): Promise<Application> {
+  ): Promise<ApplicationWithRelations> {
     return this.prisma.application.update({
       where,
       data,
-      include: includeRelations ? this.applicationRelations : null,
+      include: applicationInclude,
     });
   }
 

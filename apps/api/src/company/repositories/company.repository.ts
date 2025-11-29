@@ -28,8 +28,13 @@ export class CompanyRepository {
     return this.prisma.company.findUnique({ where });
   }
 
-  async findMany(params: Prisma.CompanyFindManyArgs): Promise<Company[]> {
-    return this.prisma.company.findMany(params);
+  async findMany(
+    where: Prisma.CompanyWhereInput,
+    orderBy: Prisma.CompanyOrderByWithRelationInput,
+    skip: number,
+    take: number,
+  ): Promise<Company[]> {
+    return this.prisma.company.findMany({ where, orderBy, skip, take });
   }
 
   async update(

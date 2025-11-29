@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../src/prisma/services/prisma.service';
 import { Server } from 'node:http';
@@ -26,6 +26,13 @@ describe('UserController (e2e)', () => {
     redis = app.get(RedisService);
 
     app.use(cookieParser());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    );
     app.setGlobalPrefix('api');
 
     await app.init();

@@ -9,8 +9,7 @@ import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { FindManyCompaniesDto } from '../dto/find-many-companies.dto';
 import { CompanyRepository } from '../repositories/company.repository';
-import { ConfigService } from '@nestjs/config';
-import { createPaginationMeta, getPaginationByPage } from '@common/utils';
+import { createPaginationMeta } from '@common/utils';
 import { PagedDataResponse } from '@common/responses';
 import { InviteDto } from '../dto/invite.dto';
 import { RecruiterService } from '../../recruiter/services/recruiter.service';
@@ -24,20 +23,13 @@ import { AcceptInviteDto } from '../dto/accept-invite.dto';
 
 @Injectable()
 export class CompanyService {
-  private readonly searchPageSize: number;
-
   constructor(
     private readonly repository: CompanyRepository,
     private readonly recruiterService: RecruiterService,
     private readonly email: EmailService,
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
-    private readonly config: ConfigService,
-  ) {
-    this.searchPageSize = this.config.getOrThrow<number>(
-      'search.company.pageSize',
-    );
-  }
+  ) {}
 
   async create(recruiterId: string, dto: CreateCompanyDto): Promise<Company> {
     const company = await this.repository.create(recruiterId, dto);
@@ -66,7 +58,6 @@ export class CompanyService {
     dto: FindManyCompaniesDto,
   ): Promise<PagedDataResponse<Company[]>> {
     const where: Prisma.CompanyWhereInput = {};
-    const pagination = getPaginationByPage(dto.page, this.searchPageSize);
 
     if (dto.name) {
       where.name = {
@@ -74,11 +65,14 @@ export class CompanyService {
         mode: 'insensitive',
       };
     }
+    const orderBy = { name: Prisma.SortOrder.desc };
 
-    const data = await this.repository.findMany({ where, ...pagination });
+    const skip = (dto.page - 1) * dto.take;
+
+    const data = await this.repository.findMany(where, orderBy, skip, dto.take);
     const total = await this.repository.count(where);
 
-    const meta = createPaginationMeta(total, dto.page, this.searchPageSize);
+    const meta = createPaginationMeta(total, dto.page, dto.take);
 
     return { data, meta };
   }

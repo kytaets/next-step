@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
 import { PrismaService } from '../src/prisma/services/prisma.service';
 import { RedisService } from '../src/redis/services/redis.service';
@@ -40,6 +40,13 @@ describe('JobSeekerController (e2e)', () => {
     redis = app.get(RedisService);
 
     app.use(cookieParser());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+      }),
+    );
     app.setGlobalPrefix('api');
 
     await app.init();
@@ -233,6 +240,7 @@ describe('JobSeekerController (e2e)', () => {
         ],
         orderBy: { expectedSalary: 'desc' },
         page: 1,
+        take: 10,
       };
 
       return request(server)
@@ -448,7 +456,7 @@ describe('JobSeekerController (e2e)', () => {
     const url = '/api/job-seekers/me/contacts';
     const body: SetContactsDto = {
       githubUrl: 'https://github.com/user',
-      linkedinUrl: 'https://linkedin.com/in/user',
+      linkedinUrl: 'https://www.linkedin.com/in/user',
     };
 
     it('should put contacts to the authenticated job seeker profile', async () => {

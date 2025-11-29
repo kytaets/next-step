@@ -14,7 +14,7 @@ class OrderBy {
   createdAt?: Prisma.SortOrder;
 }
 
-export class FindManyApplicationDto {
+export class FindManyApplicationsDto {
   @IsOptional()
   @IsEnum(ApplicationStatus)
   status?: ApplicationStatus;
@@ -29,4 +29,10 @@ export class FindManyApplicationDto {
   @IsInt()
   @Min(1)
   page: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  take: number = 20;
 }

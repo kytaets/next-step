@@ -13,7 +13,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { VacancyService } from '../services/vacancy.service';
-import { Vacancy } from '@prisma/client';
 import { CreateVacancyDto } from '../dto/create-vacancy.dto';
 import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
@@ -25,6 +24,7 @@ import { VacancyOwnerGuard } from '../guards/vacancy-owner.guard';
 import { RecruiterWithCompanyGuard } from '../../recruiter/guards/recruiter-with-company.guard';
 import { CurrentRecruiterWithCompany } from '../../recruiter/decorators/current-recruiter-with-company.decorator';
 import { RecruiterWithCompany } from '../../recruiter/types/recruiter-with-company.type';
+import { VacancyWithRelations } from '../types/vacancy-with-relations.type';
 
 @Controller('vacancies')
 export class VacancyController {
@@ -35,7 +35,7 @@ export class VacancyController {
   async create(
     @CurrentRecruiterWithCompany() recruiter: RecruiterWithCompany,
     @Body() dto: CreateVacancyDto,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.service.create(recruiter.companyId, dto);
   }
 
@@ -43,12 +43,14 @@ export class VacancyController {
   @HttpCode(HttpStatus.OK)
   async findMany(
     @Body() dto: FindManyVacanciesDto,
-  ): Promise<PagedDataResponse<Vacancy[]>> {
+  ): Promise<PagedDataResponse<VacancyWithRelations[]>> {
     return this.service.findMany(dto);
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Vacancy> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<VacancyWithRelations> {
     return this.service.findOneOrThrow({ id });
   }
 
@@ -57,7 +59,7 @@ export class VacancyController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateVacancyDto,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.service.update({ id }, dto);
   }
 
@@ -75,7 +77,7 @@ export class VacancyController {
   async setRequiredSkills(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetSkillsDto,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.service.setRequiredSkills(id, dto);
   }
 
@@ -84,7 +86,7 @@ export class VacancyController {
   async setRequiredLanguages(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetLanguagesDto,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     return this.service.setRequiredLanguages(id, dto);
   }
 }

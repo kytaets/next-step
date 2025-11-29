@@ -11,40 +11,36 @@ import { SetSkillsDto } from '../dto/set-skills.dto';
 import { CompanyService } from '../../company/services/company.service';
 import { PagedDataResponse } from '@common/responses';
 import { VacancyQueryBuilder } from '../builders/vacancy-query.builder';
-import { createPaginationMeta, getPaginationByPage } from '@common/utils';
-import { ConfigService } from '@nestjs/config';
+import { createPaginationMeta } from '@common/utils';
+import { VacancyWithRelations } from '../types/vacancy-with-relations.type';
 
 @Injectable()
 export class VacancyService {
-  private readonly searchPageSize: number;
-
   constructor(
     private readonly repository: VacancyRepository,
     private readonly languageService: LanguageService,
     private readonly skillService: SkillService,
     private readonly companyService: CompanyService,
-    private readonly config: ConfigService,
-  ) {
-    this.searchPageSize = this.config.getOrThrow<number>(
-      'search.vacancy.pageSize',
-    );
-  }
+  ) {}
 
-  async create(companyId: string, dto: CreateVacancyDto): Promise<Vacancy> {
-    return this.repository.create(companyId, dto, true);
+  async create(
+    companyId: string,
+    dto: CreateVacancyDto,
+  ): Promise<VacancyWithRelations> {
+    return this.repository.create(companyId, dto);
   }
 
   async findOneOrThrow(
     where: Prisma.VacancyWhereUniqueInput,
-  ): Promise<Vacancy> {
-    const vacancy = await this.repository.findOne(where, true);
+  ): Promise<VacancyWithRelations> {
+    const vacancy = await this.repository.findOne(where);
     if (!vacancy) throw new NotFoundException('Vacancy not found');
     return vacancy;
   }
 
   async findMany(
     dto: FindManyVacanciesDto,
-  ): Promise<PagedDataResponse<Vacancy[]>> {
+  ): Promise<PagedDataResponse<VacancyWithRelations[]>> {
     if (dto.requiredSkillIds?.length) {
       await this.skillService.assertExists(dto.requiredSkillIds);
     }
@@ -68,17 +64,14 @@ export class VacancyService {
       .withCompanyId(dto.companyId, true)
       .build();
 
-    const pagination = getPaginationByPage(dto.page, this.searchPageSize);
-    const data = await this.repository.findMany(
-      where,
-      dto.orderBy ?? { createdAt: 'desc' },
-      pagination,
-      true,
-    );
+    const orderBy = dto.orderBy ?? { createdAt: Prisma.SortOrder.desc };
+    const skip = (dto.page - 1) * dto.take;
+
+    const data = await this.repository.findMany(where, orderBy, skip, dto.take);
 
     const total = await this.repository.count(where);
 
-    const meta = createPaginationMeta(total, dto.page, this.searchPageSize);
+    const meta = createPaginationMeta(total, dto.page, dto.take);
 
     return { data, meta };
   }
@@ -86,32 +79,31 @@ export class VacancyService {
   async update(
     where: Prisma.VacancyWhereUniqueInput,
     dto: UpdateVacancyDto,
-  ): Promise<Vacancy> {
-    return this.repository.update(where, dto, true);
+  ): Promise<VacancyWithRelations> {
+    return this.repository.update(where, dto);
   }
 
   async delete(where: Prisma.VacancyWhereUniqueInput): Promise<Vacancy> {
     return this.repository.delete(where);
   }
 
-  async setRequiredSkills(id: string, dto: SetSkillsDto): Promise<Vacancy> {
+  async setRequiredSkills(
+    id: string,
+    dto: SetSkillsDto,
+  ): Promise<VacancyWithRelations> {
     await this.skillService.assertExists(dto.requiredSkillIds);
     const requiredSkills = dto.requiredSkillIds.map((skillId) => ({
       skillId,
     }));
-    return this.repository.setRequiredSkills(id, requiredSkills, true);
+    return this.repository.setRequiredSkills(id, requiredSkills);
   }
 
   async setRequiredLanguages(
     id: string,
     dto: SetLanguagesDto,
-  ): Promise<Vacancy> {
+  ): Promise<VacancyWithRelations> {
     const languageIds = dto.requiredLanguages.map((lang) => lang.languageId);
     await this.languageService.assertExists(languageIds);
-    return this.repository.setRequiredLanguages(
-      id,
-      dto.requiredLanguages,
-      true,
-    );
+    return this.repository.setRequiredLanguages(id, dto.requiredLanguages);
   }
 }

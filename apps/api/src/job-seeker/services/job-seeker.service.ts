@@ -14,25 +14,17 @@ import { SkillService } from '../../skill/services/skill.service';
 import { LanguageService } from '../../language/services/language.service';
 import { SetContactsDto } from '../dto/set-contacts.dto';
 import { PagedDataResponse } from '@common/responses';
-import { createPaginationMeta, getPaginationByPage } from '@common/utils';
+import { createPaginationMeta } from '@common/utils';
 import { JobSeekerQueryBuilder } from '../builders/job-seeker-query.builder';
-import { ConfigService } from '@nestjs/config';
 import { JobSeekerWithRelations } from '../types/job-seeker-with-relations.type';
 
 @Injectable()
 export class JobSeekerService {
-  private readonly searchPageSize: number;
-
   constructor(
     private readonly repository: JobSeekerRepository,
     private readonly skillService: SkillService,
     private readonly languageService: LanguageService,
-    private readonly config: ConfigService,
-  ) {
-    this.searchPageSize = this.config.getOrThrow<number>(
-      'search.jobSeeker.pageSize',
-    );
-  }
+  ) {}
 
   async create(
     userId: string,
@@ -69,14 +61,14 @@ export class JobSeekerService {
       .withSeniorityLevels(dto.seniorityLevels)
       .build();
 
-    const pagination = getPaginationByPage(dto.page, this.searchPageSize);
-    const orderBy = dto.orderBy ?? { updatedAt: 'desc' };
+    const skip = (dto.page - 1) * dto.take;
+    const orderBy = dto.orderBy ?? { updatedAt: Prisma.SortOrder.desc };
 
-    const data = await this.repository.findMany(where, orderBy, pagination);
+    const data = await this.repository.findMany(where, orderBy, skip, dto.take);
 
     const total = await this.repository.count(where);
 
-    const meta = createPaginationMeta(total, dto.page, this.searchPageSize);
+    const meta = createPaginationMeta(total, dto.page, dto.take);
 
     return { data, meta };
   }

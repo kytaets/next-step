@@ -64,31 +64,4 @@ export default () => ({
         parseInt(process.env.USER_UNVERIFIED_TTL_MS, 10)) ??
       21600,
   },
-
-  search: {
-    jobSeeker: {
-      pageSize:
-        (process.env.SEARCH_JOB_SEEKER_PAGE_SIZE &&
-          parseInt(process.env.SEARCH_JOB_SEEKER_PAGE_SIZE, 10)) ??
-        20,
-    },
-    company: {
-      pageSize:
-        (process.env.SEARCH_COMPANY_PAGE_SIZE &&
-          parseInt(process.env.SEARCH_COMPANY_PAGE_SIZE, 10)) ??
-        20,
-    },
-    vacancy: {
-      pageSize:
-        (process.env.SEARCH_VACANCY_PAGE_SIZE &&
-          parseInt(process.env.SEARCH_VACANCY_PAGE_SIZE, 10)) ??
-        20,
-    },
-    application: {
-      pageSize:
-        (process.env.SEARCH_APPLICATION_PAGE_SIZE &&
-          parseInt(process.env.SEARCH_APPLICATION_PAGE_SIZE, 10)) ??
-        20,
-    },
-  },
 });

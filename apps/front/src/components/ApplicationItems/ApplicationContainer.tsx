@@ -22,8 +22,12 @@ export default function ApplicationContainer({
             <h1>{vacancyData.title}</h1>
             <h2>{vacancyData.description}</h2>
             <p>{applicationData.coverLetter}</p>
-            <p>Status: {applicationData.status}</p>
-            <p>Applied: {isoToDate(applicationData.createdAt)}</p>
+            <p>
+              <span>Status:</span> {applicationData.status}
+            </p>
+            <p>
+              <span>Applied:</span> {isoToDate(applicationData.createdAt)}
+            </p>
           </div>
 
           <SideBox data={vacancyData} applyBtn={false} />

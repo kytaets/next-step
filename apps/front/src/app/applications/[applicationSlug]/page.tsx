@@ -11,7 +11,6 @@ import { useParams } from 'next/navigation';
 
 export default function ApplicationPage() {
   const params = useParams();
-  console.log(params);
   const applicationId = params.applicationSlug as string;
 
   const {

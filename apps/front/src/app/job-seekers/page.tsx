@@ -25,35 +25,28 @@ export default function JobSeekersPage() {
   const router = useRouter();
 
   const queryData = Object.fromEntries(searchParams.entries());
-
   const jobSeekerForm = mapQueryToJobSeekerForm(queryData);
 
   const {
     data: jobSeekersData,
     isError,
     error,
+    isPending,
   } = useQuery({
     queryKey: ['job-seekers', queryData],
     queryFn: () => searchJobSeekers(jobSeekerForm),
   });
 
+  console.log(jobSeekersData);
+
   const updateUrl = (values: JobSeekerSearchForm) => {
-    console.log(values);
     const params = new URLSearchParams();
 
     Object.entries(values).forEach(([key, value]) => {
       if (isEmptyValue(value)) return;
 
-      if (key === 'skillIds' && Array.isArray(value)) {
-        if (value.length) params.set(key, value.join(','));
-      } else if (Array.isArray(value)) {
-        if (
-          value.every((v) => typeof v === 'string' || typeof v === 'number')
-        ) {
-          params.set(key, value.join(','));
-        } else {
-          params.set(key, JSON.stringify(value));
-        }
+      if (Array.isArray(value)) {
+        params.set(key, value.join(','));
       } else if (typeof value === 'object') {
         params.set(key, JSON.stringify(value));
       } else {
@@ -67,15 +60,27 @@ export default function JobSeekersPage() {
   if (isError)
     return (
       <MessageBox type="error">
-        <p>Error loading profile: {error?.message || 'Unexpected error'}</p>
+        <p>Error loading job seekers: {error?.message || 'Unexpected error'}</p>
       </MessageBox>
     );
 
+  if (isPending)
+    return (
+      <MessageBox>
+        <p>Loading job seekers...</p>
+      </MessageBox>
+    );
+
+  const jobSeekers = Array.isArray(jobSeekersData?.data)
+    ? jobSeekersData.data
+    : [];
+
   return (
     <div className="container">
-      <h1 className={classes['page-header']}>Search for top-tier jobs </h1>
+      <h1 className={classes['page-header']}>Search for job seekers</h1>
+
       <SearchBar
-        type={'jobSeekers'}
+        type="jobSeekers"
         onSubmit={updateUrl}
         fieldsValues={jobSeekerForm}
       />
@@ -90,22 +95,19 @@ export default function JobSeekersPage() {
       </Link>
 
       <div className={classes['vacancies-container']}>
-        {jobSeekersData &&
-          jobSeekersData.data.map((vacancyData: JobSeekerItemData) => {
-            return (
-              <JobSeekerItem
-                key={vacancyData.id}
-                data={{
-                  id: vacancyData.id,
-                  firstName: vacancyData.firstName,
-                  lastName: vacancyData.lastName,
-                  avatarUrl: vacancyData.avatarUrl,
-                  dateOfBirth: vacancyData.dateOfBirth,
-                  createdAt: vacancyData.createdAt,
-                }}
-              />
-            );
-          })}
+        {jobSeekers.map((js: JobSeekerItemData) => (
+          <JobSeekerItem
+            key={js.id}
+            data={{
+              id: js.id,
+              firstName: js.firstName,
+              lastName: js.lastName,
+              avatarUrl: js.avatarUrl,
+              dateOfBirth: js.dateOfBirth,
+              createdAt: js.createdAt,
+            }}
+          />
+        ))}
       </div>
     </div>
   );

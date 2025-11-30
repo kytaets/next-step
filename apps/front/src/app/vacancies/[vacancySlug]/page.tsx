@@ -19,6 +19,7 @@ import {
   getVacancyById,
 } from '@/services/vacanciesService';
 import Cookies from 'js-cookie';
+import ApplyBtn from '@/components/ApplicationItems/ApplyBtn';
 
 export default function VacancyPage() {
   const params = useParams();
@@ -110,11 +111,7 @@ export default function VacancyPage() {
             </div>
           </section>
 
-          {!companyId && (
-            <button className={classes['apply-btn']}>
-              <AnimatedIcon>Apply for a job</AnimatedIcon>
-            </button>
-          )}
+          {!companyId && <ApplyBtn vacancyId={data?.id} />}
 
           {requestError && (
             <div className={classes['error-container']}>

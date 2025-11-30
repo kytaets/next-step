@@ -11,6 +11,7 @@ import { VacancySideBoxData } from '@/types/vacancy';
 import { capitalize, toKebabCase } from '@/utils/convertData';
 import { validateImageUrl } from '@/utils/validation';
 import Cookies from 'js-cookie';
+import ApplyBtn from '@/components/ApplicationItems/ApplyBtn';
 
 interface Props {
   data: VacancySideBoxData;
@@ -80,11 +81,8 @@ export default function SideBox({ data }: Props) {
           {data?.salaryMin} - {data.salaryMax} $
         </p>
       </section>
-      {!companyId && (
-        <button className={classes['apply-btn']}>
-          <HoveredItem> Apply for a job</HoveredItem>
-        </button>
-      )}
+      {!companyId && <ApplyBtn vacancyId={data.id} />}
+
       {companyId === data?.companyId && (
         <>
           <h3 className="underline-link">

@@ -199,7 +199,8 @@
   font-size: 2rem;
 }
 
-.invitation-form-container > input {
+.invitation-form-container > input,
+.invitation-form-container > textarea {
   width: 30vw;
   padding: 10px;
   font-size: 1.25rem;
@@ -207,6 +208,10 @@
   background-color: transparent;
   border: 3px solid #ccc;
   border-radius: 5px;
+}
+
+.invitation-form-container > textarea {
+  width: 50vw;
 }
 
 .invitation-form-container > button {

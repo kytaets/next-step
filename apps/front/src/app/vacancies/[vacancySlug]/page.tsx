@@ -125,7 +125,7 @@ export default function VacancyPage() {
           {companyId === data?.company.id && (
             <div className={classes['bottom-row']}>
               <Link
-                href={`/my-company/vacancies/edit-vacancy/${data?.id}`}
+                href={`/my-profile/recruiter/company/vacancies/edit-vacancy/${data?.id}`}
                 className={classes['edit-link']}
               >
                 <AnimatedIcon>Edit vacancy</AnimatedIcon>

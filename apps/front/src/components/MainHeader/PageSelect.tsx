@@ -15,13 +15,16 @@ export default function PageSelect() {
   const pages = [
     {
       label: 'Search for Vacancies',
-      value: '/vacancies',
+      value: '/vacancies?page=1',
     },
-    { label: 'Search for Companies', value: '/companies' },
+    { label: 'Search for Companies', value: '/companies?page=1' },
   ];
 
   if (role === 'RECRUITER') {
-    pages.push({ label: 'Search for Job Seekers', value: '/job-seekers' });
+    pages.push({
+      label: 'Search for Job Seekers',
+      value: '/job-seekers?page=1',
+    });
   }
 
   const handleSelect = (page: { label: string; value: string }) => {

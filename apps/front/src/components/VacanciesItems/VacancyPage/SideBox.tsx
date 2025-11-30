@@ -92,7 +92,7 @@ export default function SideBox({ data }: Props) {
           </h3>
 
           <Link
-            href={`/my-company/vacancies/edit-vacancy/${data.id}`}
+            href={`/my-profile/recruiter/company/vacancies/edit-vacancy/${data?.id}`}
             className={classes['edit-link']}
           >
             <HoveredItem>Edit vacancy</HoveredItem>

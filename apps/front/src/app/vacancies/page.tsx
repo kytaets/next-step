@@ -1,6 +1,7 @@
 'use client';
 
 import VacancyItem from '@/components/VacanciesItems/VacancyItem';
+import PagesCounter from '@/components/VacanciesItems/PagesCounter';
 
 import classes from './page.module.css';
 
@@ -92,7 +93,6 @@ export default function VacanciesPage() {
     ? vacanciesData.data
     : [];
 
-  console.log('VacanciesPage render', vacanciesData);
   return (
     <div className="container">
       <h1 className={classes['page-header']}>Search for top-tier jobs </h1>
@@ -125,6 +125,12 @@ export default function VacanciesPage() {
             />
           ))}
       </div>
+      {vacanciesData && (
+        <PagesCounter
+          currentPage={vacanciesData.meta.page}
+          totalPages={vacanciesData.meta.totalPages}
+        />
+      )}
     </div>
   );
 }

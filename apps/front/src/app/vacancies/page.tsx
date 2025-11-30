@@ -19,6 +19,34 @@ import { useEffect, useState } from 'react';
 
 import Cookies from 'js-cookie';
 
+const serializeUrlParams = (values: VacancyFormValues): string => {
+  const params = new URLSearchParams();
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (isEmptyValue(value)) return;
+
+    if (key === 'requiredSkillIds' && Array.isArray(value)) {
+      if (value.length) params.set(key, value.join(','));
+    } else if (Array.isArray(value)) {
+      if (value.every((v) => typeof v === 'string' || typeof v === 'number')) {
+        params.set(key, value.join(','));
+      } else {
+        params.set(key, JSON.stringify(value));
+      }
+    } else if (typeof value === 'object') {
+      params.set(key, JSON.stringify(value));
+    } else {
+      params.set(key, String(value));
+    }
+  });
+
+  return params.toString();
+};
+
+const isValidVacancyArray = (data: unknown): data is VacancyData[] => {
+  return Array.isArray(data);
+};
+
 export default function VacanciesPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -36,46 +64,35 @@ export default function VacanciesPage() {
     data: vacanciesData,
     isError,
     error,
+    isPending,
   } = useQuery({
     queryKey: ['vacancies', queryData],
     queryFn: () => searchVacancies(vacancyForm),
   });
 
   const updateUrl = (values: VacancyFormValues) => {
-    const params = new URLSearchParams();
-
-    Object.entries(values).forEach(([key, value]) => {
-      if (isEmptyValue(value)) return;
-
-      if (key === 'requiredSkillIds' && Array.isArray(value)) {
-        if (value.length) params.set(key, value.join(','));
-      } else if (Array.isArray(value)) {
-        if (
-          value.every((v) => typeof v === 'string' || typeof v === 'number')
-        ) {
-          params.set(key, value.join(','));
-        } else {
-          params.set(key, JSON.stringify(value));
-        }
-      } else if (typeof value === 'object') {
-        params.set(key, JSON.stringify(value));
-      } else {
-        params.set(key, String(value));
-      }
-    });
-
-    router.push(`?${params.toString()}`);
+    router.push(`?${serializeUrlParams(values)}`);
   };
 
   if (isError)
     return (
       <MessageBox type="error">
-        <p>Error loading profile: {error?.message || 'Unexpected error'}</p>
+        <p>Error loading vacancies: {error?.message || 'Unexpected error'}</p>
       </MessageBox>
     );
 
-  console.log(vacancyForm);
+  if (isPending)
+    return (
+      <MessageBox>
+        <p>Loading vacancies...</p>
+      </MessageBox>
+    );
 
+  const vacancies = isValidVacancyArray(vacanciesData?.data)
+    ? vacanciesData.data
+    : [];
+
+  console.log('VacanciesPage render', vacanciesData);
   return (
     <div className="container">
       <h1 className={classes['page-header']}>Search for top-tier jobs </h1>
@@ -93,21 +110,20 @@ export default function VacanciesPage() {
       )}
 
       <div className={classes['vacancies-container']}>
-        {vacanciesData &&
-          vacanciesData.data
-            .filter((v: VacancyData) => v.company)
-            .map((vacancyData: VacancyData) => (
-              <VacancyItem
-                key={vacancyData.id}
-                data={{
-                  id: vacancyData.id,
-                  title: vacancyData.title,
-                  companyName: vacancyData.company.name,
-                  companyLogo: vacancyData.company.logoUrl,
-                  createdAt: vacancyData.createdAt,
-                }}
-              />
-            ))}
+        {vacancies
+          .filter((v: VacancyData) => v.company)
+          .map((vacancyData: VacancyData) => (
+            <VacancyItem
+              key={vacancyData.id}
+              data={{
+                id: vacancyData.id,
+                title: vacancyData.title,
+                companyName: vacancyData.company.name,
+                companyLogo: vacancyData.company.logoUrl,
+                createdAt: vacancyData.createdAt,
+              }}
+            />
+          ))}
       </div>
     </div>
   );

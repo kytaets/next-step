@@ -41,7 +41,7 @@ export default function PageSelect() {
       {open && (
         <div
           className={classes['select-nav']}
-          style={{ bottom: role !== 'COMPANY' ? '-110px' : '' }}
+          style={{ bottom: role !== 'RECRUITER' ? '-110px' : '' }}
         >
           {pages.map((page) => (
             <div

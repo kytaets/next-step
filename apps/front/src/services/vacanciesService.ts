@@ -121,20 +121,16 @@ export async function editVacancy({
 }
 
 export async function searchVacancies(data: VacancySearchForm) {
-  return api
-    .post('/vacancies/search', data)
-    .then((response) => {
-      return {
-        status: 'ok',
-        error: null,
-        data: response.data,
-      };
-    })
-    .catch((error) => {
-      const message =
+  try {
+    const response = await api.post('/vacancies/search', data);
+    return response.data;
+  } catch (error: any) {
+    throw {
+      status: error?.response?.status ?? 500,
+      message:
         error?.response?.data?.errors?.[0] ||
         error?.response?.data?.message ||
-        'Creating vacancy failed';
-      return { status: 'error', error: message, data: null };
-    });
+        'Searching vacancies failed',
+    };
+  }
 }

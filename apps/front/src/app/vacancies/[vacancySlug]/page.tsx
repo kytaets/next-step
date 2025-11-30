@@ -13,7 +13,7 @@ import classes from './page.module.css';
 
 import { VacancyData } from '@/types/vacancies';
 import { ApiError } from '@/types/authForm';
-import { capitalize, toKebabCase } from '@/utils/convertData';
+import { capitalize, isoToDate, toKebabCase } from '@/utils/convertData';
 import {
   deleteVacancy as deleteVacancyFn,
   getVacancyById,
@@ -106,7 +106,7 @@ export default function VacancyPage() {
           <section>
             <div className={classes['date-views-row']}>
               <h4>
-                Posted: <span>{data?.createdAt}</span>
+                Posted: <span>{data && isoToDate(data.createdAt)}</span>
               </h4>
             </div>
           </section>
@@ -126,6 +126,12 @@ export default function VacancyPage() {
                 className={classes['edit-link']}
               >
                 <AnimatedIcon>Edit vacancy</AnimatedIcon>
+              </Link>
+              <Link
+                href={`/my-profile/recruiter/company/applications/${data?.id}?page=1`}
+                className={classes['applications-link']}
+              >
+                <AnimatedIcon>Vacancy Applications</AnimatedIcon>
               </Link>
               <button
                 className={classes['del-btn']}

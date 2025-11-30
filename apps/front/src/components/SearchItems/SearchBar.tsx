@@ -18,6 +18,8 @@ import { jobSeekerSearchDefaults } from '@/lib/jobseeker-search-data';
 import { submitJobSeekersSearchForm } from '@/utils/jobSeekerSearchValidation';
 import { JobSeekerSearchForm } from '@/types/jobSeekerSearch';
 import { validateLanguages } from '@/utils/profileValidation';
+import { applicationsDefaults } from '@/lib/appplication-data';
+import { submitApplicationsSearchForm } from '@/utils/applicationsValidation';
 
 interface Props {
   type?: 'vacancies' | 'companies' | 'jobSeekers' | 'applications';
@@ -49,6 +51,10 @@ export default function SearchBar({
     defaultValues = jobSeekerSearchDefaults;
     validate = validateLanguages;
     submit = submitJobSeekersSearchForm;
+  }
+  if (type === 'applications') {
+    defaultValues = applicationsDefaults;
+    submit = submitApplicationsSearchForm;
   }
 
   return (

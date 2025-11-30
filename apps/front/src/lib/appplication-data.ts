@@ -1,3 +1,7 @@
 const statusOptions = ['SUBMITTED', 'REJECTED', 'ACCEPTED'];
 
-export { statusOptions };
+const applicationsDefaults = {
+  page: 1,
+};
+
+export { statusOptions, applicationsDefaults };

@@ -49,3 +49,8 @@ export type Meta = {
   total: number;
   totalPages: number;
 };
+
+export type ApplicationSearchData = {
+  status: 'ACCEPTED' | 'SUBMITTED' | 'REJECTED';
+  page: number;
+};

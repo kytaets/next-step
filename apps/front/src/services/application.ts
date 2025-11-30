@@ -22,3 +22,10 @@ export async function getApplication(vacancyId: string) {
     `/applications/${vacancyId}`
   );
 }
+
+export async function getVacancyApplications(vacancyId: string) {
+  return apiRequest<VacancyApplicationResponse | null>(
+    'get',
+    `/applications/vacancies/${vacancyId}`
+  );
+}

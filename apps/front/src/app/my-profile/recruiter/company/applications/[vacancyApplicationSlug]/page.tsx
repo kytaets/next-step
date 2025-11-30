@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 import SearchBar from '@/components/SearchItems/SearchBar';
@@ -11,13 +11,16 @@ import classes from './page.module.css';
 import { CompaniesSearchForm } from '@/types/companiesSearch';
 import { mapQueryToCompaniesForm } from '@/utils/companiesSearchValidation';
 import { isEmptyValue } from '@/utils/vacancyValidation';
-import { getMyApplications } from '@/services/application';
+import { getVacancyApplications } from '@/services/application';
 import { ApplicationSearchData, VacancyApplication } from '@/types/application';
 import ApplicationItem from '@/components/ApplicationItems/ApplicationItem';
 
-export default function MyApplicationsPage() {
+export default function VacancyApplicationsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const params = useParams();
+  const vacancyId = params.vacancyApplicationSlug as string;
 
   const queryData = Object.fromEntries(searchParams.entries());
   const companyForm = mapQueryToCompaniesForm(queryData);
@@ -32,7 +35,7 @@ export default function MyApplicationsPage() {
     error,
   } = useQuery({
     queryKey: ['my-applications'],
-    queryFn: () => getMyApplications(),
+    queryFn: () => getVacancyApplications(vacancyId),
   });
 
   const updateUrl = (values: ApplicationSearchData) => {

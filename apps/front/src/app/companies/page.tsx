@@ -27,6 +27,11 @@ export default function CompaniesPage() {
   const queryData = Object.fromEntries(searchParams.entries());
   const companyForm = mapQueryToCompaniesForm(queryData);
 
+  // only keep name + page for URL / form
+  const name = companyForm?.name ?? '';
+  const page = Number(companyForm?.page) || 1;
+  const minimalQuery: CompaniesSearchForm = { name, page };
+
   const [role, setRole] = useState<string | undefined>();
 
   useEffect(() => {
@@ -39,16 +44,13 @@ export default function CompaniesPage() {
     error,
   } = useQuery({
     queryKey: ['companies', queryData],
-    queryFn: () => searchCompanies(companyForm),
+    queryFn: () => searchCompanies(minimalQuery),
   });
 
   const updateUrl = (values: CompaniesSearchForm) => {
     const params = new URLSearchParams();
-
-    Object.entries(values).forEach(([key, value]) => {
-      if (isEmptyValue(value)) return;
-      params.set(key, String(value));
-    });
+    if (!isEmptyValue(values.name)) params.set('name', String(values.name));
+    params.set('page', String(values.page ?? 1));
 
     router.push(`?${params.toString()}`);
   };
@@ -66,7 +68,7 @@ export default function CompaniesPage() {
       <SearchBar
         type={'companies'}
         onSubmit={updateUrl}
-        fieldsValues={companyForm}
+        fieldsValues={minimalQuery} // pass only name + page
       />
       {role && (
         <Link href="/vacancies">

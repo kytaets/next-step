@@ -13,17 +13,16 @@ import Link from 'next/link';
 import HoveredItem from '../HoveredItem/HoveredItem';
 
 interface Props {
-  isEditable?: boolean;
   companyData: CompanyProfileData;
 }
 
-export default function CompanyProfileContainer({
-  isEditable = false,
-  companyData,
-}: Props) {
+export default function CompanyProfileContainer({ companyData }: Props) {
   console.log(companyData);
 
   const recruiterRole = Cookies.get('recruiter-role');
+  const companyId = Cookies.get('company-id');
+
+  const isEditable = companyId === companyData.id ? true : false;
 
   const mainInfoData = {
     id: companyData.id,

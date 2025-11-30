@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 
-const AUTH_COOKIES = ['company-id', 'sid'] as const;
+const AUTH_COOKIES = ['company-id', 'sid', 'recruiter-role'] as const;
 
 export const clearAuthCookies = (): void => {
   AUTH_COOKIES.forEach((cookieName) => {

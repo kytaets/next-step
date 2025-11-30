@@ -56,7 +56,7 @@ export default function CompanyProfilePage() {
 
   return (
     <div className="container">
-      <CompanyProfileContainer isEditable companyData={companyData} />
+      <CompanyProfileContainer companyData={companyData} />
     </div>
   );
 }

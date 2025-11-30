@@ -14,3 +14,22 @@
   font-size: 1.5rem;
   font-weight: 500;
 }
+
+.application-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.application-container .left-container {
+  width: 70vw;
+}
+
+.application-container * {
+  margin-bottom: 20px;
+}
+
+.left-container > p {
+  width: 100%;
+  word-wrap: break-word;
+  font-size: 1.25rem;
+}

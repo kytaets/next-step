@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 
 import classes from '../VacanciesItems/VacanciesItems.module.css';
 
-import { CompanyItemData } from '@/types/companiesSearch';
 import { isoToDate } from '@/utils/convertData';
 import { validateImageUrl } from '@/utils/validation';
 import { useQuery } from '@tanstack/react-query';
@@ -53,7 +52,7 @@ export default function ApplicationItem({ data }: Props) {
       className={classes['vacancy-item-container']}
     >
       <Link
-        href={`/my-profile/job-seeker/applications/${data.id}`}
+        href={`/applications/${data.id}`}
         className={classes['vacancy-item']}
       >
         <div>

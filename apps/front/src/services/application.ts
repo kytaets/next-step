@@ -15,3 +15,10 @@ export async function getMyApplications() {
     '/applications/job-seekers/my'
   );
 }
+
+export async function getApplication(vacancyId: string) {
+  return apiRequest<VacancyApplication | null>(
+    'get',
+    `/applications/${vacancyId}`
+  );
+}

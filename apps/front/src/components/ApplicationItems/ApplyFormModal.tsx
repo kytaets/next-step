@@ -37,7 +37,6 @@ export default function ApplyFormModal({ vacancyId }: Props) {
       <h2>Send invitation</h2>
       <Formik
         initialValues={{ coverLetter: '' }}
-        // validate={validateInvitationForm}
         onSubmit={(values) => {
           sendApplicationFn({
             coverLetter:
@@ -55,7 +54,7 @@ export default function ApplyFormModal({ vacancyId }: Props) {
                 name="coverLetter"
                 as="textarea"
                 rows={10}
-                placeholder="Enter email to send invitation..."
+                placeholder="Write a few words for recruiter..."
                 className={`${classes['form-input']} ${classes['form-details']}`}
               />
             </div>
@@ -67,7 +66,9 @@ export default function ApplyFormModal({ vacancyId }: Props) {
             )}
             {isError && <MessageBox type="error">{requestError}</MessageBox>}
             {isSuccess && (
-              <MessageBox type="info">Invitation sent successfully!</MessageBox>
+              <MessageBox type="info">
+                Application sent successfully!
+              </MessageBox>
             )}
             <div className={classes['info-form-btn-container']}>
               <button

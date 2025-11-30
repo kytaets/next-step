@@ -136,21 +136,7 @@ export default function VacancyPage() {
             </div>
           )}
         </div>
-        <SideBox
-          data={{
-            id: data?.id ?? '',
-            isActive: data?.isActive ?? false,
-            companyId: data?.company.id ?? '',
-            companyName: data?.company.name ?? '',
-            companyLogo: data?.company.logoUrl ?? '',
-            companyUrl: data?.company.url ?? '',
-            employmentType: data?.employmentType ?? [],
-            workFormat: data?.workFormat ?? [],
-            officeLocation: data?.officeLocation ?? '',
-            salaryMin: data?.salaryMin ?? 0,
-            salaryMax: data?.salaryMax ?? 0,
-          }}
-        />
+        <SideBox data={data} />
       </div>
     </div>
   );

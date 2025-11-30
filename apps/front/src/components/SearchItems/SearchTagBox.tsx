@@ -13,9 +13,10 @@ import WorkFormatsInput from './Fields/WorkFormats';
 import HoveredItem from '../HoveredItem/HoveredItem';
 
 import classes from './SearchVacancies.module.css';
+import ApplicationStatus from './Fields/ApplicationStatus';
 
 interface Props {
-  type?: 'vacancies' | 'jobSeekers';
+  type?: 'vacancies' | 'jobSeekers' | 'applications';
 }
 
 export default function SearchTagBox({ type = 'vacancies' }: Props) {
@@ -43,7 +44,6 @@ export default function SearchTagBox({ type = 'vacancies' }: Props) {
           <SortingFields type={'jobSeekers'} />
         </>
       )}
-
       {type === 'vacancies' && (
         <button
           className={classes['more-btn']}
@@ -53,7 +53,8 @@ export default function SearchTagBox({ type = 'vacancies' }: Props) {
           {moreFilters ? 'Less filters' : 'More filters...'}
         </button>
       )}
-      {type === 'jobSeekers' && (
+      {type === 'applications' && <ApplicationStatus />}
+      {type !== 'vacancies' && (
         <button type="submit" className={classes['tags-search-btn']}>
           <HoveredItem>Search</HoveredItem>
         </button>

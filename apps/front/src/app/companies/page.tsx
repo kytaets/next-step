@@ -27,7 +27,6 @@ export default function CompaniesPage() {
   const queryData = Object.fromEntries(searchParams.entries());
   const companyForm = mapQueryToCompaniesForm(queryData);
 
-  // only keep name + page for URL / form
   const name = companyForm?.name ?? '';
   const page = Number(companyForm?.page) || 1;
   const minimalQuery: CompaniesSearchForm = { name, page };
@@ -68,7 +67,7 @@ export default function CompaniesPage() {
       <SearchBar
         type={'companies'}
         onSubmit={updateUrl}
-        fieldsValues={minimalQuery} // pass only name + page
+        fieldsValues={minimalQuery}
       />
       {role && (
         <Link href="/vacancies">

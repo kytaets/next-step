@@ -20,7 +20,7 @@ import { JobSeekerSearchForm } from '@/types/jobSeekerSearch';
 import { validateLanguages } from '@/utils/profileValidation';
 
 interface Props {
-  type?: 'vacancies' | 'companies' | 'jobSeekers';
+  type?: 'vacancies' | 'companies' | 'jobSeekers' | 'applications';
   onSubmit?: (values: any) => void;
   fieldsValues: VacancySearchForm | CompaniesSearchForm | JobSeekerSearchForm;
 }
@@ -53,7 +53,11 @@ export default function SearchBar({
 
   return (
     <div
-      className={classes['searchbar-wrapper']}
+      className={
+        type === 'applications'
+          ? classes['searchbar-wrapper-applications']
+          : classes['searchbar-wrapper']
+      }
       style={{ marginBottom: type === 'jobSeekers' ? 0 : '' }}
     >
       <Formik
@@ -66,7 +70,9 @@ export default function SearchBar({
             className={classes['btn-search-container']}
             style={{ width: type === 'companies' ? '100%' : '' }}
           >
-            {type !== 'jobSeekers' && <InputContainer type={type} />}
+            {type !== 'jobSeekers' && type !== 'applications' && (
+              <InputContainer type={type} />
+            )}
           </div>
           {type !== 'companies' && <SearchTagBox type={type} />}
         </Form>

@@ -28,6 +28,11 @@ export type ApplicationStatus =
   | 'APPROVED'
   | 'INTERVIEW';
 
+export type VacancyApplicationResponse = {
+  data: VacancyApplication[];
+  meta: Meta;
+};
+
 export type VacancyApplication = {
   id: string;
   status: ApplicationStatus;
@@ -37,4 +42,10 @@ export type VacancyApplication = {
   jobSeekerId: string;
   vacancyId: string;
   jobSeeker: JobSeekerShortData;
+};
+
+export type Meta = {
+  page: number;
+  total: number;
+  totalPages: number;
 };

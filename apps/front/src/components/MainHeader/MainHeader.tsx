@@ -102,6 +102,20 @@ export default function MainHeader() {
               Log Out
             </motion.button>
 
+            {role === 'JOB_SEEKER' && (
+              <motion.div
+                className={classes['no-border-btn']}
+                whileHover={{
+                  scale: 1.1,
+                  borderColor: 'white',
+                }}
+              >
+                <Link href="/my-profile/job-seeker/applications?page=1">
+                  My Applications
+                </Link>
+              </motion.div>
+            )}
+
             <motion.div
               className={`${classes['border-btn']} ${
                 pathname === '/my-profile' ? classes['active-link'] : ''

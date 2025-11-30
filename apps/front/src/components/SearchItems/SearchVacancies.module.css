@@ -5,6 +5,11 @@
   margin-bottom: 130px;
 }
 
+.searchbar-wrapper-applications {
+  position: relative;
+  margin-bottom: 0;
+}
+
 .searchbar-container {
   position: absolute;
   display: flex;

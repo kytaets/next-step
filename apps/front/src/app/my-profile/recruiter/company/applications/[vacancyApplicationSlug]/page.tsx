@@ -13,7 +13,7 @@ import { mapQueryToCompaniesForm } from '@/utils/companiesSearchValidation';
 import { isEmptyValue } from '@/utils/vacancyValidation';
 import { getVacancyApplications } from '@/services/application';
 import { ApplicationSearchData, VacancyApplication } from '@/types/application';
-import ApplicationItem from '@/components/ApplicationItems/ApplicationItem';
+import VacancyApplicationItem from '@/components/ApplicationItems/VacancyApplicationItem';
 
 export default function VacancyApplicationsPage() {
   const searchParams = useSearchParams();
@@ -69,7 +69,10 @@ export default function VacancyApplicationsPage() {
         {myApplications &&
           myApplications.data &&
           myApplications.data.map((applicationData: VacancyApplication) => (
-            <ApplicationItem key={applicationData.id} data={applicationData} />
+            <VacancyApplicationItem
+              key={applicationData.id}
+              data={applicationData}
+            />
           ))}
       </div>
     </div>

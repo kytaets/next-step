@@ -29,3 +29,14 @@ export async function getVacancyApplications(vacancyId: string) {
     `/applications/vacancies/${vacancyId}`
   );
 }
+
+export async function updateApplicationStatus(
+  applicationId: string,
+  data: { status: string }
+) {
+  return apiRequest<VacancyApplicationResponse | null>(
+    'put',
+    `/applications/${applicationId}/status`,
+    data
+  );
+}

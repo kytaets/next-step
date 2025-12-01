@@ -56,3 +56,39 @@
   font-size: 1.5rem;
   text-decoration: underline;
 }
+
+.status-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.status-row span,
+.status-row button {
+  font-size: 1.5rem;
+}
+
+.form-container {
+  display: flex;
+  gap: 10px;
+}
+
+.form-container .form-input {
+  padding: 10px 15px;
+  background-color: #1f1f21;
+  border: 2px solid white;
+  border-radius: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.btn-container {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-container button {
+  border: 1px solid white;
+  padding: 10px 15px;
+  border-radius: 10px;
+}

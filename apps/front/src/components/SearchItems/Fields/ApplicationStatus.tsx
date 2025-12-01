@@ -9,7 +9,7 @@ export default function ApplicationStatus() {
   return (
     <>
       <div className={classes['seniority']}>
-        <label>Seniority</label>
+        <label>Status</label>
         <div>
           <Field as="select" name="status" className={classes['form-input']}>
             <option value="">Select status</option>

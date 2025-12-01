@@ -1,3 +1,4 @@
+'use client';
 import { VacancyApplication } from '@/types/application';
 import SideBox from '../VacanciesItems/VacancyPage/SideBox';
 import classes from './ApplicationItems.module.css';
@@ -9,6 +10,8 @@ import MainInfo from '../ProfileItems/MainInfo';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+import StatusUpdateForm from './StatusUpdateForm';
 
 interface Props {
   applicationData: VacancyApplication;
@@ -21,8 +24,7 @@ export default function ApplicationContainer({
   vacancyData,
   jobSeekerData,
 }: Props) {
-  console.log(applicationData);
-
+  const [editStatus, setEditStatus] = useState(false);
   const bottomContent = (
     <div className={classes['bottom-container']}>
       <h2>Cover Letter</h2>
@@ -31,9 +33,32 @@ export default function ApplicationContainer({
           ? applicationData.coverLetter
           : 'No cover letter was attached'}
       </p>
-      <p>
-        <span>Status:</span> {applicationData.status}
-      </p>
+      {jobSeekerData ? (
+        <div className={classes['status-row']}>
+          <div className="align-center">
+            <span>Status:</span>
+          </div>
+          <div>
+            {!editStatus ? (
+              <>
+                <span>{applicationData.status} </span>
+                <button onClick={() => setEditStatus(true)}>(Change)</button>
+              </>
+            ) : (
+              <StatusUpdateForm
+                applicationId={applicationData.id}
+                currentStatus={applicationData.status}
+                onClose={() => setEditStatus(false)}
+              />
+            )}
+          </div>
+        </div>
+      ) : (
+        <p>
+          <span>Status:</span> {applicationData.status}
+        </p>
+      )}
+
       <p>
         <span>Applied:</span> {isoToDate(applicationData.createdAt)}
       </p>

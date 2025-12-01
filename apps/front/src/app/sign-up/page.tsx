@@ -11,7 +11,7 @@ export default function SignUpPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/sign-up?step=role');
+    router.push('/sign-up?step=account');
   }, [router]);
 
   return (

@@ -73,4 +73,200 @@
   font-size: 2rem;
 }
 
+.verified-invite-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.company-members-link {
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.invite-btn {
+  margin-bottom: 30px;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.invite-btn div {
+  padding: 15px 20px;
+  background-color: #37aa9c;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 1.5rem;
+}
+
+.invitation-container {
+  display: flex;
+  gap: 10px;
+}
+
 /* Main info */
+
+/* Company Members */
+
+.company-member {
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  background-color: #1f1f21;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+.company-member .member-p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.form-del-btn {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.form-del-btn div {
+  padding: 8px 10px;
+  background-color: #f37199;
+  border: 2px solid #f37199;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+}
+
+/* Company Members */
+
+/* Company Invitation */
+
+.check-box {
+  padding: 10px 10px;
+  background-color: #1f1f21;
+  border-radius: 20px;
+}
+
+.check-box h2 {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.check-box h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.check-box a {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.continue-btn {
+  padding: 15px 20px;
+  background-color: transparent;
+  border: 3px solid white;
+  border-radius: 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.image-container {
+  margin: auto;
+  margin-bottom: 30px;
+  width: 40%;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+}
+
+.invitation-modal {
+  padding: 5px 10px;
+}
+
+.invitation-modal h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.invitation-form-container > input,
+.invitation-form-container > textarea {
+  width: 30vw;
+  padding: 10px;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  background-color: transparent;
+  border: 3px solid #ccc;
+  border-radius: 5px;
+}
+
+.invitation-form-container > textarea {
+  width: 50vw;
+}
+
+.invitation-form-container > button {
+  width: 100%;
+  padding: 10px;
+  background-color: #37aa9c;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.validation-error {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.info-form-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.info-form-btn {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  border: 0;
+}
+
+.info-form-btn div {
+  padding: 8px 12px;
+  border: 2px solid white;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* Company Invitation */
+
+/* Bottom Row */
+
+.logout-btn-container {
+  display: flex;
+  justify-content: end;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 3px solid #f37199 !important;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  color: #f37199;
+}
+
+/* Bottom Row */

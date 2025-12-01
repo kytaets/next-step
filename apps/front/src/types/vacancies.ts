@@ -37,6 +37,15 @@ type VacancyData = {
   updatedAt: string;
 };
 
+export type VacanciesResponse = {
+  data: VacancyData[];
+  meta: {
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+};
+
 type VacancyItemData = {
   id: string;
   title: string;

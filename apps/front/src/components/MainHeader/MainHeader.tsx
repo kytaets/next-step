@@ -5,9 +5,6 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import {
   greenBorderBtnHover,
   whiteBorderBtnHover,
@@ -17,6 +14,7 @@ import classes from './MainHeader.module.css';
 import { useAuthStore } from '@/store/authSlice';
 import { logoutUser } from '@/services/userService';
 import Cookies from 'js-cookie';
+import PageSelect from './PageSelect';
 
 export default function MainHeader() {
   const pathname = usePathname();
@@ -64,21 +62,7 @@ export default function MainHeader() {
           </Link>
         </motion.div>
 
-        <motion.div
-          className={classes['search-link-box']}
-          whileHover={{ scale: 1.05 }}
-        >
-          <Link href="/vacancies">
-            {pathname === '/vacancies' ? (
-              <span>You&apos;re making your first step!</span>
-            ) : (
-              <>
-                <span>Make your first step</span>
-                <FontAwesomeIcon icon={faArrowRight} />
-              </>
-            )}
-          </Link>
-        </motion.div>
+        <PageSelect />
       </div>
 
       <div className={classes['auth-nav']}>
@@ -117,7 +101,8 @@ export default function MainHeader() {
             >
               Log Out
             </motion.button>
-            {role === 'COMPANY' && (
+
+            {role === 'JOB_SEEKER' && (
               <motion.div
                 className={classes['no-border-btn']}
                 whileHover={{
@@ -125,12 +110,16 @@ export default function MainHeader() {
                   borderColor: 'white',
                 }}
               >
-                <Link href="/my-company/vacancies">My Vacancies</Link>
+                <Link href="/my-profile/job-seeker/applications?page=1">
+                  My Applications
+                </Link>
               </motion.div>
             )}
 
             <motion.div
-              className={`${classes['border-btn']} ${pathname === '/my-profile' ? classes['active-link'] : ''} `}
+              className={`${classes['border-btn']} ${
+                pathname === '/my-profile' ? classes['active-link'] : ''
+              } `}
               whileHover={
                 pathname === '/my-profile'
                   ? greenBorderBtnHover
@@ -138,7 +127,11 @@ export default function MainHeader() {
               }
             >
               <Link
-                href={role === 'JOB_SEEKER' ? '/my-profile' : '/my-company'}
+                href={
+                  role === 'JOB_SEEKER'
+                    ? '/my-profile/job-seeker'
+                    : '/my-profile/recruiter'
+                }
               >
                 Profile
               </Link>

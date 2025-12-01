@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleResponseError } from './authInterceptor';
 
 const api = axios.create({
   baseURL: 'http://localhost:8020/api',
@@ -7,5 +8,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+api.interceptors.response.use((response) => response, handleResponseError);
 
 export default api;

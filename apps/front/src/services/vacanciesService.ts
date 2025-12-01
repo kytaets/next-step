@@ -1,20 +1,13 @@
 import { VacancyFormValues } from '@/types/vacancy';
 import api from './axios';
 import { UpdatedUserLanguages } from '@/types/profile';
-import { VacancySearchForm } from '@/types/vacancies';
+import { VacanciesResponse, VacancySearchForm } from '@/types/vacancies';
+import apiRequest from './apiRequest';
 
-export async function getMyVacancies() {
-  return api
-    .get('/vacancies/my')
-    .then((res) => res.data)
-    .catch((error) => {
-      const message =
-        error?.response?.data?.message || 'Failed to fetch profile';
-      throw {
-        status: error?.response?.status || 500,
-        message,
-      };
-    });
+export async function getMyVacancies(companyId: string | null) {
+  return apiRequest<VacanciesResponse>('post', '/vacancies/search', {
+    companyId,
+  });
 }
 
 export async function createVacancy(data: VacancyFormValues) {
@@ -128,20 +121,16 @@ export async function editVacancy({
 }
 
 export async function searchVacancies(data: VacancySearchForm) {
-  return api
-    .post('/vacancies/search', data)
-    .then((response) => {
-      return {
-        status: 'ok',
-        error: null,
-        data: response.data,
-      };
-    })
-    .catch((error) => {
-      const message =
+  try {
+    const response = await api.post('/vacancies/search', data);
+    return response.data;
+  } catch (error: any) {
+    throw {
+      status: error?.response?.status ?? 500,
+      message:
         error?.response?.data?.errors?.[0] ||
         error?.response?.data?.message ||
-        'Creating vacancy failed';
-      return { status: 'error', error: message, data: null };
-    });
+        'Searching vacancies failed',
+    };
+  }
 }

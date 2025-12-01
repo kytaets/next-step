@@ -16,8 +16,10 @@ import {
   validateCompanyInfoData,
 } from '@/utils/companyProfileValidation';
 import { createCompanyProfile } from '@/services/companyProfileService';
+import Cookies from 'js-cookie';
 
 const initialValues: MainInfoData = {
+  id: '',
   name: '',
   url: '',
 };
@@ -31,16 +33,18 @@ export default function CompanyProfileForm() {
 
   const { mutate: createProfile, isPending } = useMutation({
     mutationFn: createCompanyProfile,
-    onSuccess: async (result) => {
-      if (result.status === 'error') {
-        setRequestErrors([result.error]);
-        return;
-      }
-
+    onSuccess: async () => {
       setRequestErrors([]);
-      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['company-profile'],
+      });
       closeModal();
+      Cookies.set('recruiter-role', 'ADMIN');
       router.refresh();
+    },
+
+    onError: (error) => {
+      setRequestErrors([error.message]);
     },
   });
 
@@ -54,8 +58,8 @@ export default function CompanyProfileForm() {
     >
       {({ errors }) => (
         <Form>
-          <h1>Create Your Professional Profile</h1>
-          <h2>Tell us about yourself</h2>
+          <h1>Add Your Amazing Company</h1>
+          <h2>Tell us about it</h2>
 
           <div className={classes['profile-form']}>
             <div>
@@ -101,8 +105,8 @@ export default function CompanyProfileForm() {
           </h5>
           <div className="row-space-between">
             <div className="align-center">
-              <Link href="/my-profile" className={classes['link']}>
-                I am not a Company
+              <Link href="/my-profile/recruiter" className={classes['link']}>
+                ← Go back
               </Link>
             </div>
 

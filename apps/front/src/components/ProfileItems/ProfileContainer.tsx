@@ -1,7 +1,3 @@
-import Avatar from '@/components/ProfileItems/Avatar';
-import OpenToWork from '@/components/ProfileItems/StatusController';
-import Skills from '@/components/ProfileItems/Skills';
-import PersonalInfo from '@/components/ProfileItems/PersonalInfo';
 import Contacts from '@/components/ProfileItems/Contacts';
 import Bio from '@/components/ProfileItems/Description';
 import Languages from '@/components/ProfileItems/Languages';
@@ -13,6 +9,7 @@ import classes from './Profile.module.css';
 import { ProfileData } from '@/types/profile';
 import { userData } from '@/lib/profile-data';
 import BottomRow from './BottomRow';
+import MainInfo from './MainInfo';
 
 interface Props {
   isEditable?: boolean;
@@ -23,35 +20,12 @@ export default function ProfileContainer({
   isEditable = false,
   profileData,
 }: Props) {
-  const personalInfo = {
-    firstName: profileData.firstName,
-    lastName: profileData.lastName,
-    dateOfBirth: profileData.dateOfBirth,
-    location: profileData.location,
-  };
-
   return (
     <div className={classes['profile-container']}>
       {isEditable && (
         <h1 className={classes['page-header']}>Your Next Level Profile</h1>
       )}
-      <div className={classes['main-info']}>
-        <Avatar
-          key={`avatar-${profileData.id}`}
-          isEditable={isEditable}
-          data={profileData.avatarUrl}
-        />
-        <div className={classes['main-info-side']}>
-          <div className={classes['skills-open-container']}>
-            <Skills isEditable={isEditable} skills={profileData.skills} />
-            <OpenToWork
-              isEditable={isEditable}
-              isTrue={profileData.isOpenToWork}
-            />
-          </div>
-          <PersonalInfo isEditable={isEditable} data={personalInfo} />
-        </div>
-      </div>
+      <MainInfo isEditable={isEditable} data={profileData} />
       <Contacts isEditable={isEditable} data={profileData.contacts} />
       <Bio isEditable={isEditable} data={profileData.bio} />
       <WorkExperience isEditable={isEditable} data={userData.experience} />

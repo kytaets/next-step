@@ -19,8 +19,6 @@ export default function MainInfoForm() {
     setFieldValue('isActive', !values.isActive);
   };
 
-  console.log(values);
-
   return (
     <>
       <div>

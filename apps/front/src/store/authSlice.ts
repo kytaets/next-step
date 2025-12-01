@@ -10,7 +10,6 @@ export const useAuthStore = create<ModalState>()(
   persist(
     (set) => ({
       isLogged: false,
-      role: undefined,
       setIsLogged: (value) => set({ isLogged: value }),
     }),
     {

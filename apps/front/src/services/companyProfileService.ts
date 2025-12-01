@@ -1,44 +1,26 @@
-import { MainInfoData, UpdCompanyProfileData } from '@/types/companyProfile';
+import {
+  CompanyProfileData,
+  MainInfoData,
+  UpdCompanyProfileData,
+} from '@/types/companyProfile';
 import api from './axios';
+import apiRequest from './apiRequest';
+import { RecruiterProfileData } from '@/types/recruiter';
 
 export async function getMyCompanyProfile() {
-  return api
-    .get('/companies/me')
-    .then((res) => res.data)
-    .catch((error) => {
-      const message =
-        error?.response?.data?.message || 'Failed to fetch company profile';
-      throw {
-        status: error?.response?.status || 500,
-        message,
-      };
-    });
+  return apiRequest<CompanyProfileData | null>('get', '/companies/my');
 }
 
 export async function updateCompanyProfile(data: UpdCompanyProfileData) {
-  return api
-    .patch('/companies/me', data)
-    .then(() => ({ status: 'ok', error: null }))
-    .catch((error) => {
-      const message =
-        error?.response?.data?.errors?.[0] ||
-        error?.response?.data?.message ||
-        'Updating company profile data failed';
-      return { status: 'error', error: message };
-    });
+  return apiRequest<UpdCompanyProfileData | null>(
+    'patch',
+    '/companies/my',
+    data
+  );
 }
 
 export async function createCompanyProfile(data: MainInfoData) {
-  return api
-    .post('/companies', data)
-    .then(() => ({ status: 'ok', error: null }))
-    .catch((error) => {
-      const message =
-        error?.response?.data?.errors?.[0] ||
-        error?.response?.data?.message ||
-        'Creating company profile failed';
-      return { status: 'error', error: message };
-    });
+  return apiRequest<CompanyProfileData | null>('post', '/companies', data);
 }
 
 export async function getCompanyProfileById(id: string) {
@@ -53,4 +35,26 @@ export async function getCompanyProfileById(id: string) {
         message,
       };
     });
+}
+
+export async function sendInvite(data: { email: string | null }) {
+  console.log('sendInvite data:', data);
+  return apiRequest<void>('post', '/companies/invite', data);
+}
+
+export async function deleteCompany() {
+  return apiRequest<void>('delete', '/companies/my');
+}
+
+export async function getMyMembers(companyId: string | undefined) {
+  return apiRequest<RecruiterProfileData[] | null>(
+    'get',
+    '/recruiters',
+    {},
+    { companyId }
+  );
+}
+
+export async function removeRecruiter(recruiterId: string) {
+  return apiRequest<void>('delete', `/companies/recruiters/${recruiterId}`);
 }

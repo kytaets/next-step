@@ -1,37 +1,33 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 import HoveredItem from '../HoveredItem/HoveredItem';
 
-import classes from './SignUpItems.module.css';
+import classes from './Profile.module.css';
 
 import Cookies from 'js-cookie';
 
-interface Props {
-  isVisible: boolean;
-}
-
-export default function RoleFormItem({ isVisible }: Props) {
+export default function ChooseRoleForm() {
   const router = useRouter();
 
   const stepUpHandler = (role: string) => {
     Cookies.set('role', role);
-    router.push('/sign-up?step=account');
+
+    if (role === 'JOB_SEEKER') router.push('/my-profile/job-seeker');
+    if (role === 'RECRUITER') router.push('/my-profile/recruiter');
   };
 
   return (
-    <div className={isVisible ? '' : classes.hidden}>
+    <div>
       <motion.div
-        className={classes['sign-up-form']}
+        className={classes['role-form-container']}
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 30 }}
         transition={{ duration: 0.4 }}
       >
-        <h3>Step 1: Registration</h3>
-        <h5>Choose your role</h5>
+        <h3>Choose your role</h3>
         <div className={classes['role-form']}>
           <HoveredItem>
             <label className={classes['role-btn']}>
@@ -49,18 +45,11 @@ export default function RoleFormItem({ isVisible }: Props) {
               <input
                 type="radio"
                 name="role"
-                value="COMPANY"
-                onChange={() => stepUpHandler('COMPANY')}
+                value="RECRUITER"
+                onChange={() => stepUpHandler('RECRUITER')}
               />
-              <span>Company</span>
+              <span>Recruiter</span>
             </label>
-          </HoveredItem>
-        </div>
-        <div className="row-center">
-          <HoveredItem scale={1.05}>
-            <Link href="/sign-in" className={classes['link']}>
-              I already have an account
-            </Link>
           </HoveredItem>
         </div>
       </motion.div>

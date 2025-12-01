@@ -13,12 +13,13 @@ import classes from './page.module.css';
 
 import { VacancyData } from '@/types/vacancies';
 import { ApiError } from '@/types/authForm';
-import { capitalize, toKebabCase } from '@/utils/convertData';
+import { capitalize, isoToDate, toKebabCase } from '@/utils/convertData';
 import {
   deleteVacancy as deleteVacancyFn,
   getVacancyById,
 } from '@/services/vacanciesService';
 import Cookies from 'js-cookie';
+import ApplyBtn from '@/components/ApplicationItems/ApplyBtn';
 
 export default function VacancyPage() {
   const params = useParams();
@@ -46,7 +47,9 @@ export default function VacancyPage() {
         return;
       }
       setRequestError(null);
-      router.push('/my-company/vacancies/');
+      router.push(
+        '/my-profile/recruiter/company/vacancies?companyId=' + companyId
+      );
     },
   });
 
@@ -103,16 +106,12 @@ export default function VacancyPage() {
           <section>
             <div className={classes['date-views-row']}>
               <h4>
-                Posted: <span>{data?.createdAt}</span>
+                Posted: <span>{data && isoToDate(data.createdAt)}</span>
               </h4>
             </div>
           </section>
 
-          {!companyId && (
-            <button className={classes['apply-btn']}>
-              <AnimatedIcon>Apply for a job</AnimatedIcon>
-            </button>
-          )}
+          {!companyId && <ApplyBtn vacancyId={data?.id} />}
 
           {requestError && (
             <div className={classes['error-container']}>
@@ -123,10 +122,16 @@ export default function VacancyPage() {
           {companyId === data?.company.id && (
             <div className={classes['bottom-row']}>
               <Link
-                href={`/my-company/vacancies/edit-vacancy/${data?.id}`}
+                href={`/my-profile/recruiter/company/vacancies/edit-vacancy/${data?.id}`}
                 className={classes['edit-link']}
               >
                 <AnimatedIcon>Edit vacancy</AnimatedIcon>
+              </Link>
+              <Link
+                href={`/my-profile/recruiter/company/applications/${data?.id}?page=1`}
+                className={classes['applications-link']}
+              >
+                <AnimatedIcon>Vacancy Applications</AnimatedIcon>
               </Link>
               <button
                 className={classes['del-btn']}
@@ -137,21 +142,7 @@ export default function VacancyPage() {
             </div>
           )}
         </div>
-        <SideBox
-          data={{
-            id: data?.id ?? '',
-            isActive: data?.isActive ?? false,
-            companyId: data?.company.id ?? '',
-            companyName: data?.company.name ?? '',
-            companyLogo: data?.company.logoUrl ?? '',
-            companyUrl: data?.company.url ?? '',
-            employmentType: data?.employmentType ?? [],
-            workFormat: data?.workFormat ?? [],
-            officeLocation: data?.officeLocation ?? '',
-            salaryMin: data?.salaryMin ?? 0,
-            salaryMax: data?.salaryMax ?? 0,
-          }}
-        />
+        <SideBox data={data} />
       </div>
     </div>
   );

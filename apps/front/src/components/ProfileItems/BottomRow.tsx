@@ -5,13 +5,15 @@ import { logoutUser } from '@/services/userService';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authSlice';
 import Cookies from 'js-cookie';
+import HoveredItem from '../HoveredItem/HoveredItem';
 
 interface Props {
   isEditable: boolean;
   data: string;
+  type?: 'recruiter' | 'job-seeker' | 'company';
 }
 
-export default function BottomRow({ isEditable, data }: Props) {
+export default function BottomRow({ isEditable, data, type }: Props) {
   const router = useRouter();
   const { setIsLogged } = useAuthStore();
   const queryClient = useQueryClient();
@@ -39,15 +41,41 @@ export default function BottomRow({ isEditable, data }: Props) {
     logoutMutate();
   };
 
+  const handleChangeAccount = () => {
+    router.push(type === 'recruiter' ? 'job-seeker' : 'recruiter');
+  };
+
   return (
-    <div className="row-space-between">
-      <h3 className={classes['created-at']}>
-        With us from: <span>{isoToDate(data)}</span>
-      </h3>
-      {isEditable && (
-        <button className={classes['logout-btn']} onClick={handleLogoutAll}>
-          Log out from all devices
-        </button>
+    <div>
+      <div className="row-space-between">
+        <h3 className={classes['created-at']}>
+          {type === 'company' ? 'Created at' : 'With us from'}:{' '}
+          <span>{isoToDate(data)}</span>
+        </h3>
+        {type !== 'company' && (
+          <>
+            {isEditable && (
+              <HoveredItem scale={1.05}>
+                <button
+                  className={classes['change-btn']}
+                  onClick={handleChangeAccount}
+                >
+                  Change to {type === 'recruiter' ? 'job-seeker' : 'recruiter'}{' '}
+                  account
+                </button>
+              </HoveredItem>
+            )}
+          </>
+        )}
+      </div>
+      {type !== 'company' && (
+        <div className={classes['logout-btn-container']}>
+          <HoveredItem scale={1.05}>
+            <button className={classes['logout-btn']} onClick={handleLogoutAll}>
+              Log out from all devices
+            </button>
+          </HoveredItem>
+        </div>
       )}
     </div>
   );

@@ -15,12 +15,17 @@
   font-weight: 500;
 }
 
-.application-container {
+.vacancy-container {
   display: flex;
   justify-content: space-between;
 }
 
-.application-container * {
+.application-container button {
+  background-color: transparent;
+  border: 0;
+}
+
+.application-container > * {
   margin-bottom: 20px;
 }
 
@@ -29,8 +34,25 @@
   padding-right: 5vw;
 }
 
-.left-container > p {
+.bottom-container > h2 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.bottom-container > p {
+  margin-bottom: 20px;
   width: 100%;
   word-wrap: break-word;
   font-size: 1.25rem;
+}
+
+.bottom-container > p:first-of-type {
+  margin-bottom: 30px;
+}
+
+.link-to-profile {
+  margin-bottom: 30px;
+  font-size: 1.5rem;
+  text-decoration: underline;
 }

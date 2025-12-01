@@ -13,6 +13,7 @@ import { ApiError } from '@/types/authForm';
 import { VacancyApplication } from '@/types/application';
 import { getProfileById } from '@/services/jobseekerService';
 import { ProfileData } from '@/types/profile';
+import { useParams } from 'next/navigation';
 
 interface Props {
   data: VacancyApplication;
@@ -21,6 +22,9 @@ interface Props {
 export default function VacancyApplicationItem({ data }: Props) {
   const [logoUrl, setLogoUrl] = useState('/images/suitcase.png');
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const params = useParams();
+  const vacancyId = params.vacancyApplicationSlug as string;
 
   const { data: jobseekerData } = useQuery<ProfileData | null, ApiError>({
     queryKey: ['vacancy', data.id],
@@ -52,7 +56,7 @@ export default function VacancyApplicationItem({ data }: Props) {
       className={classes['vacancy-item-container']}
     >
       <Link
-        href={`/applications/${data.id}`}
+        href={`/my-profile/recruiter/company/applications/${vacancyId}/${data.id}`}
         className={classes['vacancy-item']}
       >
         <div>

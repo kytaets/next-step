@@ -49,7 +49,7 @@ export default function Avatar({
 
   return (
     <button
-      className={classes['avatar-btn']}
+      className={`${classes['avatar-btn']} ${isEditable ? classes['disabled'] : ''}`.trim()}
       type="submit"
       onClick={() =>
         openModal(

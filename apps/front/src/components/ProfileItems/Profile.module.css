@@ -256,7 +256,13 @@
 /* Avatar */
 .avatar-btn {
   height: 100%;
+  cursor: none;
 }
+
+.disabled {
+  cursor: default;
+}
+
 .avatar-btn img {
   border: 3px solid #37aa9c;
   border-radius: 10px;

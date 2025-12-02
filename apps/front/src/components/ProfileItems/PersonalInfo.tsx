@@ -12,7 +12,10 @@ import classes from './Profile.module.css';
 
 import { PersonalData, UpdatedPersonalData } from '@/types/profile';
 import { isoToDate, isoToSimpleDate } from '@/utils/convertData';
-import { validateProfileForm } from '@/utils/profileValidation';
+import {
+  validateProfileForm,
+  validateUpdatedPersonalData,
+} from '@/utils/profileValidation';
 import { updatePersonalData } from '@/services/jobseekerService';
 
 interface Props {
@@ -81,7 +84,7 @@ export default function PersonalInfo({ isEditable, data }: Props) {
       ) : (
         <Formik
           initialValues={initialValues}
-          validate={validateProfileForm}
+          validate={validateUpdatedPersonalData}
           onSubmit={handleSubmit}
         >
           {({ errors }) => (

@@ -1,46 +1,12 @@
-'use client';
+export const dynamic = 'force-dynamic';
 
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import EditVacancy from './EditVacancyPage';
 
-import VacancyForm from '@/components/VacanciesItems/VacancyForm/VacancyForm';
-import MessageBox from '@/components/MessageBox/MessageBox';
-
-import classes from './page.module.css';
-
-import { VacancyData } from '@/types/vacancies';
-import { ApiError } from '@/types/authForm';
-import { getVacancyById } from '@/services/vacanciesService';
-import { mapVacancyToFormValues } from '@/utils/vacancyValidation';
-
-export default function EditVacancy() {
-  const params = useParams();
-  const vacancyId = params.editVacancyId as string;
-
-  const { data, error, isError } = useQuery<VacancyData | null, ApiError>({
-    queryKey: ['vacancy', vacancyId],
-    queryFn: () => getVacancyById(vacancyId),
-    staleTime: 0,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
-  });
-
-  if (isError)
-    return (
-      <MessageBox type="error">
-        <p>Error loading profile: {error?.message || 'Unexpected error'}</p>
-      </MessageBox>
-    );
-
+export default function Page() {
   return (
-    <div className="container">
-      <div className={classes['page-container']}>
-        <h1 className={classes['page-header']}>Edit your vacancy</h1>
-        <VacancyForm
-          data={data ? mapVacancyToFormValues(data) : null}
-          type={'EDIT'}
-        />
-      </div>
-    </div>
+    <Suspense fallback={null}>
+      <EditVacancy />
+    </Suspense>
   );
 }

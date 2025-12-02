@@ -177,3 +177,113 @@
     font-size: 1.25rem;
   }
 }
+
+/* ========================================= */
+/* ADAPTIVE LAYOUT FOR COMPANYINFOS          */
+/* ========================================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .companies-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+
+  .modal-container {
+    width: 70vw;
+  }
+}
+
+/* Large phones / small tablets */
+@media (max-width: 768px) {
+  .companies-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .company-info-container {
+    padding: 15px;
+  }
+
+  .header-row h3 {
+    font-size: 1.25rem;
+  }
+
+  .company-details {
+    font-size: 1rem;
+  }
+
+  .modal-container {
+    width: 85vw;
+    padding: 1rem;
+  }
+
+  .modal-container h3 {
+    font-size: 2rem;
+  }
+
+  .modal-container h4 {
+    font-size: 1.5rem;
+  }
+
+  .vacancy-item {
+    padding: 15px 20px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .companies-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .company-info-container {
+    padding: 12px;
+  }
+
+  .header-row {
+    flex-direction: row;
+  }
+
+  .header-row h3 {
+    font-size: 1.2rem;
+  }
+
+  .company-details {
+    font-size: 0.95rem;
+  }
+
+  .modal-container {
+    width: 95vw;
+    padding: 1rem 0.5rem;
+  }
+
+  .modal-container h3 {
+    font-size: 1.75rem;
+  }
+
+  .modal-container p {
+    font-size: 1.1rem;
+  }
+
+  .nav-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .more-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .vacancy-item {
+    padding: 12px 15px;
+    font-size: 1.1rem;
+  }
+
+  .posted-time {
+    font-size: 0.9rem;
+  }
+}

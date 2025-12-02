@@ -1,46 +1,12 @@
-'use client';
+export const dynamic = 'force-dynamic';
 
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import CompanyMembers from './CompanyMembers';
 
-import CompanyMembersContainer from '@/components/CompanyProfileItems/CompanyMembersContainer';
-import MessageBox from '@/components/MessageBox/MessageBox';
-import { getMyMembers } from '@/services/companyProfileService';
-import { ApiError } from '@/types/authForm';
-import { RecruiterProfileData } from '@/types/recruiter';
-
-import Cookies from 'js-cookie';
-
-export default function CompanyMembers() {
-  const router = useRouter();
-
-  const companyId = Cookies.get('company-id');
-  if (!companyId) {
-    router.push('/my-profile/recruiter/company');
-  }
-
-  const {
-    data: myMembers,
-    isPending,
-    error,
-    isError,
-  } = useQuery<RecruiterProfileData[] | null, ApiError>({
-    queryKey: ['company-members', companyId],
-    queryFn: () => getMyMembers(companyId),
-    staleTime: 0,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
-  });
-
-  console.log('myMembers:', myMembers);
-
+export default function Page() {
   return (
-    <div className="container">
-      <h1 className="page-header">Your Company Members</h1>
-      {isPending && <MessageBox>Loading your members...</MessageBox>}
-      {isError && <MessageBox>{error.message}</MessageBox>}
-
-      <CompanyMembersContainer members={myMembers} />
-    </div>
+    <Suspense fallback={null}>
+      <CompanyMembers />
+    </Suspense>
   );
 }

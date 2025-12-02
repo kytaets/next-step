@@ -1,12 +1,19 @@
 'use client';
-import { Suspense } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { AnimatePresence } from 'framer-motion';
+
+import RegistrationForm from '@/components/SignUpItems/RegistrationForm';
 
 import classes from './page.module.css';
-import SignInForm from '@/components/SignUpItems/SignInForm';
 
 export default function SignUpPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/sign-up?step=account');
+  }, [router]);
+
   return (
     <>
       <div className={classes['background']}>
@@ -18,11 +25,7 @@ export default function SignUpPage() {
           priority
         />
       </div>
-      <Suspense fallback={null}>
-        <AnimatePresence>
-          <SignInForm />
-        </AnimatePresence>
-      </Suspense>
+      <RegistrationForm />
     </>
   );
 }

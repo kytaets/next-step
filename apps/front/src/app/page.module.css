@@ -47,10 +47,7 @@
   margin: 10px;
 }
 
-/* ========================================= */
-/* ADAPTIVE LAYOUT FOR PAGE.MODULE.CSS       */
-/* ========================================= */
-
+/* Responsiveness */
 /* Tablets */
 @media (max-width: 1024px) {
   .image-row {

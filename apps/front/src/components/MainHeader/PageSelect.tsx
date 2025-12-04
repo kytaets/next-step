@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 import classes from './MainHeader.module.css';
-import Cookies from 'js-cookie';
 
 export default function PageSelect() {
   const router = useRouter();
@@ -13,10 +13,7 @@ export default function PageSelect() {
   const role = Cookies.get('role');
 
   const pages = [
-    {
-      label: 'Search for Vacancies',
-      value: '/vacancies?page=1',
-    },
+    { label: 'Search for Vacancies', value: '/vacancies?page=1' },
     { label: 'Search for Companies', value: '/companies?page=1' },
   ];
 
@@ -33,26 +30,23 @@ export default function PageSelect() {
   };
 
   return (
-    <div className={classes['search-link-box']}>
+    <div className={classes.pageSelectWrapper}>
       <button
-        onClick={() => setOpen(!open)}
-        className={classes['select-nav-btn']}
+        onClick={() => setOpen((prev) => !prev)}
+        className={classes.pageSelectBtn}
       >
         Make your first step →
       </button>
 
       {open && (
-        <div
-          className={classes['select-nav']}
-          style={{ bottom: role !== 'RECRUITER' ? '-110px' : '' }}
-        >
-          {pages.map((page) => (
+        <div className={classes.pageSelectDropdown}>
+          {pages.map((p) => (
             <div
-              key={page.value}
-              onClick={() => handleSelect(page)}
-              className={classes['select-item']}
+              key={p.value}
+              className={classes.pageSelectItem}
+              onClick={() => handleSelect(p)}
             >
-              {page.label}
+              {p.label}
             </div>
           ))}
         </div>

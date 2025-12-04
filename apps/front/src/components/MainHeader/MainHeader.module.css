@@ -142,3 +142,220 @@ button.no-border-btn {
     padding: 7px 20px;
   }
 }
+
+/* BASE HEADER */
+.header {
+  background-color: #1f1f21;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1000;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #37aa9c;
+}
+
+/* DESKTOP NAVIGATION */
+.right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+.no-border-btn,
+.border-btn {
+  padding: 10px 25px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.no-border-btn {
+  border: 2px solid transparent;
+}
+
+.border-btn {
+  border: 2px solid white;
+}
+
+.active {
+  border: 3px solid #37aa9c !important;
+}
+
+.desktopOnly {
+  display: flex;
+}
+
+/* BURGER */
+.burger {
+  width: 35px;
+  height: 25px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.burger span {
+  height: 4px;
+  background-color: white;
+  border-radius: 4px;
+}
+
+/* MOBILE MENU */
+.mobileMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1f1f21;
+  width: 220px;
+  padding: 20px 25px;
+  border-left: 1px solid white;
+  border-bottom: 1px solid white;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-item {
+  font-size: 1.3rem;
+  padding: 10px 0;
+  border-bottom: 1px solid #333;
+}
+
+/* RESPONSIVE BREAKPOINT */
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .home-link {
+    font-size: 1.6rem;
+  }
+
+  .header {
+    padding: 10px 15px;
+  }
+}
+
+/* ========================================= */
+/* PAGE SELECT — BASE */
+/* ========================================= */
+
+.pageSelectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pageSelectBtn {
+  background: transparent;
+  border: 0;
+  font-size: 1.4rem;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.pageSelectBtn:hover {
+  color: #37aa9c;
+  transform: scale(1.05);
+}
+
+.pageSelectDropdown {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  padding: 15px;
+  width: max-content;
+  background: #1f1f21;
+  border: 1px solid white;
+  border-radius: 12px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeSlide 0.2s ease;
+}
+
+.pageSelectItem {
+  cursor: pointer;
+  font-size: 1.3rem;
+  padding: 6px 0;
+  transition: 0.2s ease;
+}
+
+.pageSelectItem:hover {
+  color: #37aa9c;
+  transform: translateX(4px);
+}
+
+/* Animation */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================= */
+/* PAGE SELECT — MOBILE */
+/* ========================================= */
+
+@media (max-width: 768px) {
+  .pageSelectWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .pageSelectBtn {
+    font-size: 1.2rem;
+    padding: 8px 0;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+
+  /* mobile dropdown */
+  .pageSelectDropdown {
+    position: static;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 10px 5px;
+    border-radius: 0;
+    background: transparent;
+    animation: none;
+  }
+
+  .pageSelectItem {
+    font-size: 1.2rem;
+    padding: 6px 0;
+  }
+}

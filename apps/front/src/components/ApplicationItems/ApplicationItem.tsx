@@ -29,8 +29,6 @@ export default function ApplicationItem({ data }: Props) {
     refetchOnWindowFocus: true,
   });
 
-  console.log('Vacancy Data:', vacancyData);
-
   useEffect(() => {
     const companyLogo = vacancyData?.company.logoUrl ?? '';
     setIsLoaded(false);

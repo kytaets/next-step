@@ -1,4 +1,7 @@
 'use client';
+export const dynamic = 'force-dynamic';
+
+import { Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import ResetPasswordForm from '@/components/SignUpItems/ResetPasswordForm';
@@ -6,9 +9,11 @@ import ResetPasswordForm from '@/components/SignUpItems/ResetPasswordForm';
 export default function ForgotPasswordPage() {
   return (
     <>
-      <AnimatePresence>
-        <ResetPasswordForm />
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          <ResetPasswordForm />
+        </AnimatePresence>
+      </Suspense>
     </>
   );
 }

@@ -11,7 +11,7 @@ import { ApiError } from '@/types/authForm';
 import { getLanguages } from '@/services/jobseekerService';
 
 interface Props {
-  type?: 'vacancies' | 'jobSeekers';
+  type?: 'vacancies' | 'jobSeekers' | 'applications';
 }
 
 export default function LanguagesInput({ type = 'vacancies' }: Props) {

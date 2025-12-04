@@ -58,27 +58,29 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
             </Link>
           </p>
 
-          <Link
-            className={classes['my-vacancies-btn']}
-            href={
-              isEditable
-                ? `company/vacancies?companyId=${data.id}`
-                : `${data.id}/vacancies`
-            }
-          >
-            <AnimatedIcon>
-              {isEditable ? 'My Vacancies' : 'Company Vacancies'}
-            </AnimatedIcon>
-          </Link>
-
-          {isEditable && (
-            <button
-              className={classes['edit-main-info-btn']}
-              onClick={() => setIsChanging(true)}
+          <div className={classes['my-vacancies-edit-container']}>
+            <Link
+              className={classes['my-vacancies-btn']}
+              href={
+                isEditable
+                  ? `company/vacancies?companyId=${data.id}`
+                  : `${data.id}/vacancies`
+              }
             >
-              <AnimatedIcon iconType={faPencil} />
-            </button>
-          )}
+              <AnimatedIcon>
+                {isEditable ? 'My Vacancies' : 'Company Vacancies'}
+              </AnimatedIcon>
+            </Link>
+
+            {isEditable && (
+              <button
+                className={classes['edit-main-info-btn']}
+                onClick={() => setIsChanging(true)}
+              >
+                <AnimatedIcon iconType={faPencil} />
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <Formik

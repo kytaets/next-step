@@ -18,6 +18,7 @@ const customJestConfig = {
     '^@/types/(.*)$': '<rootDir>/src/types/$1',
 
     '^.+\\.module\\.(css|scss)$': 'identity-obj-proxy',
+    '^next/image$': '<rootDir>/__mocks__/next/image.js',
   },
 
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],

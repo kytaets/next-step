@@ -21,7 +21,7 @@ interface Props {
 
 export default function CompanyMainInfo({ isEditable, data }: Props) {
   const [isChanging, setIsChanging] = useState(false);
-  const [requestError, setRequestError] = useState<string | null>();
+  const [requestError, setRequestError] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -29,19 +29,17 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
     mutationFn: updateCompanyProfile,
     onSuccess: async () => {
       setRequestError(null);
-      await queryClient.invalidateQueries({
-        queryKey: ['company-profile'],
-      });
+      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
       setIsChanging(false);
     },
-    onError: (error) => {
-      setRequestError(error.message);
+    onError: (error: any) => {
+      setRequestError(error?.message ?? 'Unknown error');
     },
   });
 
   const formData = {
     name: data.name,
-    url: data.url ? data.url : '',
+    url: data.url ?? '',
   };
 
   return (
@@ -52,11 +50,11 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
           <p>
             {isEditable ? 'Your w' : 'W'}ebsite:{' '}
             <Link
-              href={data.url ? data.url : ''}
+              href={data.url || ''}
               className={data.url ? 'underline-link' : ''}
-              style={data.url ? { cursor: 'pointer' } : { cursor: 'default' }}
+              style={{ cursor: data.url ? 'pointer' : 'default' }}
             >
-              {data.url ? data.url : 'no url there yet'}
+              {data.url || 'no url there yet'}
             </Link>
           </p>
 
@@ -69,7 +67,7 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
             }
           >
             <AnimatedIcon>
-              {isEditable ? 'My Vacancies' : `Company Vacancies`}
+              {isEditable ? 'My Vacancies' : 'Company Vacancies'}
             </AnimatedIcon>
           </Link>
 
@@ -86,12 +84,17 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
         <Formik
           initialValues={formData}
           validate={validateCompanyInfoData}
-          onSubmit={(values) => {
+          validateOnChange
+          validateOnBlur
+          validateOnMount
+          onSubmit={(values, { setSubmitting }) => {
             const payload: UpdCompanyProfileData = {
-              name: values.name ?? undefined,
+              name: values.name?.trim() || undefined,
               url: values.url?.trim() === '' ? null : values.url?.trim(),
             };
+
             updateInfo(payload);
+            setSubmitting(false);
           }}
         >
           {({ errors }) => (
@@ -100,13 +103,12 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
                 <Field
                   className={classes['name-input']}
                   name="name"
-                  type="text"
                   placeholder="Company Name"
                 />
+
                 <Field
                   className={classes['url-input']}
                   name="url"
-                  type="text"
                   placeholder="Website url"
                 />
               </div>
@@ -122,7 +124,9 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
               )}
 
               {requestError && (
-                <div className={classes['personal-info-error-container']}>
+                <div
+                  className={profileClasses['personal-info-error-container']}
+                >
                   <MessageBox>{requestError}</MessageBox>
                 </div>
               )}
@@ -135,6 +139,7 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
                 >
                   <AnimatedIcon iconType={faXmark} />
                 </button>
+
                 <button
                   className={profileClasses['personal-info-btn']}
                   type="submit"

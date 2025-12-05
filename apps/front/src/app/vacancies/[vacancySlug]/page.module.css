@@ -58,7 +58,8 @@
 
 .apply-btn,
 .edit-link div,
-.del-btn div {
+.del-btn div,
+.applications-link div {
   padding: 10px 20px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -68,6 +69,12 @@
   color: #1f1f21;
   font-size: 1.5rem;
   font-weight: 500;
+}
+
+.applications-link div {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
 }
 
 .edit-link {

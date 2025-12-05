@@ -1,5 +1,4 @@
 import { FieldArray, useFormikContext } from 'formik';
-import { VacancySearchForm } from '@/types/vacancies';
 import { getSkills } from '@/services/jobseekerService';
 import { useQuery } from '@tanstack/react-query';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -7,37 +6,51 @@ import AnimatedIcon from '@/components/HoveredItem/HoveredItem';
 import RequestErrors from '@/components/RequestErrors/RequestErrors';
 
 import classes from './Fields.module.css';
-import { div } from 'framer-motion/client';
+import { SkillItem } from '@/types/profile';
 
-export default function SkillsInput() {
+interface Props {
+  type?: 'vacancies' | 'jobSeekers' | 'applications';
+}
+
+type SkillsFormValues = {
+  skillIds?: { skill: SkillItem }[];
+  requiredSkillIds?: { skill: SkillItem }[];
+  newSkill: string;
+};
+
+export default function SkillsInput({ type = 'vacancies' }: Props) {
   const { values, handleChange, setFieldValue } =
-    useFormikContext<VacancySearchForm>();
+    useFormikContext<SkillsFormValues>();
 
-  const { data: skillsList = [], error: fetchSkillsError } = useQuery({
+  const { data: skillsList = [], error: fetchSkillsError } = useQuery<
+    SkillItem[]
+  >({
     queryKey: ['skills'],
     queryFn: getSkills,
     retry: false,
   });
 
+  const name: keyof SkillsFormValues =
+    type === 'vacancies' ? 'requiredSkillIds' : 'skillIds';
+
   return (
     <div className={classes['skills-field']}>
       <label>Skills</label>
 
-      <FieldArray name="requiredSkillIds">
+      <FieldArray name={name}>
         {({ remove, push }) => {
           const tryAddSkill = () => {
             const trimmed = values.newSkill.trim();
             if (!trimmed) return;
 
             const existingSkill = skillsList.find(
-              (item) => item.name.toLowerCase() === trimmed.toLowerCase()
+              (item: SkillItem) =>
+                item.name.toLowerCase() === trimmed.toLowerCase()
             );
 
             if (
               existingSkill &&
-              !values.requiredSkillIds.some(
-                (s: any) => s.skill.id === existingSkill.id
-              )
+              !values[name]?.some((s) => s.skill.id === existingSkill.id)
             ) {
               push({ skill: existingSkill });
               setFieldValue('newSkill', '');
@@ -46,7 +59,7 @@ export default function SkillsInput() {
 
           return (
             <div className={classes['skills']}>
-              {values.requiredSkillIds.map((s: any, index: number) => (
+              {values[name]?.map((s, index) => (
                 <div key={s.skill.id}>
                   <div className={classes['del-btn-box']}>
                     <span>{s.skill.name}</span>
@@ -71,23 +84,25 @@ export default function SkillsInput() {
                   onChange={handleChange}
                   autoComplete="off"
                 />
+
                 {values.newSkill.trim() && (
                   <ul className={classes['autocomplete-list']}>
-                    {fetchSkillsError?.message && (
-                      <RequestErrors error={fetchSkillsError.message} />
+                    {fetchSkillsError && (
+                      <RequestErrors
+                        error={(fetchSkillsError as any).message}
+                      />
                     )}
+
                     {skillsList
                       .filter(
-                        (item) =>
+                        (item: SkillItem) =>
                           item.name
                             .toLowerCase()
                             .includes(values.newSkill.trim().toLowerCase()) &&
-                          !values.requiredSkillIds.some(
-                            (s: any) => s.skill.id === item.id
-                          )
+                          !values[name]?.some((s) => s.skill.id === item.id)
                       )
                       .slice(0, 5)
-                      .map((item) => (
+                      .map((item: SkillItem) => (
                         <li
                           key={item.id}
                           className={classes['autocomplete-item']}
@@ -101,6 +116,7 @@ export default function SkillsInput() {
                       ))}
                   </ul>
                 )}
+
                 <button
                   type="button"
                   className={classes['edit-skills-btn']}

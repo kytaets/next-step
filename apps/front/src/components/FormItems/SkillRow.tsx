@@ -3,7 +3,7 @@ import { FieldArray, FormikValues } from 'formik';
 import AnimatedIcon from '@/components/HoveredItem/HoveredItem';
 import RequestErrors from '../RequestErrors/RequestErrors';
 
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import classes from './FormItems.module.css';
 
 import { SkillData, SkillItem } from '@/types/profile';
@@ -26,34 +26,6 @@ export default function SkillsRow({
   return (
     <FieldArray name="skills">
       {({ remove, push }) => {
-        const tryAddSkill = () => {
-          const trimmed = values.newSkill.trim();
-          if (!trimmed) return;
-
-          const existsInForm = values.skills.some(
-            (s: SkillData) =>
-              s.skill.name.toLowerCase() === trimmed.toLowerCase()
-          );
-          if (existsInForm) return;
-
-          const existingSkill = skillsList?.find(
-            (item) => item.name.toLowerCase() === trimmed.toLowerCase()
-          );
-
-          if (existingSkill) {
-            push({ skill: existingSkill });
-          } else {
-            push({
-              skill: {
-                id: crypto.randomUUID(),
-                name: trimmed,
-              },
-            });
-          }
-
-          setFieldValue('newSkill', '');
-        };
-
         return (
           <div className={classes['skills']}>
             {values.skills.map((s: SkillData, index: number) => (
@@ -74,28 +46,33 @@ export default function SkillsRow({
                 type="text"
                 name="newSkill"
                 className={classes['form-input']}
-                placeholder="Add new skill"
+                placeholder="Add skill"
                 value={values.newSkill}
                 onChange={handleChange}
                 autoComplete="off"
+                onFocus={() => setFieldValue('showList', true)} // нове
               />
-              {values.newSkill.trim() && (
+
+              {(values.showList || values.newSkill.trim()) && (
                 <ul className={classes['autocomplete-list']}>
                   {fetchSkillsError?.message && (
                     <RequestErrors error={fetchSkillsError.message} />
                   )}
+
                   {skillsList &&
                     skillsList
-                      .filter(
-                        (item) =>
-                          item.name
-                            .toLowerCase()
-                            .includes(values.newSkill.trim().toLowerCase()) &&
-                          !values.skills.some(
-                            (s: SkillData) => s.skill.id === item.id
-                          )
-                      )
-                      .slice(0, 5)
+                      .filter((item) => {
+                        const exists = values.skills.some(
+                          (s: SkillData) => s.skill.id === item.id
+                        );
+                        if (exists) return false;
+
+                        const search = values.newSkill.trim().toLowerCase();
+                        if (!search) return true;
+
+                        return item.name.toLowerCase().includes(search);
+                      })
+                      .slice(0, 8)
                       .map((item) => (
                         <li
                           key={item.id}
@@ -103,6 +80,7 @@ export default function SkillsRow({
                           onClick={() => {
                             push({ skill: item });
                             setFieldValue('newSkill', '');
+                            setFieldValue('showList', false);
                           }}
                         >
                           {item.name}
@@ -111,14 +89,6 @@ export default function SkillsRow({
                 </ul>
               )}
             </div>
-
-            <button
-              type="button"
-              className={classes['edit-skills-btn']}
-              onClick={tryAddSkill}
-            >
-              <AnimatedIcon iconType={faPlus} />
-            </button>
           </div>
         );
       }}

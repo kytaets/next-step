@@ -7,20 +7,25 @@ import classes from './CompanyProfile.module.css';
 import profileClasses from '../ProfileItems/Profile.module.css';
 import CompanyMainInfo from './CompanyMainInfo';
 import Bio from '../ProfileItems/Description';
-import BottomRow from '../ProfileItems/BottomRow';
+import CompanyBottomRow from './CompanyBottomRow';
+import Cookies from 'js-cookie';
+import Link from 'next/link';
+import HoveredItem from '../HoveredItem/HoveredItem';
 
 interface Props {
-  isEditable?: boolean;
   companyData: CompanyProfileData;
 }
 
-export default function CompanyProfileContainer({
-  isEditable = false,
-  companyData,
-}: Props) {
+export default function CompanyProfileContainer({ companyData }: Props) {
   console.log(companyData);
 
+  const recruiterRole = Cookies.get('recruiter-role');
+  const companyId = Cookies.get('company-id');
+
+  const isEditable = companyId === companyData.id ? true : false;
+
   const mainInfoData = {
+    id: companyData.id,
     name: companyData.name,
     url: companyData.url,
   };
@@ -40,12 +45,22 @@ export default function CompanyProfileContainer({
         <div className="align-center">
           <div className={classes['main-info-side']}>
             <CompanyMainInfo isEditable={isEditable} data={mainInfoData} />
-            <div className={profileClasses['skills-open-container']}>
+            <div className={classes['verified-invite-container']}>
               <IsVerified
                 isEditable={isEditable}
                 isTrue={companyData.isVerified}
                 type="isVerified"
               />
+              {recruiterRole === 'ADMIN' && (
+                <HoveredItem>
+                  <Link
+                    href="/my-profile/recruiter/company/members"
+                    className={classes['company-members-link']}
+                  >
+                    Company Members
+                  </Link>
+                </HoveredItem>
+              )}
             </div>
           </div>
         </div>
@@ -55,7 +70,11 @@ export default function CompanyProfileContainer({
         data={companyData.description}
         type="description"
       />
-      <BottomRow isEditable={isEditable} data={companyData.createdAt} />
+      <CompanyBottomRow
+        isEditable={isEditable}
+        companyId={companyData.id}
+        createdAt={companyData.createdAt}
+      />
     </div>
   );
 }

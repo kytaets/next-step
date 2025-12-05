@@ -2,26 +2,22 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import {
-  greenBorderBtnHover,
-  whiteBorderBtnHover,
-} from '@/animations/variants';
-import classes from './MainHeader.module.css';
-
 import { useAuthStore } from '@/store/authSlice';
 import { logoutUser } from '@/services/userService';
+
 import Cookies from 'js-cookie';
+import PageSelect from './PageSelect';
+import classes from './MainHeader.module.css';
 
 export default function MainHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const { isLogged, setIsLogged } = useAuthStore();
 
@@ -42,110 +38,148 @@ export default function MainHeader() {
   });
 
   const role = Cookies.get('role');
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('Are you sure you want to log out?');
-    if (!confirmLogout) return;
-    logout();
+
+  const handleLogout = () => {
+    const confirmLogout = window.confirm('Are you sure?');
+    if (confirmLogout) logout();
   };
 
   return (
-    <div className={classes['header-box']}>
-      <div className={classes['main-nav']}>
-        <motion.div whileHover={{ scale: 1.05 }}>
-          <Link className={classes['home-link']} href="/">
-            <span>Next Step</span>
-            <Image
-              src="/icons/stairs.png"
-              alt="stairs-image"
-              width={50}
-              height={50}
-              priority
-            />
-          </Link>
-        </motion.div>
+    <header className={classes.header}>
+      {/* Left block */}
+      <div className={classes.left}>
+        <Link className={classes['home-link']} href="/">
+          <span>Next Step</span>
+          <Image src="/icons/stairs.png" alt="stairs" width={50} height={50} />
+        </Link>
 
-        <motion.div
-          className={classes['search-link-box']}
-          whileHover={{ scale: 1.05 }}
-        >
-          <Link href="/vacancies">
-            {pathname === '/vacancies' ? (
-              <span>You&apos;re making your first step!</span>
-            ) : (
-              <>
-                <span>Make your first step</span>
-                <FontAwesomeIcon icon={faArrowRight} />
-              </>
-            )}
-          </Link>
-        </motion.div>
+        <div className={classes.desktopOnly}>
+          <PageSelect />
+        </div>
       </div>
 
-      <div className={classes['auth-nav']}>
+      {/* Desktop navigation */}
+      <nav className={`${classes.right} ${classes.desktopOnly}`}>
         {!isLogged && (
           <>
-            <motion.div
-              className={classes['no-border-btn']}
-              whileHover={{
-                scale: 1.1,
-                borderColor: 'white',
-              }}
-            >
-              <Link href="/sign-up">Sign Up</Link>
-            </motion.div>
-            <motion.div
-              className={classes['border-btn']}
-              whileHover={{
-                scale: 1.1,
-                backgroundColor: 'white',
-                color: 'black',
-              }}
-            >
-              <Link href="/sign-in">Sign In</Link>
-            </motion.div>
+            <Link className={classes['no-border-btn']} href="/sign-up">
+              Sign Up
+            </Link>
+
+            <Link className={classes['border-btn']} href="/sign-in">
+              Sign In
+            </Link>
           </>
         )}
+
         {isLogged && (
           <>
-            <motion.button
-              className={classes['no-border-btn']}
-              whileHover={{
-                scale: 1.1,
-                borderColor: 'white',
-              }}
-              onClick={handleLogout}
-            >
+            <button className={classes['no-border-btn']} onClick={handleLogout}>
               Log Out
-            </motion.button>
-            {role === 'COMPANY' && (
-              <motion.div
+            </button>
+
+            {role === 'JOB_SEEKER' && (
+              <Link
                 className={classes['no-border-btn']}
-                whileHover={{
-                  scale: 1.1,
-                  borderColor: 'white',
-                }}
+                href="/my-profile/job-seeker/applications?page=1"
               >
-                <Link href="/my-company/vacancies">My Vacancies</Link>
-              </motion.div>
+                My Applications
+              </Link>
             )}
 
-            <motion.div
-              className={`${classes['border-btn']} ${pathname === '/my-profile' ? classes['active-link'] : ''} `}
-              whileHover={
-                pathname === '/my-profile'
-                  ? greenBorderBtnHover
-                  : whiteBorderBtnHover
+            <Link
+              className={`${classes['border-btn']} ${
+                pathname.includes('/my-profile') ? classes.active : ''
+              }`}
+              href={
+                role === 'JOB_SEEKER'
+                  ? '/my-profile/job-seeker'
+                  : '/my-profile/recruiter'
               }
             >
+              Profile
+            </Link>
+          </>
+        )}
+      </nav>
+
+      {/* BURGER */}
+      <button
+        className={classes.burger}
+        onClick={() => setMobileOpen((prev) => !prev)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      {/* MOBILE MENU */}
+      {mobileOpen && (
+        <motion.div
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          className={classes.mobileMenu}
+        >
+          <PageSelect />
+
+          {!isLogged && (
+            <>
               <Link
-                href={role === 'JOB_SEEKER' ? '/my-profile' : '/my-company'}
+                onClick={() => setMobileOpen(false)}
+                className={classes['mobile-item']}
+                href="/sign-up"
+              >
+                Sign Up
+              </Link>
+
+              <Link
+                onClick={() => setMobileOpen(false)}
+                className={classes['mobile-item']}
+                href="/sign-in"
+              >
+                Sign In
+              </Link>
+            </>
+          )}
+
+          {isLogged && (
+            <>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMobileOpen(false);
+                }}
+                className={classes['mobile-item']}
+              >
+                Log Out
+              </button>
+
+              {role === 'JOB_SEEKER' && (
+                <Link
+                  onClick={() => setMobileOpen(false)}
+                  className={classes['mobile-item']}
+                  href="/my-profile/job-seeker/applications?page=1"
+                >
+                  My Applications
+                </Link>
+              )}
+
+              <Link
+                onClick={() => setMobileOpen(false)}
+                className={classes['mobile-item']}
+                href={
+                  role === 'JOB_SEEKER'
+                    ? '/my-profile/job-seeker'
+                    : '/my-profile/recruiter'
+                }
               >
                 Profile
               </Link>
-            </motion.div>
-          </>
-        )}
-      </div>
-    </div>
+            </>
+          )}
+        </motion.div>
+      )}
+    </header>
   );
 }

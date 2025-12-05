@@ -40,14 +40,15 @@ export default function Bio({ isEditable, data, type = 'bio' }: Props) {
 
   const { mutate: updateDescription } = useMutation({
     mutationFn: updateCompanyProfile,
-    onSuccess: async (result) => {
-      if (result.status === 'error') {
-        setRequestErrors([result.error]);
-        return;
-      }
+
+    onSuccess: async () => {
       setRequestErrors([]);
       await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
       setIsChanging(false);
+    },
+
+    onError: (error: any) => {
+      setRequestErrors([error.message || 'Unexpected error']);
     },
   });
 

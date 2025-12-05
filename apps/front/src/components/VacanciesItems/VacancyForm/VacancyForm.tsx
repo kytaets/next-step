@@ -25,6 +25,7 @@ import {
   getSkills,
 } from '@/services/jobseekerService';
 import { VacancyFormValues } from '@/types/vacancy';
+import Cookies from 'js-cookie';
 
 interface Props {
   data?: VacancyFormValues | null;
@@ -35,7 +36,9 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
   const [requestError, setRequestError] = useState<string | null>(null);
   const router = useRouter();
 
-  const { mutate: updateLanguages } = useMutation({
+  const companyId = Cookies.get('company-id');
+
+  const { mutate: updateLanguages, isPending: isLangPending } = useMutation({
     mutationFn: updateVacancyLanguages,
     onSuccess: async (result) => {
       if (result.status === 'error') {
@@ -46,7 +49,7 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
     },
   });
 
-  const { mutate: updateSkills } = useMutation({
+  const { mutate: updateSkills, isPending: isSkillsPending } = useMutation({
     mutationFn: updateVacancySkills,
     onSuccess: async (result) => {
       if (result.status === 'error') {
@@ -57,7 +60,7 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
     },
   });
 
-  const { mutate: createVacancyMutate } = useMutation({
+  const { mutate: createVacancyMutate, isPending } = useMutation({
     mutationFn: createVacancy,
     onSuccess: async (result, variables) => {
       if (result.status === 'error') {
@@ -80,7 +83,10 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
       }
 
       setRequestError(null);
-      router.push('/my-company/vacancies/');
+      console.log('Created vacancy, id:', vacancyId);
+      router.push(
+        '/my-profile/recruiter/company/vacancies?companyId=' + companyId
+      );
     },
   });
 
@@ -162,7 +168,11 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
             </div>
           )}
           <div className="row-end">
-            <button type="submit" className={classes['submit-btn']}>
+            <button
+              type="submit"
+              className={classes['submit-btn']}
+              disabled={isPending || isLangPending || isSkillsPending}
+            >
               <AnimatedIcon>
                 {type === 'CREATE' ? 'Create' : 'Save'} Vacancy
               </AnimatedIcon>

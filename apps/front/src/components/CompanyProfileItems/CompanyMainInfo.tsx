@@ -27,14 +27,15 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
 
   const { mutate: updateInfo, isPending } = useMutation({
     mutationFn: updateCompanyProfile,
-    onSuccess: async (result) => {
-      if (result.status === 'error') {
-        setRequestError(result.error);
-        return;
-      }
+    onSuccess: async () => {
       setRequestError(null);
-      await queryClient.invalidateQueries({ queryKey: ['company-profile'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['company-profile'],
+      });
       setIsChanging(false);
+    },
+    onError: (error) => {
+      setRequestError(error.message);
     },
   });
 
@@ -59,21 +60,26 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
             </Link>
           </p>
 
+          <Link
+            className={classes['my-vacancies-btn']}
+            href={
+              isEditable
+                ? `company/vacancies?companyId=${data.id}`
+                : `${data.id}/vacancies`
+            }
+          >
+            <AnimatedIcon>
+              {isEditable ? 'My Vacancies' : `Company Vacancies`}
+            </AnimatedIcon>
+          </Link>
+
           {isEditable && (
-            <>
-              <Link
-                className={classes['my-vacancies-btn']}
-                href={'my-company/vacancies'}
-              >
-                <AnimatedIcon>My Vacancies</AnimatedIcon>
-              </Link>
-              <button
-                className={classes['edit-main-info-btn']}
-                onClick={() => setIsChanging(true)}
-              >
-                <AnimatedIcon iconType={faPencil} />
-              </button>
-            </>
+            <button
+              className={classes['edit-main-info-btn']}
+              onClick={() => setIsChanging(true)}
+            >
+              <AnimatedIcon iconType={faPencil} />
+            </button>
           )}
         </div>
       ) : (

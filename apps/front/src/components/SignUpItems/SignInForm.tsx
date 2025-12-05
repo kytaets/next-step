@@ -41,7 +41,11 @@ export default function SignInForm() {
       }
       setIsLogged(true);
       if (role) {
-        router.push(role === 'JOB_SEEKER' ? '/my-profile' : '/my-company');
+        router.push(
+          role === 'JOB_SEEKER'
+            ? '/my-profile/job-seeker'
+            : '/my-profile/recruiter'
+        );
       } else {
         router.push('/my-profile');
       }

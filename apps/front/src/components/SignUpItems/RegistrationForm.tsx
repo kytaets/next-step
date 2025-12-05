@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 
 import { AnimatePresence } from 'framer-motion';
 
-import RoleFormItem from './RoleFormItem';
 import CreateAccountItem from './CreateAccountItem';
 import ConfirmBoxItem from './ConfirmBoxItem';
 
@@ -56,7 +55,6 @@ export default function RegistrationForm() {
       mutate({
         email: registrationData.email,
         password: registrationData.password,
-        type: registrationData.role,
       });
     }
   };
@@ -64,13 +62,12 @@ export default function RegistrationForm() {
   return (
     <div className={classes['sign-up-container']}>
       <AnimatePresence>
-        {(step === 'role' || step === 'account') && (
-          <form ref={formRef} onSubmit={handleSubmit}>
-            <RoleFormItem isVisible={step === 'role'} />
-            {step === 'account' && <CreateAccountItem errors={errors} />}
-          </form>
+        <form key="account" ref={formRef} onSubmit={handleSubmit}>
+          {step === 'account' && <CreateAccountItem errors={errors} />}
+        </form>
+        {step === 'confirm' && (
+          <ConfirmBoxItem key="confirm" email={email ?? ''} />
         )}
-        {step === 'confirm' && <ConfirmBoxItem email={email ?? ''} />}
       </AnimatePresence>
     </div>
   );

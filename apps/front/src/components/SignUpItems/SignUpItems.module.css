@@ -26,7 +26,24 @@
   font-weight: 400;
 }
 
-/* Role Form Item */
+/* Role Form */
+
+.role-form-container {
+  margin: auto;
+  padding: 10px 15px;
+  background-color: #1f1f21;
+}
+
+.role-form-container h3 {
+  margin-bottom: 15px;
+  font-size: 2rem;
+}
+
+.role-form-container h5 {
+  margin-bottom: 30px;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
 
 .hidden {
   display: none;
@@ -40,7 +57,7 @@
 .role-btn {
   display: inline-block;
   padding: 10px 20px;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   background-color: white;
   border: 0;
   border-radius: 5px;
@@ -68,7 +85,7 @@
   color: white;
 }
 
-/* Role Form Item */
+/* Role Form */
 
 /* Create Account Item */
 

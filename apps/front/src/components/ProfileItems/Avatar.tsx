@@ -12,7 +12,7 @@ import { validateImageUrl } from '@/utils/validation';
 interface Props {
   isEditable: boolean;
   data: string | null;
-  type?: 'job-seeker' | 'company';
+  type?: 'job-seeker' | 'company' | 'recruiter';
 }
 
 export default function Avatar({
@@ -22,9 +22,9 @@ export default function Avatar({
 }: Props) {
   const openModal = useModalStore((state) => state.openModal);
   const fallbackImage =
-    type === 'job-seeker'
-      ? '/images/no-avatar.png'
-      : '/images/company-no-logo.png';
+    type === 'company'
+      ? '/images/company-no-logo.png'
+      : '/images/no-avatar.png';
   const [avatarUrl, setAvatarUrl] = useState(fallbackImage);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -49,7 +49,7 @@ export default function Avatar({
 
   return (
     <button
-      className={classes['avatar-btn']}
+      className={`${classes['avatar-btn']} ${isEditable ? classes['disabled'] : ''}`.trim()}
       type="submit"
       onClick={() =>
         openModal(

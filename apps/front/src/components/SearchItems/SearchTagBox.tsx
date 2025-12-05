@@ -1,42 +1,64 @@
+'use client';
+
+import { useState } from 'react';
+
 import EmploymentTypesInput from './Fields/EmploymentTypes';
 import ExperienceInput from './Fields/Experience';
 import LanguagesInput from './Fields/Languages';
-import OrderFields from './Fields/SortingFields';
+import SortingFields from './Fields/SortingFields';
 import SalarySlider from './Fields/SalarySlider';
 import SeniorityInput from './Fields/Seniority';
 import SkillsInput from './Fields/Skills';
 import WorkFormatsInput from './Fields/WorkFormats';
+import HoveredItem from '../HoveredItem/HoveredItem';
 
 import classes from './SearchVacancies.module.css';
-import { useState } from 'react';
+import ApplicationStatus from './Fields/ApplicationStatus';
 
-export default function VacanciesTagBox() {
-  const [moreFilters, setMoreFilters] = useState<boolean>(false);
+interface Props {
+  type?: 'vacancies' | 'jobSeekers' | 'applications';
+}
+
+export default function SearchTagBox({ type = 'vacancies' }: Props) {
+  const [moreFilters, setMoreFilters] = useState<boolean>(
+    type === 'jobSeekers' ? true : false
+  );
 
   return (
     <div className={classes['tag-box']}>
       <h3>Add filters:</h3>
-      <SalarySlider />
-      <ExperienceInput />
-      <SeniorityInput />
-      <WorkFormatsInput />
-      <EmploymentTypesInput />
-      {moreFilters && (
+      {type === 'vacancies' && (
         <>
-          <LanguagesInput />
-          <SkillsInput />
-          <h3>Add sorting:</h3>
-          <OrderFields />
+          <SalarySlider />
+          <ExperienceInput />
+          <SeniorityInput />
+          <WorkFormatsInput />
+          <EmploymentTypesInput />
         </>
       )}
-
-      <button
-        className={classes['more-btn']}
-        type="button"
-        onClick={() => setMoreFilters((prev) => !prev)}
-      >
-        {moreFilters ? 'Less filters' : 'More filters...'}
-      </button>
+      {moreFilters && (
+        <>
+          <LanguagesInput type={type} />
+          <SkillsInput type={type} />
+          <h3>Add sorting:</h3>
+          <SortingFields type={'jobSeekers'} />
+        </>
+      )}
+      {type === 'vacancies' && (
+        <button
+          className={classes['more-btn']}
+          type="button"
+          onClick={() => setMoreFilters((prev) => !prev)}
+        >
+          {moreFilters ? 'Less filters' : 'More filters...'}
+        </button>
+      )}
+      {type === 'applications' && <ApplicationStatus />}
+      {type !== 'vacancies' && (
+        <button type="submit" className={classes['tags-search-btn']}>
+          <HoveredItem>Search</HoveredItem>
+        </button>
+      )}
     </div>
   );
 }

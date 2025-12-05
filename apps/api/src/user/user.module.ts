@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
-import { UserController } from './user.controller';
+import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
+import { UserController } from './controllers/user.controller';
 import { SessionModule } from '../session/session.module';
 import { TokenModule } from '../token/token.module';
 import { EmailModule } from '../email/email.module';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './services/auth.service';
 import { SessionAuthGuard } from './guards/session-auth.guard';
 
 @Module({

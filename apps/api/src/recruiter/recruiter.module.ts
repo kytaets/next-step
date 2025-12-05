@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { RecruiterController } from './recruiter.controller';
-import { RecruiterService } from './recruiter.service';
-import { RecruiterRepository } from './recruiter.repository';
-import { TokenModule } from '../token/token.module';
+import { RecruiterController } from './controllers/recruiter.controller';
+import { RecruiterService } from './services/recruiter.service';
+import { RecruiterRepository } from './repositories/recruiter.repository';
 import { RecruiterGuard } from './guards/recruiter.guard';
 import { RecruiterWithoutCompanyGuard } from './guards/recruiter-without-company.guard';
 import { RecruiterWithCompanyGuard } from './guards/recruiter-with-company.guard';
@@ -11,7 +10,7 @@ import { SessionModule } from '../session/session.module';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TokenModule, SessionModule, UserModule],
+  imports: [SessionModule, UserModule],
   controllers: [RecruiterController],
   providers: [
     RecruiterService,

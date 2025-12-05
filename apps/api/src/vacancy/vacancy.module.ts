@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { VacancyController } from './vacancy.controller';
-import { VacancyService } from './vacancy.service';
-import { VacancyRepository } from './vacancy.repository';
+import { VacancyController } from './controllers/vacancy.controller';
+import { VacancyService } from './services/vacancy.service';
+import { VacancyRepository } from './repositories/vacancy.repository';
 import { CompanyModule } from '../company/company.module';
 import { LanguageModule } from '../language/language.module';
 import { SkillModule } from '../skill/skill.module';

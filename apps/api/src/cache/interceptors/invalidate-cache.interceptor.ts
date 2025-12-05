@@ -5,7 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { CacheService } from '../cache.service';
+import { CacheService } from '../services/cache.service';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()

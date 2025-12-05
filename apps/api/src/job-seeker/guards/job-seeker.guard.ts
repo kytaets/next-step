@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JobSeekerService } from '../services/job-seeker.service';
 import { RequestWithJobSeeker } from '../types/request-with-job-seeker.type';
-import { RequestWithUser } from '../../user/types/request-with-user.type';
+import { RequestWithUser } from '@common/requests/request-with-user.type';
 
 @Injectable()
 export class JobSeekerGuard implements CanActivate {

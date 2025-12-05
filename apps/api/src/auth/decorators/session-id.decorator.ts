@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { RequestWithSessionId } from '../types/request-with-session-id.type';
+import { RequestWithSessionId } from '@common/requests/request-with-session-id.type';
 
 export const SessionId = createParamDecorator(
   (_data: unknown, context: ExecutionContext): string => {

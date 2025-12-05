@@ -12,11 +12,11 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { SessionAuthGuard } from '../../auth/guards/session-auth.guard';
 import { JobSeekerGuard } from '../guards/job-seeker.guard';
 import { JobSeekerService } from '../services/job-seeker.service';
 import { CreateJobSeekerDto } from '../dto/create-job-seeker.dto';
-import { CurrentUser } from '../../user/decorators/current-user.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 import { UpdateJobSeekerDto } from '../dto/update-job-seeker.dto';
 import { FindManyJobSeekersDto } from '../dto/find-many-job-seekers.dto';

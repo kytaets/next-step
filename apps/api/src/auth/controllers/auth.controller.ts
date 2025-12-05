@@ -18,7 +18,7 @@ import { SessionId } from '../decorators/session-id.decorator';
 import { SessionAuthGuard } from '../guards/session-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import { UserWithoutPassword } from '../types/user-without-password.type';
+import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 import { UserAgent } from '../decorators/user-agent.decorator';
 import { MessageResponse } from '@common/responses';
 import { ResetPasswordDto } from '../dto/reset-password.dto';

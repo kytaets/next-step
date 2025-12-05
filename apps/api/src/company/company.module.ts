@@ -5,12 +5,12 @@ import { CompanyRepository } from './repositories/company.repository';
 import { EmailModule } from '../email/email.module';
 import { TokenModule } from '../token/token.module';
 import { RecruiterModule } from '../recruiter/recruiter.module';
-import { UserModule } from '../user/user.module';
 import { SessionModule } from '../session/session.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    UserModule,
+    AuthModule,
     SessionModule,
     EmailModule,
     TokenModule,

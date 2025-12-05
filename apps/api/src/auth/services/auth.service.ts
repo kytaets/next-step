@@ -4,9 +4,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from '../../user/services/user.service';
 import { RegisterDto } from '../dto/register.dto';
-import { UserWithoutPassword } from '../types/user-without-password.type';
+import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 import * as argon2 from 'argon2';
 import { LoginDto } from '../dto/login.dto';
 import { SessionService } from '../../session/services/session.service';

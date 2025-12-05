@@ -69,18 +69,33 @@ describe('UserController (e2e)', () => {
           expect(resBody).not.toHaveProperty('password');
         });
     });
+
+    it('should return 401 if the user is not authenticated', async () => {
+      return request(server).get(url).expect(401);
+    });
   });
 
   describe('DELETE /users/me', () => {
     const url = '/api/users/me';
 
     it('should delete the authenticated user', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       return request(server)
         .delete(url)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200);
+        .expect(200)
+        .then(async () => {
+          const deletedUser = await prisma.user.findUnique({
+            where: { id: user.id },
+          });
+
+          expect(deletedUser).toBeNull();
+        });
+    });
+
+    it('should return 401 if the user is not authenticated', async () => {
+      return request(server).get(url).expect(401);
     });
   });
 });

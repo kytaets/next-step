@@ -8,6 +8,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateSkillDto } from '../src/skill/dto/create-skill.dto';
 import { randomUUID } from 'node:crypto';
+import { Skill } from '@prisma/client';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
@@ -108,11 +109,17 @@ describe('SkillController (e2e)', () => {
         .post(url)
         .send(body)
         .expect(201)
-        .then((res) => {
-          expect(res.body).toEqual({
+        .then(async (res) => {
+          const resBody = res.body as Skill;
+          expect(resBody).toEqual({
             id: expect.any(String) as unknown as string,
             name: body.name,
           });
+
+          const skill = await prisma.skill.findUnique({
+            where: { id: resBody.id },
+          });
+          expect(skill).not.toBeNull();
         });
     });
 
@@ -138,7 +145,16 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(server).delete(`${url}/${skill.id}`).expect(200);
+      return request(server)
+        .delete(`${url}/${skill.id}`)
+        .expect(200)
+        .then(async () => {
+          const deletedSkill = await prisma.skill.findUnique({
+            where: { id: skill.id },
+          });
+
+          expect(deletedSkill).toBeNull();
+        });
     });
 
     it('should return 404 if skill does not exist', async () => {

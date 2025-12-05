@@ -309,5 +309,71 @@ describe('ApplicationController (e2e)', () => {
 
   describe('PUT /applications/:id/status', () => {
     const url = '/api/applications';
+
+    it('should update the status of an application', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {});
+      const company = await createCompany(prisma);
+
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
+
+      const vacancy = await createVacancy(prisma, company.id);
+
+      const application = await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy.id,
+      );
+
+      return request(server)
+        .put(`${url}/${application.id}/status`)
+        .set('Cookie', [`sid=${sid}`])
+        .send({ status: ApplicationStatus.ACCEPTED })
+        .expect(200)
+        .then((res) => {
+          const resBody = res.body as ApplicationWithRelations;
+
+          expect(resBody.id).toBe(application.id);
+          expect(resBody.status).toBe(ApplicationStatus.ACCEPTED);
+        });
+    });
+
+    it('should return 404 if the application does not exist', async () => {
+      const applicationId = randomUUID();
+
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const company = await createCompany(prisma);
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
+
+      return request(server)
+        .put(`${url}/${applicationId}/status`)
+        .set('Cookie', [`sid=${sid}`])
+        .send({ status: ApplicationStatus.ACCEPTED })
+        .expect(404);
+    });
+
+    it('should return 403 if application is not belong to the recruiter company vacancy', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {});
+      const company = await createCompany(prisma);
+
+      await createRecruiter(prisma, {}, user.id);
+
+      const vacancy = await createVacancy(prisma, company.id);
+      const application = await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy.id,
+      );
+
+      return request(server)
+        .put(`${url}/${application.id}/status`)
+        .set('Cookie', [`sid=${sid}`])
+        .send({ status: ApplicationStatus.ACCEPTED })
+        .expect(403);
+    });
   });
 });

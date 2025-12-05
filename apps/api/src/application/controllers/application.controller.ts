@@ -54,7 +54,7 @@ export class ApplicationController {
     return this.service.findManyByVacancyId(vacancyId, dto);
   }
 
-  @Get('job-seekers/me')
+  @Get('job-seekers/my')
   @UseGuards(SessionAuthGuard, JobSeekerGuard)
   async findMy(
     @Query() dto: FindManyApplicationsDto,

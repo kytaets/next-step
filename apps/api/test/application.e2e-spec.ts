@@ -13,6 +13,10 @@ import { createJobSeekerWithProps } from './utils/job-seeker.helper';
 import { ApplicationStatus, JobSeeker } from '@prisma/client';
 import { createApplication } from './utils/application.helper';
 import { randomUUID } from 'node:crypto';
+import { FindManyApplicationsDto } from '../src/application/dto/find-many-applications.dto';
+import { createRecruiter } from './utils/recruiter.helper';
+import { ApplicationWithRelations } from '../src/application/types/application-with-relations.type';
+import { PagedDataResponse } from '@common/responses';
 
 describe('ApplicationController (e2e)', () => {
   let app: INestApplication;
@@ -190,10 +194,68 @@ describe('ApplicationController (e2e)', () => {
 
   describe('GET /applications/vacancies/:id', () => {
     const url = '/api/applications/vacancies';
+
+    const body: FindManyApplicationsDto = {
+      status: ApplicationStatus.REJECTED,
+      page: 1,
+      take: 10,
+    };
+
+    it('should return all filtered applications for a vacancy', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker1 = await createJobSeekerWithProps(prisma, {});
+
+      const company = await createCompany(prisma);
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
+      const vacancy = await createVacancy(prisma, company.id);
+
+      const targetApplication = await createApplication(
+        prisma,
+        jobSeeker1.id,
+        vacancy.id,
+        ApplicationStatus.REJECTED,
+      );
+
+      const jobSeeker2 = await createJobSeekerWithProps(prisma, {});
+      await createApplication(prisma, jobSeeker2.id, vacancy.id);
+      const jobSeeker3 = await createJobSeekerWithProps(prisma, {});
+      await createApplication(prisma, jobSeeker3.id, vacancy.id);
+
+      return request(server)
+        .get(`${url}/${vacancy.id}`)
+        .set('Cookie', [`sid=${sid}`])
+        .query(body)
+        .expect(200)
+        .then((res) => {
+          const { data, meta } = res.body as PagedDataResponse<
+            ApplicationWithRelations[]
+          >;
+
+          expect(data).toHaveLength(1);
+          expect(data[0].id).toBe(targetApplication.id);
+          expect(meta.total).toBe(1);
+        });
+    });
+
+    it('should return 404 if the vacancy does not exist', async () => {
+      const vacancyId = randomUUID();
+
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const company = await createCompany(prisma);
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
+
+      return request(server)
+        .get(`${url}/${vacancyId}`)
+        .set('Cookie', [`sid=${sid}`])
+        .query(body)
+        .expect(404);
+    });
   });
 
-  describe('GET /applications/job-seekers/me', () => {
-    const url = '/api/applications/job-seekers/me';
+  describe('GET /applications/job-seekers/my', () => {
+    const url = '/api/applications/job-seekers/my';
   });
 
   describe('PUT /applications/:id/status', () => {

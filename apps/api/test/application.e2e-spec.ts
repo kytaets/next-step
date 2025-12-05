@@ -256,6 +256,55 @@ describe('ApplicationController (e2e)', () => {
 
   describe('GET /applications/job-seekers/my', () => {
     const url = '/api/applications/job-seekers/my';
+    const body: FindManyApplicationsDto = {
+      status: ApplicationStatus.ACCEPTED,
+      page: 1,
+      take: 10,
+    };
+
+    it('should return all filtered applications for a job seeker', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+      const company = await createCompany(prisma);
+
+      const vacancy1 = await createVacancy(prisma, company.id);
+      const vacancy2 = await createVacancy(prisma, company.id);
+      const vacancy3 = await createVacancy(prisma, company.id);
+
+      const targetApplication = await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy1.id,
+        ApplicationStatus.ACCEPTED,
+      );
+      await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy2.id,
+        ApplicationStatus.SUBMITTED,
+      );
+      await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy3.id,
+        ApplicationStatus.REJECTED,
+      );
+
+      return request(server)
+        .get(url)
+        .set('Cookie', [`sid=${sid}`])
+        .query(body)
+        .expect(200)
+        .then((res) => {
+          const { data, meta } = res.body as PagedDataResponse<
+            ApplicationWithRelations[]
+          >;
+          expect(data).toHaveLength(1);
+          expect(data[0].id).toBe(targetApplication.id);
+          expect(meta.total).toBe(1);
+        });
+    });
   });
 
   describe('PUT /applications/:id/status', () => {

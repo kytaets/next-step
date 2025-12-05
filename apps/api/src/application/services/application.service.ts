@@ -10,7 +10,6 @@ import { CreateApplicationDto } from '../dto/create-application.dto';
 import { VacancyService } from '../../vacancy/services/vacancy.service';
 import { createPaginationMeta } from '@common/utils';
 import { FindManyApplicationsDto } from '../dto/find-many-applications.dto';
-import { JobSeekerService } from '../../job-seeker/services/job-seeker.service';
 import { SetStatusDto } from '../dto/set-status.dto';
 import { PagedDataResponse } from '@common/responses';
 import { ApplicationWithRelations } from '../types/application-with-relations.type';
@@ -20,7 +19,6 @@ export class ApplicationService {
   constructor(
     private readonly repository: ApplicationRepository,
     private readonly vacancyService: VacancyService,
-    private readonly jobSeekerService: JobSeekerService,
   ) {}
 
   async create(
@@ -62,7 +60,6 @@ export class ApplicationService {
     jobSeekerId: string,
     dto: FindManyApplicationsDto,
   ): Promise<PagedDataResponse<ApplicationWithRelations[]>> {
-    await this.jobSeekerService.findOneOrThrow({ id: jobSeekerId });
     return this.search(dto, { jobSeekerId });
   }
 

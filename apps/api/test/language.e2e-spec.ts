@@ -8,6 +8,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateLanguageDto } from '../src/language/dto/create-language.dto';
 import { randomUUID } from 'node:crypto';
+import { Language } from '@prisma/client';
 
 describe('LanguageController (e2e)', () => {
   let app: INestApplication;
@@ -106,11 +107,19 @@ describe('LanguageController (e2e)', () => {
         .post(url)
         .send(body)
         .expect(201)
-        .then((res) => {
-          expect(res.body).toEqual({
+        .then(async (res) => {
+          const resBody = res.body as Language;
+
+          expect(resBody).toEqual({
             id: expect.any(String) as unknown as string,
             name: body.name,
           });
+
+          const language = await prisma.language.findUnique({
+            where: { id: resBody.id },
+          });
+
+          expect(language).not.toBeNull();
         });
     });
 
@@ -136,7 +145,16 @@ describe('LanguageController (e2e)', () => {
         },
       });
 
-      return request(server).delete(`${url}/${language.id}`).expect(200);
+      return request(server)
+        .delete(`${url}/${language.id}`)
+        .expect(200)
+        .then(async () => {
+          const deletedLanguage = await prisma.language.findUnique({
+            where: { id: language.id },
+          });
+
+          expect(deletedLanguage).toBeNull();
+        });
     });
 
     it('should return 404 if language does not exist', async () => {

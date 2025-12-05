@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/types/authForm';
 
-function isAxiosErrorWithData(error: unknown): error is {
+export function isAxiosErrorWithData(error: unknown): error is {
   response: {
     data: {
       errors?: string[];

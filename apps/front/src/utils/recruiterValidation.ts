@@ -26,7 +26,6 @@ export function validateCreateRecruiterForm(
 }
 
 export function validateInvitationForm(values: { email: string }) {
-  console.log(values);
   const errors: { email?: string } = {};
 
   const email = values.email?.trim();

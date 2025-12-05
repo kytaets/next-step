@@ -104,7 +104,6 @@ export async function editVacancy({
   return api
     .patch(`/vacancies/${id}`, data)
     .then((response) => {
-      console.log(response.data.id);
       return {
         status: 'ok',
         error: null,

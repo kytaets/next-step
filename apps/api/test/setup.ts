@@ -31,7 +31,7 @@ const waitForService = async (port: number, maxAttempts = 30) => {
     }
     await new Promise((r) => setTimeout(r, 1000));
   }
-  throw new Error(`Service on port ${port} failed to start`);
+  throw new Error(`Service on port ${port} is not available`);
 };
 
 export default async () => {

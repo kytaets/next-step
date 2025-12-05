@@ -2,7 +2,7 @@ name: test-next-step
 
 services:
   test-postgres:
-    image: postgres:latest
+    image: postgres:17-alpine
     container_name: test-postgres
     restart: always
     ports:

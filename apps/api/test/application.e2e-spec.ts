@@ -10,7 +10,7 @@ import { createAuthenticatedUser } from './utils/auth.helper';
 import { createVacancy } from './utils/vacancy.helper';
 import { createCompany } from './utils/company.helper';
 import { createJobSeekerWithProps } from './utils/job-seeker.helper';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus, JobSeeker } from '@prisma/client';
 import { createApplication } from './utils/application.helper';
 import { randomUUID } from 'node:crypto';
 
@@ -142,6 +142,50 @@ describe('ApplicationController (e2e)', () => {
 
   describe('GET /applications/:id', () => {
     const url = '/api/applications';
+
+    it('should return an application by id', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+
+      const jobSeeker = await createJobSeekerWithProps(prisma, {}, user.id);
+
+      const company = await createCompany(prisma);
+      const vacancy = await createVacancy(prisma, company.id);
+
+      const application = await createApplication(
+        prisma,
+        jobSeeker.id,
+        vacancy.id,
+      );
+
+      return request(server)
+        .get(`${url}/${application.id}`)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(200)
+        .then((res) => {
+          expect(res.body).toEqual({
+            id: application.id,
+            status: application.status,
+            coverLetter: application.coverLetter,
+            jobSeekerId: application.jobSeekerId,
+            vacancyId: application.vacancyId,
+            createdAt: application.createdAt.toISOString(),
+            updatedAt: application.updatedAt.toISOString(),
+            jobSeeker: expect.any(Object) as unknown as JobSeeker,
+          });
+        });
+    });
+
+    it('should return 404 if the application does not exist', async () => {
+      const applicationId = randomUUID();
+
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+      await createJobSeekerWithProps(prisma, {}, user.id);
+
+      return request(server)
+        .get(`${url}/${applicationId}`)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(404);
+    });
   });
 
   describe('GET /applications/vacancies/:id', () => {

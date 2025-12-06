@@ -13,9 +13,9 @@ import {
 import { RecruiterService } from '../services/recruiter.service';
 import { Recruiter } from '@prisma/client';
 import { CreateRecruiterDto } from '../dto/create-recruiter.dto';
-import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { SessionAuthGuard } from '../../auth/guards/session-auth.guard';
 import { UserWithoutPassword } from '../../user/types/user-without-password.type';
-import { CurrentUser } from '../../user/decorators/current-user.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { MessageResponse } from '@common/responses';
 import { RecruiterGuard } from '../guards/recruiter.guard';
 import { CurrentRecruiter } from '../decorators/current-recruiter.decorator';
@@ -76,7 +76,7 @@ export class RecruiterController {
   async delete(
     @CurrentRecruiter() recruiter: Recruiter,
   ): Promise<MessageResponse> {
-    await this.service.delete(recruiter.id);
+    await this.service.delete(recruiter);
     return { message: 'Recruiter deleted successfully' };
   }
 }

@@ -11,12 +11,19 @@ import * as cookieParser from 'cookie-parser';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { randomUUID } from 'node:crypto';
 import { TokenType } from '../src/token/enums/token-type.enum';
+import {
+  SESSION_PREFIX,
+  USER_SESSIONS_PREFIX,
+} from '../src/session/constants/session.constants';
+import { shouldFailWithoutAuth } from './utils/guards.helper';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let server: Server;
   let prisma: PrismaService;
   let redis: RedisService;
+
+  const baseUrl = '/api/auth';
 
   const mockEmailService = {
     sendVerificationEmail: jest.fn(),
@@ -70,8 +77,6 @@ describe('AuthController (e2e)', () => {
   };
 
   describe('POST /auth/login', () => {
-    const url = '/api/auth/login';
-
     it('should login and return sid', async () => {
       const hashedPassword = await argon2.hash(userData.password);
 
@@ -83,24 +88,26 @@ describe('AuthController (e2e)', () => {
         },
       });
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(`${baseUrl}/login`)
         .send(userData)
-        .expect(200)
-        .then(async (res) => {
-          const cookies = res.get('Set-Cookie');
-          expect(cookies).toBeDefined();
+        .expect(200);
 
-          const sidCookie = cookies!.find((cookie) => cookie.startsWith('sid'));
-          expect(sidCookie).toBeDefined();
+      const cookies = res.get('Set-Cookie');
+      expect(cookies).toBeDefined();
 
-          const rawSession = await redis.get(sidCookie!);
-          expect(rawSession).toBeDefined();
-        });
+      const sidCookie = cookies!.find((cookie) => cookie.startsWith('sid'));
+      expect(sidCookie).toBeDefined();
+
+      const rawSession = await redis.get(sidCookie!);
+      expect(rawSession).toBeDefined();
     });
 
     it('should throw 401 if the user does not exist', async () => {
-      return request(server).post(url).send(userData).expect(401);
+      return request(server)
+        .post(`${baseUrl}/login`)
+        .send(userData)
+        .expect(401);
     });
 
     it('should throw 401 if the password is incorrect', async () => {
@@ -114,10 +121,13 @@ describe('AuthController (e2e)', () => {
         },
       });
 
-      return request(server).post(url).send(userData).expect(401);
+      return request(server)
+        .post(`${baseUrl}/login`)
+        .send(userData)
+        .expect(401);
     });
 
-    it("should throw 403 if the user's email is not verified", async () => {
+    it('should throw 403 if the email is not verified', async () => {
       const hashedPassword = await argon2.hash(userData.password);
 
       await prisma.user.create({
@@ -127,15 +137,22 @@ describe('AuthController (e2e)', () => {
         },
       });
 
-      return request(server).post(url).send(userData).expect(403);
+      return request(server)
+        .post(`${baseUrl}/login`)
+        .send(userData)
+        .expect(403);
     });
   });
 
   describe('POST /auth/register', () => {
-    const url = '/api/auth/register';
-
     it('should register the user and send verification letter', async () => {
-      await request(server).post(url).send(userData).expect(201);
+      await request(server)
+        .post(`${baseUrl}/register`)
+        .send(userData)
+        .expect(201);
+
+      const keys = await redis.keys(`${TokenType.VERIFY}*`);
+      expect(keys).toHaveLength(1);
 
       expect(mockEmailService.sendVerificationEmail).toHaveBeenCalledWith(
         userData.email,
@@ -153,73 +170,83 @@ describe('AuthController (e2e)', () => {
         },
       });
 
-      return request(server).post(url).send(userData).expect(400);
+      return request(server)
+        .post(`${baseUrl}/register`)
+        .send(userData)
+        .expect(400);
     });
   });
 
   describe('POST /auth/logout', () => {
-    const url = '/api/auth/logout';
-
     it('should logout the user', async () => {
       const { sid } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(`${baseUrl}/logout`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then((res) => {
-          expect(res.get('Set-Cookie')).not.toContain(`sid=${sid}`);
-        });
+        .expect(200);
+
+      expect(res.get('Set-Cookie')).not.toContain(`sid=${sid}`);
+
+      const session = await redis.get(`${SESSION_PREFIX}${sid}`);
+      expect(session).toBeNull();
     });
+
+    shouldFailWithoutAuth(() => server, 'post', `${baseUrl}/logout`);
   });
 
   describe('POST /auth/logout-all', () => {
-    const url = '/api/auth/logout-all';
-
     it('should logout the user from all sessions', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(`${baseUrl}/logout-all`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then((res) => {
-          expect(res.get('Set-Cookie')).not.toContain(`sid=${sid}`);
-        });
+        .expect(200);
+
+      expect(res.get('Set-Cookie')).not.toContain(`sid=${sid}`);
+
+      const session = await redis.get(`${SESSION_PREFIX}${sid}`);
+      expect(session).toBeNull();
+
+      const sessions = await redis.zrange(
+        `${USER_SESSIONS_PREFIX}${user.id}`,
+        0,
+        -1,
+      );
+
+      expect(sessions).toHaveLength(0);
     });
+
+    shouldFailWithoutAuth(() => server, 'post', `${baseUrl}/logout-all`);
   });
 
   describe('GET /auth/sessions', () => {
-    const url = '/api/auth/sessions';
-
-    it("should get the user's sessions", async () => {
+    it('should get user sessions', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .get(url)
+      const res = await request(server)
+        .get(`${baseUrl}/sessions`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toHaveLength(1);
+        .expect(200);
 
-          expect(res.body).toEqual(
-            expect.arrayContaining([
-              expect.objectContaining({
-                sid: sid,
-                userId: user.id,
-                ua: 'TestAgent',
-                ip: '127.0.0.1',
-              }),
-            ]),
-          );
-        });
+      expect(res.body).toHaveLength(1);
+
+      expect(res.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            sid: sid,
+            userId: user.id,
+          }),
+        ]),
+      );
     });
+
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/sessions`);
   });
 
   describe('GET /auth/verify', () => {
-    const url = '/api/auth/verify';
-
-    it("should verify the user's email", async () => {
+    it('should verify the email', async () => {
       const hashedPassword = await argon2.hash(userData.password);
 
       const user = await prisma.user.create({
@@ -234,19 +261,31 @@ describe('AuthController (e2e)', () => {
 
       await redis.setex(`${TokenType.VERIFY}:${verifyToken}`, 3000, payload);
 
-      return request(server).get(url).query(`token=${verifyToken}`).expect(200);
+      await request(server)
+        .get(`${baseUrl}/verify`)
+        .query(`token=${verifyToken}`)
+        .expect(200);
+
+      const verifiedUser = await prisma.user.findUnique({
+        where: { email: userData.email },
+      });
+      expect(verifiedUser).not.toBeNull();
+      expect(verifiedUser).toMatchObject({
+        isEmailVerified: true,
+      });
     });
 
     it('should throw 400 if the token is invalid', async () => {
       const verifyToken = randomUUID();
 
-      return request(server).get(url).query(`token=${verifyToken}`).expect(400);
+      return request(server)
+        .get(`${baseUrl}/verify`)
+        .query(`token=${verifyToken}`)
+        .expect(400);
     });
   });
 
   describe('POST /auth/verify/resend', () => {
-    const url = '/api/auth/verify/resend';
-
     it('should resend verification letter', async () => {
       const hashedPassword = await argon2.hash(userData.password);
 
@@ -258,9 +297,12 @@ describe('AuthController (e2e)', () => {
       });
 
       await request(server)
-        .post(url)
+        .post(`${baseUrl}/verify/resend`)
         .send({ email: userData.email })
         .expect(200);
+
+      const keys = await redis.keys(`${TokenType.VERIFY}*`);
+      expect(keys).toHaveLength(1);
 
       expect(mockEmailService.sendVerificationEmail).toHaveBeenCalledWith(
         userData.email,
@@ -270,7 +312,7 @@ describe('AuthController (e2e)', () => {
 
     it('should throw 404 if the user does not exist', async () => {
       return request(server)
-        .post(url)
+        .post(`${baseUrl}/verify/resend`)
         .send({ email: userData.email })
         .expect(404);
     });
@@ -287,15 +329,13 @@ describe('AuthController (e2e)', () => {
       });
 
       return request(server)
-        .post(url)
+        .post(`${baseUrl}/verify/resend`)
         .send({ email: userData.email })
         .expect(400);
     });
   });
 
   describe('POST /auth/forgot-password', () => {
-    const url = '/api/auth/forgot-password';
-
     it('should send reset password letter', async () => {
       const hashedPassword = await argon2.hash(userData.password);
 
@@ -308,9 +348,12 @@ describe('AuthController (e2e)', () => {
       });
 
       await request(server)
-        .post(url)
+        .post(`${baseUrl}/forgot-password`)
         .send({ email: userData.email })
         .expect(200);
+
+      const keys = await redis.keys(`${TokenType.RESET}*`);
+      expect(keys).toHaveLength(1);
 
       expect(mockEmailService.sendResetPasswordEmail).toHaveBeenCalledWith(
         userData.email,
@@ -319,15 +362,15 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should throw 404 if the user does not exist', async () => {
-      await request(server)
-        .post(url)
+      return request(server)
+        .post(`${baseUrl}/forgot-password`)
         .send({ email: userData.email })
         .expect(404);
     });
   });
 
   describe('POST /auth/reset-password', () => {
-    const url = '/api/auth/reset-password';
+    const newPassword = 'newPassword';
 
     it('should reset password', async () => {
       const hashedPassword = await argon2.hash(userData.password);
@@ -345,18 +388,28 @@ describe('AuthController (e2e)', () => {
 
       await redis.setex(`${TokenType.RESET}:${resetToken}`, 3000, data);
 
-      return request(server)
-        .post(url)
-        .send({ token: resetToken, password: 'newPassword' })
+      await request(server)
+        .post(`${baseUrl}/reset-password`)
+        .send({ token: resetToken, password: newPassword })
         .expect(200);
+
+      const updatedUser = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      });
+      expect(updatedUser).not.toBeNull();
+      expect(await argon2.verify(updatedUser!.password, newPassword)).toBe(
+        true,
+      );
     });
 
     it('should throw 400 if the token is invalid', async () => {
       const resetToken = randomUUID();
 
       return request(server)
-        .post(url)
-        .send({ token: resetToken, password: 'newPassword' })
+        .post(`${baseUrl}/reset-password`)
+        .send({ token: resetToken, password: newPassword })
         .expect(400);
     });
   });

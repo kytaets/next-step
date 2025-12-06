@@ -66,7 +66,10 @@ export class RecruiterService {
     return this.repository.findMany(dto);
   }
 
-  async delete(id: string): Promise<Recruiter> {
-    return this.repository.delete({ id });
+  async delete(recruiter: Recruiter): Promise<Recruiter> {
+    if (recruiter.companyId) {
+      await this.leaveCompany(recruiter);
+    }
+    return this.repository.delete({ id: recruiter.id });
   }
 }

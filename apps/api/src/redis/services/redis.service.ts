@@ -53,6 +53,10 @@ export class RedisService implements OnModuleDestroy {
     await this.redis.flushall();
   }
 
+  async keys(pattern: string): Promise<string[]> {
+    return this.redis.keys(pattern);
+  }
+
   pipeline(): ChainableCommander {
     return this.redis.pipeline();
   }

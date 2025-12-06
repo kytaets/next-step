@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { VacancyService } from '../services/vacancy.service';
 import { CreateVacancyDto } from '../dto/create-vacancy.dto';
-import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { SessionAuthGuard } from '../../auth/guards/session-auth.guard';
 import { MessageResponse, PagedDataResponse } from '@common/responses';
 import { UpdateVacancyDto } from '../dto/update-vacancy.dto';
 import { FindManyVacanciesDto } from '../dto/find-many-vacancies.dto';
@@ -39,19 +39,19 @@ export class VacancyController {
     return this.service.create(recruiter.companyId, dto);
   }
 
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<VacancyWithRelations> {
+    return this.service.findOneOrThrow({ id });
+  }
+
   @Post('search')
   @HttpCode(HttpStatus.OK)
   async findMany(
     @Body() dto: FindManyVacanciesDto,
   ): Promise<PagedDataResponse<VacancyWithRelations[]>> {
     return this.service.findMany(dto);
-  }
-
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<VacancyWithRelations> {
-    return this.service.findOneOrThrow({ id });
   }
 
   @Patch(':id')

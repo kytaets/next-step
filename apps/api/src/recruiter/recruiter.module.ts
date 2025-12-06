@@ -7,10 +7,10 @@ import { RecruiterWithoutCompanyGuard } from './guards/recruiter-without-company
 import { RecruiterWithCompanyGuard } from './guards/recruiter-with-company.guard';
 import { RecruiterAdminGuard } from './guards/recruiter-admin.guard';
 import { SessionModule } from '../session/session.module';
-import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [SessionModule, UserModule],
+  imports: [SessionModule, AuthModule],
   controllers: [RecruiterController],
   providers: [
     RecruiterService,

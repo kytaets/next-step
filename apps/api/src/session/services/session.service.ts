@@ -126,6 +126,6 @@ export class SessionService {
 
   private readonly k = {
     session: (sid: string) => `${SESSION_PREFIX}${sid}`,
-    userSessions: (userId: string) => `${USER_SESSIONS_PREFIX}:${userId}`,
+    userSessions: (userId: string) => `${USER_SESSIONS_PREFIX}${userId}`,
   };
 }

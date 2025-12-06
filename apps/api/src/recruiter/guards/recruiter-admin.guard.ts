@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { RecruiterService } from '../services/recruiter.service';
-import { RequestWithUser } from '../../user/types/request-with-user.type';
+import { RequestWithUser } from '@common/requests/request-with-user.type';
 import { RecruiterWithCompanyRequest } from '../types/recruiter-with-company-request.type';
 
 @Injectable()

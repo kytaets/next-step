@@ -20,7 +20,7 @@ services:
       - test-network
 
   test-redis:
-    image: redis:latest
+    image: redis:6-alpine
     container_name: test-redis
     restart: always
     ports:

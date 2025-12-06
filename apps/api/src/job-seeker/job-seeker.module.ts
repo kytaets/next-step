@@ -6,10 +6,10 @@ import { SkillModule } from '../skill/skill.module';
 import { LanguageModule } from '../language/language.module';
 import { JobSeekerRepository } from './repositories/job-seeker.repository';
 import { SessionModule } from '../session/session.module';
-import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [SkillModule, UserModule, SessionModule, LanguageModule],
+  imports: [SkillModule, AuthModule, SessionModule, LanguageModule],
   controllers: [JobSeekerController],
   providers: [JobSeekerService, JobSeekerGuard, JobSeekerRepository],
   exports: [JobSeekerService, JobSeekerGuard],

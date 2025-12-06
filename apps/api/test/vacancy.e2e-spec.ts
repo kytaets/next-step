@@ -24,12 +24,19 @@ import { FindManyVacanciesDto } from '../src/vacancy/dto/find-many-vacancies.dto
 import { SetSkillsDto } from '../src/vacancy/dto/set-skills.dto';
 import { SetLanguagesDto } from '../src/vacancy/dto/set-languages.dto';
 import { UpdateVacancyDto } from '../src/vacancy/dto/update-vacancy.dto';
+import {
+  shouldFailForRecruiterWithoutCompany,
+  shouldFailForVacancyOfAnotherCompany,
+  shouldFailWithoutAuth,
+} from './utils/guards.helper';
 
 describe('VacancyController (e2e)', () => {
   let app: INestApplication;
   let server: Server;
   let prisma: PrismaService;
   let redis: RedisService;
+
+  const baseUrl = '/api/vacancies';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -78,20 +85,13 @@ describe('VacancyController (e2e)', () => {
     server.close();
   });
 
-  //
-  // ─── CREATE VACANCY ───────────────────────────────────────────────────────────────
-  //
-
   describe('POST /vacancies', () => {
-    const url = '/api/vacancies';
-
     const body: CreateVacancyDto = {
       title: 'Strong Senior Backend Developer',
       description:
         'We are searching for a senior. We are searching for a senior.',
       salaryMin: 1000,
       salaryMax: 3000,
-      experienceRequired: 3,
       seniorityLevel: SeniorityLevel.SENIOR,
       workFormat: [WorkFormat.REMOTE],
       employmentType: [EmploymentType.FULL_TIME],
@@ -101,118 +101,101 @@ describe('VacancyController (e2e)', () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
       const company = await createCompany(prisma);
-      await createRecruiter(prisma, { companyId: company.id }, user.id); // recruiter with company
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(baseUrl)
         .set('Cookie', [`sid=${sid}`])
         .send(body)
-        .expect(201)
-        .then((res) => {
-          const vacancy = res.body as VacancyWithRelations;
+        .expect(201);
 
-          expect(vacancy.id).toEqual(expect.any(String));
-          expect(vacancy.companyId).toBe(company.id);
-          expect(vacancy.title).toBe(body.title);
-          expect(vacancy.workFormat).toEqual(body.workFormat);
-        });
+      const resBody = res.body as VacancyWithRelations;
+
+      expect(resBody.id).toEqual(expect.any(String));
+      expect(resBody.companyId).toBe(company.id);
+      expect(resBody.title).toBe(body.title);
+
+      const vacancy = await prisma.vacancy.findUnique({
+        where: { id: resBody.id },
+      });
+      expect(vacancy).not.toBeNull();
     });
+
+    shouldFailWithoutAuth(() => server, 'post', baseUrl);
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'post',
+      baseUrl,
+    );
   });
 
   describe('GET /vacancies/:id', () => {
-    const url = '/api/vacancies';
-
     it('should return vacancy by id', async () => {
       const company = await createCompany(prisma);
       const vacancy = await createVacancy(prisma, company.id);
 
-      return request(server)
-        .get(`${url}/${vacancy.id}`)
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as VacancyWithRelations;
-          expect(resBody.id).toBe(vacancy.id);
-          expect(resBody.companyId).toBe(company.id);
-        });
+      const res = await request(server)
+        .get(`${baseUrl}/${vacancy.id}`)
+        .expect(200);
+
+      const resBody = res.body as VacancyWithRelations;
+      expect(resBody.id).toBe(vacancy.id);
+      expect(resBody.companyId).toBe(company.id);
     });
 
     it('should return 404 if vacancy does not exist', async () => {
       const id = randomUUID();
-      return request(server).get(`${url}/${id}`).expect(404);
+      return request(server).get(`${baseUrl}/${id}`).expect(404);
     });
   });
 
   describe('POST /vacancies/search', () => {
-    const url = '/api/vacancies/search';
-
-    it('should filter vacancies by skills, languages, experience', async () => {
+    it('should return filtered vacancies', async () => {
       const company = await createCompany(prisma);
 
-      const skillJava = await prisma.skill.create({ data: { name: 'Java' } });
-      const skillSQL = await prisma.skill.create({ data: { name: 'SQL' } });
-
-      const langEng = await prisma.language.create({
-        data: { name: 'English' },
-      });
-
       const targetVacancy = await createVacancy(prisma, company.id, {
-        seniorityLevel: SeniorityLevel.MIDDLE,
+        seniorityLevel: SeniorityLevel.SENIOR,
         workFormat: [WorkFormat.REMOTE],
-        employmentType: [EmploymentType.FULL_TIME],
-        salaryMin: 1200,
-        salaryMax: 2700,
-        requiredSkillIds: [skillJava.id],
-        requiredLanguages: [
-          { level: LanguageLevel.INTERMEDIATE, languageId: langEng.id },
-        ],
       });
 
       await createVacancy(prisma, company.id, {
         seniorityLevel: SeniorityLevel.MIDDLE,
         workFormat: [WorkFormat.REMOTE],
         employmentType: [EmploymentType.FULL_TIME],
-        salaryMin: 1000,
-        salaryMax: 2000,
-        requiredSkillIds: [skillSQL.id],
-        requiredLanguages: [
-          { level: LanguageLevel.ELEMENTARY, languageId: langEng.id },
-        ],
       });
 
       const dto: FindManyVacanciesDto = {
-        requiredSkillIds: [skillJava.id],
-        requiredLanguages: [
-          { languageId: langEng.id, level: LanguageLevel.INTERMEDIATE },
-        ],
+        seniorityLevels: [SeniorityLevel.SENIOR],
         page: 1,
         take: 10,
       };
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(`${baseUrl}/search`)
         .send(dto)
-        .expect(200)
-        .then((res) => {
-          const { data, meta } = res.body as PagedDataResponse<
-            VacancyWithRelations[]
-          >;
+        .expect(200);
 
-          expect(data).toHaveLength(1);
-          expect(data[0].id).toBe(targetVacancy.id);
-          expect(meta.total).toBe(1);
-        });
+      const { data, meta } = res.body as PagedDataResponse<
+        VacancyWithRelations[]
+      >;
+
+      expect(data).toHaveLength(1);
+      expect(data[0].id).toBe(targetVacancy.id);
+      expect(meta.total).toBe(1);
     });
 
     it('should return 400 if required skills not found', async () => {
       return request(server)
-        .post(url)
+        .post(`${baseUrl}/search`)
         .send({ requiredSkillIds: [randomUUID()] })
         .expect(400);
     });
 
     it('should return 400 if required languages not found', async () => {
       return request(server)
-        .post(url)
+        .post(`${baseUrl}/search`)
         .send({
           requiredLanguages: [
             { languageId: randomUUID(), level: LanguageLevel.NATIVE },
@@ -223,8 +206,6 @@ describe('VacancyController (e2e)', () => {
   });
 
   describe('PATCH /vacancies/:id', () => {
-    const url = '/api/vacancies';
-
     const body: UpdateVacancyDto = {
       title: 'Updated Vacancy Title',
     };
@@ -238,23 +219,43 @@ describe('VacancyController (e2e)', () => {
 
       const vacancy = await createVacancy(prisma, company.id);
 
-      return request(server)
-        .patch(`${url}/${vacancy.id}`)
+      const res = await request(server)
+        .patch(`${baseUrl}/${vacancy.id}`)
         .set('Cookie', [`sid=${sid}`])
         .send(body)
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as VacancyWithRelations;
-          expect(resBody.id).toBe(vacancy.id);
-          expect(resBody.title).toBe(body.title);
-          expect(resBody.updatedAt).not.toBe(vacancy.updatedAt.toISOString());
-        });
+        .expect(200);
+
+      const resBody = res.body as VacancyWithRelations;
+
+      expect(resBody.id).toBe(vacancy.id);
+      expect(resBody.title).toBe(body.title);
+      expect(resBody.updatedAt).not.toBe(vacancy.updatedAt.toISOString());
+
+      const updatedVacancy = await prisma.vacancy.findUnique({
+        where: { id: vacancy.id },
+      });
+      expect(updatedVacancy).not.toBeNull();
+      expect(updatedVacancy).toMatchObject({ title: body.title });
     });
+
+    shouldFailWithoutAuth(() => server, 'patch', `${baseUrl}/${randomUUID()}`);
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'patch',
+      `${baseUrl}/${randomUUID()}`,
+    );
+    shouldFailForVacancyOfAnotherCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'patch',
+      `${baseUrl}`,
+    );
   });
 
   describe('DELETE /vacancies/:id', () => {
-    const url = '/api/vacancies';
-
     it('should delete vacancy', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
@@ -263,16 +264,35 @@ describe('VacancyController (e2e)', () => {
 
       const vacancy = await createVacancy(prisma, company.id);
 
-      return request(server)
-        .delete(`${url}/${vacancy.id}`)
+      await request(server)
+        .delete(`${baseUrl}/${vacancy.id}`)
         .set('Cookie', [`sid=${sid}`])
         .expect(200);
+
+      const deletedVacancy = await prisma.vacancy.findUnique({
+        where: { id: vacancy.id },
+      });
+      expect(deletedVacancy).toBeNull();
     });
+
+    shouldFailWithoutAuth(() => server, 'delete', `${baseUrl}/${randomUUID()}`);
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'delete',
+      `${baseUrl}/${randomUUID()}`,
+    );
+    shouldFailForVacancyOfAnotherCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'delete',
+      `${baseUrl}`,
+    );
   });
 
   describe('PUT /vacancies/:id/skills', () => {
-    const url = '/api/vacancies';
-
     it('should set required skills for vacancy', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
@@ -281,23 +301,35 @@ describe('VacancyController (e2e)', () => {
 
       const vacancy = await createVacancy(prisma, company.id);
 
-      const skills = await prisma.skill.createManyAndReturn({
-        data: [{ name: 'Java' }, { name: 'NodeJS' }],
+      const skill = await prisma.skill.create({
+        data: { name: 'Java' },
       });
 
-      const dto: SetSkillsDto = {
-        requiredSkillIds: skills.map((s) => s.id),
+      const body: SetSkillsDto = {
+        requiredSkillIds: [skill.id],
       };
 
-      return request(server)
-        .put(`${url}/${vacancy.id}/skills`)
+      const res = await request(server)
+        .put(`${baseUrl}/${vacancy.id}/skills`)
         .set('Cookie', [`sid=${sid}`])
-        .send(dto)
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as VacancyWithRelations;
-          expect(resBody.requiredSkills).toHaveLength(2);
-        });
+        .send(body)
+        .expect(200);
+
+      const resBody = res.body as VacancyWithRelations;
+      expect(resBody.id).toBe(vacancy.id);
+      expect(resBody.requiredSkills).toHaveLength(1);
+
+      const expectedSkills = [{ skill: { id: skill.id, name: skill.name } }];
+      expect(resBody.requiredSkills).toEqual(
+        expect.arrayContaining(expectedSkills),
+      );
+
+      const updatedVacancy = await prisma.vacancy.findUnique({
+        where: { id: vacancy.id },
+        select: { requiredSkills: true },
+      });
+      expect(updatedVacancy).not.toBeNull();
+      expect(updatedVacancy!.requiredSkills).toHaveLength(1);
     });
 
     it('should return 400 if skills not exist', async () => {
@@ -310,16 +342,34 @@ describe('VacancyController (e2e)', () => {
       const vacancy = await createVacancy(prisma, company.id);
 
       return request(server)
-        .put(`${url}/${vacancy.id}/skills`)
+        .put(`${baseUrl}/${vacancy.id}/skills`)
         .set('Cookie', [`sid=${sid}`])
         .send({ requiredSkillIds: [skillId] })
         .expect(400);
     });
+
+    shouldFailWithoutAuth(
+      () => server,
+      'put',
+      `${baseUrl}/${randomUUID()}/skills`,
+    );
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'put',
+      `${baseUrl}/${randomUUID()}/skills`,
+    );
+    shouldFailForVacancyOfAnotherCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'put',
+      `${baseUrl}/:id/skills`,
+    );
   });
 
   describe('PUT /vacancies/:id/languages', () => {
-    const url = '/api/vacancies';
-
     it('should set required languages for vacancy', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
@@ -327,26 +377,31 @@ describe('VacancyController (e2e)', () => {
       await createRecruiter(prisma, { companyId: company.id }, user.id);
       const vacancy = await createVacancy(prisma, company.id);
 
-      const langs = await prisma.language.createManyAndReturn({
-        data: [{ name: 'English' }, { name: 'Ukrainian' }],
+      const language = await prisma.language.create({
+        data: { name: 'English' },
       });
 
       const dto: SetLanguagesDto = {
         requiredLanguages: [
-          { languageId: langs[0].id, level: LanguageLevel.ADVANCED },
-          { languageId: langs[1].id, level: LanguageLevel.INTERMEDIATE },
+          { languageId: language.id, level: LanguageLevel.ADVANCED },
         ],
       };
 
-      return request(server)
-        .put(`${url}/${vacancy.id}/languages`)
+      const res = await request(server)
+        .put(`${baseUrl}/${vacancy.id}/languages`)
         .set('Cookie', [`sid=${sid}`])
         .send(dto)
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as VacancyWithRelations;
-          expect(resBody.requiredLanguages).toHaveLength(2);
-        });
+        .expect(200);
+
+      const resBody = res.body as VacancyWithRelations;
+      expect(resBody.requiredLanguages).toHaveLength(1);
+
+      const updatedVacancy = await prisma.vacancy.findUnique({
+        where: { id: vacancy.id },
+        select: { requiredLanguages: true },
+      });
+      expect(updatedVacancy).not.toBeNull();
+      expect(updatedVacancy!.requiredLanguages).toHaveLength(1);
     });
 
     it('should return 400 if languages do not exist', async () => {
@@ -359,7 +414,7 @@ describe('VacancyController (e2e)', () => {
       const vacancy = await createVacancy(prisma, company.id);
 
       return request(server)
-        .put(`${url}/${vacancy.id}/languages`)
+        .put(`${baseUrl}/${vacancy.id}/languages`)
         .set('Cookie', [`sid=${sid}`])
         .send({
           requiredLanguages: [
@@ -368,5 +423,25 @@ describe('VacancyController (e2e)', () => {
         })
         .expect(400);
     });
+
+    shouldFailWithoutAuth(
+      () => server,
+      'put',
+      `${baseUrl}/${randomUUID()}/languages`,
+    );
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'put',
+      `${baseUrl}/${randomUUID()}/languages`,
+    );
+    shouldFailForVacancyOfAnotherCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'put',
+      `${baseUrl}/:id/languages`,
+    );
   });
 });

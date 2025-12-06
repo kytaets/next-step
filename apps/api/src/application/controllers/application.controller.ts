@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApplicationService } from '../services/application.service';
 import { CurrentJobSeeker } from '../../job-seeker/decorators/current-job-seeker.decorator';
-import { SessionAuthGuard } from '../../user/guards/session-auth.guard';
+import { SessionAuthGuard } from '../../auth/guards/session-auth.guard';
 import { JobSeekerGuard } from '../../job-seeker/guards/job-seeker.guard';
 import { CreateApplicationDto } from '../dto/create-application.dto';
 import { FindManyApplicationsDto } from '../dto/find-many-applications.dto';

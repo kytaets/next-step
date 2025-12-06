@@ -8,12 +8,15 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { CreateSkillDto } from '../src/skill/dto/create-skill.dto';
 import { randomUUID } from 'node:crypto';
+import { Skill } from '@prisma/client';
 
 describe('SkillController (e2e)', () => {
   let app: INestApplication;
   let server: Server;
   let prisma: PrismaService;
   let redis: RedisService;
+
+  const baseUrl = '/api/skills';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,25 +56,19 @@ describe('SkillController (e2e)', () => {
   });
 
   describe('GET /skills', () => {
-    const url = '/api/skills';
-
     it('should return all skills', async () => {
       const skills = await prisma.skill.createManyAndReturn({
         data: [{ name: 'React' }, { name: 'Vue.js' }, { name: 'Angular' }],
       });
 
-      return request(server)
-        .get(url)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toHaveLength(skills.length);
-          expect(res.body).toEqual(expect.arrayContaining(skills));
-        });
+      const res = await request(server).get(baseUrl).expect(200);
+
+      expect(res.body).toHaveLength(skills.length);
+      expect(res.body).toEqual(expect.arrayContaining(skills));
     });
   });
 
   describe('GET /skills/:id', () => {
-    const url = '/api/skills';
     const skillName = 'Vue.js';
 
     it('should return a skill by id', async () => {
@@ -81,39 +78,37 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(server)
-        .get(`${url}/${skill.id}`)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toEqual({
-            id: skill.id,
-            name: skillName,
-          });
-        });
+      const res = await request(server)
+        .get(`${baseUrl}/${skill.id}`)
+        .expect(200);
+
+      expect(res.body).toEqual({
+        id: skill.id,
+        name: skillName,
+      });
     });
 
     it('should return 404 if skill does not exist', async () => {
       const skillId = randomUUID();
 
-      return request(server).get(`${url}/${skillId}`).expect(404);
+      return request(server).get(`${baseUrl}/${skillId}`).expect(404);
     });
   });
 
   describe('POST /skills', () => {
-    const url = '/api/skills';
     const body: CreateSkillDto = { name: 'Vue.js' };
 
     it('should create a new skill', async () => {
-      return request(server)
-        .post(url)
-        .send(body)
-        .expect(201)
-        .then((res) => {
-          expect(res.body).toEqual({
-            id: expect.any(String) as unknown as string,
-            name: body.name,
-          });
-        });
+      const res = await request(server).post(baseUrl).send(body).expect(201);
+
+      const resBody = res.body as Skill;
+      expect(resBody.id).toBeDefined();
+      expect(resBody.name).toBe(body.name);
+
+      const skill = await prisma.skill.findUnique({
+        where: { id: resBody.id },
+      });
+      expect(skill).not.toBeNull();
     });
 
     it('should return 400 if skill already exists', async () => {
@@ -123,12 +118,11 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(server).post(url).send(body).expect(400);
+      return request(server).post(baseUrl).send(body).expect(400);
     });
   });
 
   describe('DELETE /skills/:id', () => {
-    const url = '/api/skills';
     const skillName = 'Vue.js';
 
     it('should delete a skill by id', async () => {
@@ -138,13 +132,19 @@ describe('SkillController (e2e)', () => {
         },
       });
 
-      return request(server).delete(`${url}/${skill.id}`).expect(200);
+      await request(server).delete(`${baseUrl}/${skill.id}`).expect(200);
+
+      const deletedSkill = await prisma.skill.findUnique({
+        where: { id: skill.id },
+      });
+
+      expect(deletedSkill).toBeNull();
     });
 
     it('should return 404 if skill does not exist', async () => {
       const skillId = randomUUID();
 
-      return request(server).delete(`${url}/${skillId}`).expect(404);
+      return request(server).delete(`${baseUrl}/${skillId}`).expect(404);
     });
   });
 });

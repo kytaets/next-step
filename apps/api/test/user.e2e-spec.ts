@@ -8,12 +8,15 @@ import { RedisService } from '../src/redis/services/redis.service';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { UserWithoutPassword } from '../src/user/types/user-without-password.type';
+import { shouldFailWithoutAuth } from './utils/guards.helper';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let server: Server;
   let prisma: PrismaService;
   let redis: RedisService;
+
+  const baseUrl = '/api/users';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,34 +56,38 @@ describe('UserController (e2e)', () => {
   });
 
   describe('GET /users/me', () => {
-    const url = '/api/users/me';
-
     it('should return the authenticated user', async () => {
       const { sid, user } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .get(url)
+      const res = await request(server)
+        .get(`${baseUrl}/me`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as UserWithoutPassword;
+        .expect(200);
 
-          expect(resBody.id).toBe(user.id);
-          expect(resBody).not.toHaveProperty('password');
-        });
+      const resBody = res.body as UserWithoutPassword;
+      expect(resBody.id).toBe(user.id);
+      expect(resBody).not.toHaveProperty('password');
     });
+
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/me`);
   });
 
   describe('DELETE /users/me', () => {
-    const url = '/api/users/me';
-
     it('should delete the authenticated user', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .delete(url)
+      await request(server)
+        .delete(`${baseUrl}/me`)
         .set('Cookie', [`sid=${sid}`])
         .expect(200);
+
+      const deletedUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+
+      expect(deletedUser).toBeNull();
     });
+
+    shouldFailWithoutAuth(() => server, 'delete', `${baseUrl}/me`);
   });
 });

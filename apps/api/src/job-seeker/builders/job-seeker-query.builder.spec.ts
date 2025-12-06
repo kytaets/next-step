@@ -6,6 +6,11 @@ jest.mock('@common/utils', () => ({
   getLanguageLevelsFromLevel: jest.fn(),
 }));
 
+const mockedGetLanguageLevelsFromLevel =
+  getLanguageLevelsFromLevel as jest.MockedFunction<
+    typeof getLanguageLevelsFromLevel
+  >;
+
 describe('JobSeekerQueryBuilder', () => {
   let builder: JobSeekerQueryBuilder;
 
@@ -54,7 +59,7 @@ describe('JobSeekerQueryBuilder', () => {
 
   describe('withLanguages', () => {
     it('should add language conditions using helper utility', () => {
-      (getLanguageLevelsFromLevel as jest.Mock).mockReturnValue([
+      mockedGetLanguageLevelsFromLevel.mockReturnValue([
         LanguageLevel.UPPER_INTERMEDIATE,
         LanguageLevel.ADVANCED,
         LanguageLevel.NATIVE,
@@ -69,7 +74,7 @@ describe('JobSeekerQueryBuilder', () => {
 
       const result = builder.withLanguages(languages).build();
 
-      expect(getLanguageLevelsFromLevel).toHaveBeenCalledWith({
+      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenCalledWith({
         minLevel: LanguageLevel.UPPER_INTERMEDIATE,
       });
 
@@ -95,9 +100,7 @@ describe('JobSeekerQueryBuilder', () => {
     });
 
     it('should handle multiple languages', () => {
-      (getLanguageLevelsFromLevel as jest.Mock).mockReturnValue([
-        'MOCKED_LEVEL',
-      ]);
+      mockedGetLanguageLevelsFromLevel.mockReturnValue([LanguageLevel.NATIVE]);
 
       const languages = [
         { languageId: 'uuid-1', level: LanguageLevel.ELEMENTARY },
@@ -107,13 +110,13 @@ describe('JobSeekerQueryBuilder', () => {
       const result = builder.withLanguages(languages).build();
 
       expect(result.AND).toHaveLength(2);
-      expect(getLanguageLevelsFromLevel).toHaveBeenCalledTimes(2);
+      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenCalledTimes(2);
     });
 
     it('should do nothing if languages array is empty', () => {
       const result = builder.withLanguages([]).build();
       expect(result).toEqual({ isOpenToWork: true });
-      expect(getLanguageLevelsFromLevel).not.toHaveBeenCalled();
+      expect(mockedGetLanguageLevelsFromLevel).not.toHaveBeenCalled();
     });
 
     it('should do nothing if languages is undefined', () => {
@@ -148,9 +151,7 @@ describe('JobSeekerQueryBuilder', () => {
 
   describe('Integration (Chaining)', () => {
     it('should combine multiple filters correctly', () => {
-      (getLanguageLevelsFromLevel as jest.Mock).mockReturnValue([
-        LanguageLevel.NATIVE,
-      ]);
+      mockedGetLanguageLevelsFromLevel.mockReturnValue([LanguageLevel.NATIVE]);
 
       const result = builder
         .withSkillIds(['skill-uuid-1'])

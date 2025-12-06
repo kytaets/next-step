@@ -1,13 +1,6 @@
 import { VacancyQueryBuilder } from './vacancy-query.builder';
+import { WorkFormat, EmploymentType, LanguageLevel } from '@prisma/client';
 import { getLanguageLevelsFromLevel } from '@common/utils';
-import {
-  EmploymentType,
-  LanguageLevel,
-  Prisma,
-  SeniorityLevel,
-  WorkFormat,
-} from '@prisma/client';
-import { VacancyLanguageDto } from '../dto/vacancy-language.dto';
 
 jest.mock('@common/utils', () => ({
   getLanguageLevelsFromLevel: jest.fn(),
@@ -23,140 +16,164 @@ describe('VacancyQueryBuilder', () => {
 
   beforeEach(() => {
     builder = new VacancyQueryBuilder();
-    mockedGetLanguageLevelsFromLevel.mockClear();
+    jest.clearAllMocks();
   });
 
-  it('should have the default "isActive: true" state initially', () => {
-    expect(builder.build()).toEqual({ isActive: true });
+  describe('build (Default state)', () => {
+    it('should return default query with isActive: true', () => {
+      const result = builder.build();
+      expect(result).toEqual({ isActive: true });
+    });
   });
 
   describe('withTitle', () => {
-    it('should add a title filter correctly', () => {
-      const where = builder.withTitle('Software Engineer').build();
-      expect(where).toEqual({
+    it('should add insensitive contains condition', () => {
+      const result = builder.withTitle('Backend').build();
+
+      expect(result).toEqual({
         isActive: true,
-        title: { contains: 'Software Engineer', mode: 'insensitive' },
+        title: { contains: 'Backend', mode: 'insensitive' },
       });
     });
 
-    it('should not add a title filter if title is undefined', () => {
-      const where = builder.withTitle(undefined).build();
-      expect(where).toEqual({ isActive: true });
+    it('should do nothing if title is undefined or empty', () => {
+      const result = builder.withTitle('').build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
   describe('withSalaryMin', () => {
-    it('should add a salary filter correctly', () => {
-      const where = builder.withSalaryMin(50000).build();
-      expect(where).toEqual({
+    it('should add OR condition for salaryMax and salaryMin', () => {
+      const minSalary = 2000;
+      const result = builder.withSalaryMin(minSalary).build();
+
+      expect(result).toEqual({
         isActive: true,
-        OR: [{ salaryMax: { gte: 50000 } }, { salaryMin: { gte: 50000 } }],
+        OR: [
+          { salaryMax: { gte: minSalary } },
+          { salaryMin: { gte: minSalary } },
+        ],
       });
     });
 
-    it('should not add a salary filter if min is 0', () => {
-      const where = builder.withSalaryMin(0).build();
-      expect(where).toEqual({ isActive: true });
+    it('should do nothing if min is undefined', () => {
+      const result = builder.withSalaryMin().build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
   describe('withExperience', () => {
-    it('should add an experience filter correctly', () => {
-      const where = builder.withExperience(5).build();
-      expect(where).toEqual({
+    it('should add LTE condition', () => {
+      const result = builder.withExperience(2).build();
+
+      expect(result).toEqual({
         isActive: true,
-        experienceRequired: { lte: 5 },
+        experienceRequired: { lte: 2 },
       });
     });
 
-    it('should not add an experience filter if experience is 0', () => {
-      const where = builder.withExperience(0).build();
-      expect(where).toEqual({ isActive: true });
+    it('should do nothing if experience is undefined', () => {
+      const result = builder.withExperience().build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
   describe('withWorkFormats', () => {
-    it('should add work formats filter', () => {
-      const formats: WorkFormat[] = [WorkFormat.REMOTE, WorkFormat.HYBRID];
-      const where = builder.withWorkFormats(formats).build();
-      expect(where).toEqual({
+    it('should use hasSome for work formats', () => {
+      const formats = [WorkFormat.REMOTE, WorkFormat.HYBRID];
+      const result = builder.withWorkFormats(formats).build();
+
+      expect(result).toEqual({
         isActive: true,
-        workFormat: { hasSome: [WorkFormat.REMOTE, WorkFormat.HYBRID] },
+        workFormat: { hasSome: formats },
       });
     });
 
-    it('should not add filter for empty array', () => {
-      const where = builder.withWorkFormats([]).build();
-      expect(where).toEqual({ isActive: true });
+    it('should ignore empty arrays', () => {
+      const result = builder.withWorkFormats([]).build();
+      expect(result).toEqual({ isActive: true });
+    });
+
+    it('should do nothing if workFormats is undefined', () => {
+      const result = builder.withWorkFormats().build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
   describe('withEmploymentTypes', () => {
-    it('should add employment types filter', () => {
-      const types: EmploymentType[] = [EmploymentType.FULL_TIME];
-      const where = builder.withEmploymentTypes(types).build();
-      expect(where).toEqual({
+    it('should use hasSome for employment types', () => {
+      const types = [EmploymentType.FULL_TIME, EmploymentType.CONTRACT];
+      const result = builder.withEmploymentTypes(types).build();
+
+      expect(result).toEqual({
         isActive: true,
-        employmentType: { hasSome: [EmploymentType.FULL_TIME] },
+        employmentType: { hasSome: types },
       });
+    });
+
+    it('should ignore empty arrays', () => {
+      const result = builder.withEmploymentTypes([]).build();
+      expect(result).toEqual({ isActive: true });
+    });
+
+    it('should do nothing if employmentTypes is undefined', () => {
+      const result = builder.withEmploymentTypes().build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
-  describe('withSeniorityLevels', () => {
-    it('should add seniority levels filter', () => {
-      const levels: SeniorityLevel[] = [
-        SeniorityLevel.MIDDLE,
-        SeniorityLevel.SENIOR,
-      ];
-      const where = builder.withSeniorityLevels(levels).build();
-      expect(where).toEqual({
-        isActive: true,
-        seniorityLevel: { in: [SeniorityLevel.MIDDLE, SeniorityLevel.SENIOR] },
-      });
-    });
-  });
+  describe('withRequiredSkillIds', () => {
+    it('should match vacancies having some of the skills', () => {
+      const skillIds = ['skill-uuid-1', 'skill-uuid-2'];
+      const result = builder.withRequiredSkillIds(skillIds).build();
 
-  describe('withRequiredSkills', () => {
-    it('should add required skills filter', () => {
-      const skillIds = ['skill-uuid-2', 'skill-uuid-2'];
-      const where = builder.withRequiredSkillIds(skillIds).build();
-      expect(where).toEqual({
+      expect(result).toEqual({
         isActive: true,
         requiredSkills: {
           some: { skillId: { in: skillIds } },
         },
       });
     });
+
+    it('should do nothing if skillIds is empty', () => {
+      const result = builder.withRequiredSkillIds([]).build();
+      expect(result).toEqual({ isActive: true });
+    });
+
+    it('should do nothing if skillIds is undefined', () => {
+      const result = builder.withRequiredSkillIds().build();
+      expect(result).toEqual({ isActive: true });
+    });
   });
 
   describe('withRequiredLanguages', () => {
-    it('should add required languages filter and call util', () => {
+    it('should build complex OR query for languages using utility', () => {
       mockedGetLanguageLevelsFromLevel.mockReturnValue([
         LanguageLevel.ELEMENTARY,
-        LanguageLevel.UPPER_INTERMEDIATE,
+        LanguageLevel.PRE_INTERMEDIATE,
       ]);
 
-      const languages: VacancyLanguageDto[] = [
-        { languageId: 'lang-uuid-1', level: LanguageLevel.UPPER_INTERMEDIATE },
+      const reqLanguages = [
+        { languageId: 'lang-1', level: LanguageLevel.PRE_INTERMEDIATE },
       ];
-      const where = builder.withRequiredLanguages(languages).build();
 
-      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenCalledTimes(1);
+      const result = builder.withRequiredLanguages(reqLanguages).build();
+
       expect(mockedGetLanguageLevelsFromLevel).toHaveBeenCalledWith({
-        maxLevel: LanguageLevel.UPPER_INTERMEDIATE,
+        maxLevel: LanguageLevel.PRE_INTERMEDIATE,
       });
 
-      expect(where).toEqual({
+      expect(result).toEqual({
         isActive: true,
         requiredLanguages: {
           some: {
             OR: [
               {
-                languageId: 'lang-uuid-1',
+                languageId: 'lang-1',
                 level: {
                   in: [
                     LanguageLevel.ELEMENTARY,
-                    LanguageLevel.UPPER_INTERMEDIATE,
+                    LanguageLevel.PRE_INTERMEDIATE,
                   ],
                 },
               },
@@ -166,102 +183,112 @@ describe('VacancyQueryBuilder', () => {
       });
     });
 
-    it('should handle multiple languages', () => {
-      mockedGetLanguageLevelsFromLevel.mockImplementation(({ maxLevel }) => {
-        if (maxLevel === LanguageLevel.PRE_INTERMEDIATE)
-          return [LanguageLevel.ELEMENTARY, LanguageLevel.PRE_INTERMEDIATE];
-        if (maxLevel === LanguageLevel.ADVANCED)
-          return [
-            LanguageLevel.ELEMENTARY,
-            LanguageLevel.PRE_INTERMEDIATE,
-            LanguageLevel.INTERMEDIATE,
-            LanguageLevel.UPPER_INTERMEDIATE,
-            LanguageLevel.ADVANCED,
-          ];
-        return [];
+    it('should handle multiple languages correctly', () => {
+      mockedGetLanguageLevelsFromLevel
+        .mockReturnValueOnce([
+          LanguageLevel.ELEMENTARY,
+          LanguageLevel.INTERMEDIATE,
+        ])
+        .mockReturnValueOnce([
+          LanguageLevel.UPPER_INTERMEDIATE,
+          LanguageLevel.ADVANCED,
+        ]);
+
+      const reqLanguages = [
+        { languageId: 'lang-1', level: LanguageLevel.INTERMEDIATE },
+        { languageId: 'lang-2', level: LanguageLevel.ADVANCED },
+      ];
+
+      const result = builder.withRequiredLanguages(reqLanguages).build();
+
+      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenCalledTimes(2);
+      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenNthCalledWith(1, {
+        maxLevel: LanguageLevel.INTERMEDIATE,
+      });
+      expect(mockedGetLanguageLevelsFromLevel).toHaveBeenNthCalledWith(2, {
+        maxLevel: LanguageLevel.ADVANCED,
       });
 
-      const languages: VacancyLanguageDto[] = [
-        { languageId: 'lang-uuid-1', level: LanguageLevel.ADVANCED },
-        { languageId: 'lang-uuid-2', level: LanguageLevel.PRE_INTERMEDIATE },
-      ];
-      const where = builder.withRequiredLanguages(languages).build();
-
-      expect(where.requiredLanguages).toEqual({
-        some: {
-          OR: [
-            {
-              languageId: 'lang-uuid-1',
-              level: {
-                in: [
-                  LanguageLevel.ELEMENTARY,
-                  LanguageLevel.PRE_INTERMEDIATE,
-                  LanguageLevel.INTERMEDIATE,
-                  LanguageLevel.UPPER_INTERMEDIATE,
-                  LanguageLevel.ADVANCED,
-                ],
+      expect(result).toEqual({
+        isActive: true,
+        requiredLanguages: {
+          some: {
+            OR: [
+              {
+                languageId: 'lang-1',
+                level: {
+                  in: [LanguageLevel.ELEMENTARY, LanguageLevel.INTERMEDIATE],
+                },
               },
-            },
-            {
-              languageId: 'lang-uuid-2',
-              level: {
-                in: [LanguageLevel.ELEMENTARY, LanguageLevel.PRE_INTERMEDIATE],
+              {
+                languageId: 'lang-2',
+                level: {
+                  in: [
+                    LanguageLevel.UPPER_INTERMEDIATE,
+                    LanguageLevel.ADVANCED,
+                  ],
+                },
               },
-            },
-          ],
+            ],
+          },
         },
       });
+    });
+
+    it('should do nothing if requiredLanguages is empty', () => {
+      const result = builder.withRequiredLanguages([]).build();
+      expect(result).toEqual({ isActive: true });
+    });
+
+    it('should do nothing if requiredLanguages is undefined', () => {
+      const result = builder.withRequiredLanguages().build();
+      expect(result).toEqual({ isActive: true });
     });
   });
 
   describe('withCompanyId', () => {
-    it('should add companyId and keep isActive for public search', () => {
-      const companyId = 'company-uuid-1';
-      const where = builder.withCompanyId(companyId).build();
-      expect(where).toEqual({
+    it('should filter by companyId and keep isActive=true by default', () => {
+      const companyId = 'comp-uuid-1';
+      const result = builder.withCompanyId(companyId).build();
+
+      expect(result).toEqual({
+        companyId,
         isActive: true,
-        companyId: companyId,
       });
     });
 
-    it('should add companyId and REMOVE isActive for author search', () => {
-      const companyId = 'company-uuid-1';
-      const where = builder.withCompanyId(companyId, true).build();
-      expect(where).toEqual({
-        companyId: companyId,
-      });
+    it('should remover isActive filter if isAuthor is true', () => {
+      const companyId = 'comp-uuid-1';
+      const result = builder.withCompanyId(companyId, true).build();
+
+      expect(result).toEqual({ companyId });
     });
 
-    it('should not add companyId if undefined', () => {
-      const where = builder.withCompanyId(undefined, true).build();
-      expect(where).toEqual({ isActive: true });
+    it('should keep isActive filter if isAuthor is false', () => {
+      const companyId = 'comp-uuid-1';
+      const result = builder.withCompanyId(companyId, false).build();
+
+      expect(result).toEqual({
+        companyId,
+        isActive: true,
+      });
     });
   });
 
-  it('should chain all filters together correctly', () => {
-    const companyId = 'company-uuid-1';
-    const skillIds = ['skill-uuid-1'];
+  describe('Integration (Chaining)', () => {
+    it('should combine multiple conditions correctly', () => {
+      const result = builder
+        .withTitle('Node')
+        .withSalaryMin(3000)
+        .withWorkFormats([WorkFormat.REMOTE])
+        .build();
 
-    const finalWhere = builder
-      .withTitle('DevOps')
-      .withSalaryMin(100000)
-      .withExperience(3)
-      .withWorkFormats([WorkFormat.REMOTE])
-      .withSeniorityLevels([SeniorityLevel.SENIOR])
-      .withRequiredSkillIds(skillIds)
-      .withCompanyId(companyId, true)
-      .build();
-
-    const expectedWhere: Prisma.VacancyWhereInput = {
-      title: { contains: 'DevOps', mode: 'insensitive' },
-      OR: [{ salaryMax: { gte: 100000 } }, { salaryMin: { gte: 100000 } }],
-      experienceRequired: { lte: 3 },
-      workFormat: { hasSome: [WorkFormat.REMOTE] },
-      seniorityLevel: { in: [SeniorityLevel.SENIOR] },
-      requiredSkills: { some: { skillId: { in: skillIds } } },
-      companyId: companyId,
-    };
-
-    expect(finalWhere).toEqual(expectedWhere);
+      expect(result).toEqual({
+        isActive: true,
+        title: { contains: 'Node', mode: 'insensitive' },
+        workFormat: { hasSome: [WorkFormat.REMOTE] },
+        OR: [{ salaryMax: { gte: 3000 } }, { salaryMin: { gte: 3000 } }],
+      });
+    });
   });
 });

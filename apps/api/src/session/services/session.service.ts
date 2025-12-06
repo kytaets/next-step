@@ -79,15 +79,12 @@ export class SessionService {
   async refreshSessionTTL(sid: string): Promise<void> {
     const session = await this.getSession(sid);
     if (!session) return;
-    const key = this.k.session(sid);
-    const exists = await this.redis.exists(key);
-    if (exists) {
-      const pipeline = this.redis.pipeline();
-      pipeline.expire(key, this.sessionTTL);
-      pipeline.zadd(this.k.userSessions(session.userId), Date.now(), sid);
-      pipeline.expire(this.k.userSessions(session.userId), this.sessionTTL);
-      await pipeline.exec();
-    }
+
+    const pipeline = this.redis.pipeline();
+    pipeline.expire(this.k.session(sid), this.sessionTTL);
+    pipeline.zadd(this.k.userSessions(session.userId), Date.now(), sid);
+    pipeline.expire(this.k.userSessions(session.userId), this.sessionTTL);
+    await pipeline.exec();
   }
 
   async getUserSessions(userId: string): Promise<SessionPayload[]> {

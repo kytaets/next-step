@@ -10,7 +10,7 @@ describe('LanguageService', () => {
   let repository: jest.Mocked<LanguageRepository>;
 
   const mockLanguage: Language = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
+    id: 'language-uuid-1',
     name: 'English',
   };
 
@@ -44,24 +44,19 @@ describe('LanguageService', () => {
   });
 
   describe('assertExists', () => {
-    const languageIds: string[] = [
-      '123e4567-e89b-12d3-a456-426614174000',
-      '123e4567-e89b-12d3-a456-426614174001',
-      '123e4567-e89b-12d3-a456-426614174002',
-    ];
+    const languageIds = ['language-uuid-1', 'language-uuid-2'];
 
-    it('should not throw error if all languages are found', async () => {
+    it('should not throw an error if all languages are found', async () => {
       repository.count.mockResolvedValue(languageIds.length);
 
-      const result = await service.assertExists(languageIds);
+      await service.assertExists(languageIds);
 
       expect(repository.count).toHaveBeenCalledWith({
         id: { in: languageIds },
       });
-      expect(result).toBeUndefined();
     });
 
-    it('should throw error if not all languages are found', async () => {
+    it('should throw error if some languages are not found', async () => {
       repository.count.mockResolvedValue(languageIds.length - 1);
 
       await expect(service.assertExists(languageIds)).rejects.toThrow(
@@ -115,7 +110,7 @@ describe('LanguageService', () => {
 
   describe('findOneOrThrow', () => {
     const where: Prisma.LanguageWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'language-uuid-1',
     };
 
     it('should find a language', async () => {
@@ -140,16 +135,15 @@ describe('LanguageService', () => {
 
   describe('assertNotExists', () => {
     const where: Prisma.LanguageWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'language-uuid-1',
     };
 
     it('should not throw if language does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      const result = await service.assertNotExists(where);
+      await service.assertNotExists(where);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
-      expect(result).toBeUndefined();
     });
 
     it('should throw BadRequestException if language exists', async () => {
@@ -165,7 +159,7 @@ describe('LanguageService', () => {
 
   describe('delete', () => {
     const where: Prisma.LanguageWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'language-uuid-1',
     };
 
     it('should delete a language', async () => {

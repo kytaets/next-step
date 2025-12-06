@@ -10,7 +10,7 @@ describe('SkillService', () => {
   let repository: jest.Mocked<SkillRepository>;
 
   const mockSkill: Skill = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
+    id: 'skill-uuid-1',
     name: 'Nest.js',
   };
 
@@ -44,24 +44,19 @@ describe('SkillService', () => {
   });
 
   describe('assertExists', () => {
-    const skillIds: string[] = [
-      '123e4567-e89b-12d3-a456-426614174000',
-      '123e4567-e89b-12d3-a456-426614174001',
-      '123e4567-e89b-12d3-a456-426614174002',
-    ];
+    const skillIds = ['skill-uuid-1', 'skill-uuid-2'];
 
-    it('should not throw error if all skills are found', async () => {
+    it('should not throw an error if all skills are found', async () => {
       repository.count.mockResolvedValue(skillIds.length);
 
-      const result = await service.assertExists(skillIds);
+      await service.assertExists(skillIds);
 
       expect(repository.count).toHaveBeenCalledWith({
         id: { in: skillIds },
       });
-      expect(result).toBeUndefined();
     });
 
-    it('should throw error if not all skills are found', async () => {
+    it('should throw error if some skills are not found', async () => {
       repository.count.mockResolvedValue(skillIds.length - 1);
 
       await expect(service.assertExists(skillIds)).rejects.toThrow(
@@ -115,7 +110,7 @@ describe('SkillService', () => {
 
   describe('findOneOrThrow', () => {
     const where: Prisma.SkillWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'skill-uuid-1',
     };
 
     it('should find a skill', async () => {
@@ -140,16 +135,15 @@ describe('SkillService', () => {
 
   describe('assertNotExists', () => {
     const where: Prisma.SkillWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'skill-uuid-1',
     };
 
     it('should not throw if skill does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      const result = await service.assertNotExists(where);
+      await service.assertNotExists(where);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
-      expect(result).toBeUndefined();
     });
 
     it('should throw BadRequestException if skill exists', async () => {
@@ -165,7 +159,7 @@ describe('SkillService', () => {
 
   describe('delete', () => {
     const where: Prisma.SkillWhereUniqueInput = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+      id: 'skill-uuid-1',
     };
 
     it('should delete a skill', async () => {

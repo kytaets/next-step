@@ -47,7 +47,11 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <form className={classes['sign-up-container']} onSubmit={handleSubmit}>
+    <form
+      className={classes['sign-up-container']}
+      onSubmit={handleSubmit}
+      aria-label="reset-form"
+    >
       <motion.div
         className={classes['sign-up-form']}
         initial={{ opacity: 0, x: 30 }}

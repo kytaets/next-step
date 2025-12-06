@@ -98,9 +98,9 @@ export default function AvatarModal({ url, type }: Props) {
               disabled={isPending || isCompanyPending || isRecruiterPending}
             >
               <AnimatedIcon scale={1.07}>
-                {!isPending || !isCompanyPending || isRecruiterPending
-                  ? 'Save changes'
-                  : 'Saving...'}
+                {isPending || isCompanyPending || isRecruiterPending
+                  ? 'Saving...'
+                  : 'Save changes'}
               </AnimatedIcon>
             </button>
           </div>

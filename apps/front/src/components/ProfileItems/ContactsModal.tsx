@@ -49,8 +49,6 @@ export default function ContactsModal({ data }: Props) {
     },
   });
 
-  console.log(isError);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}

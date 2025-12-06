@@ -38,7 +38,6 @@ export async function getCompanyProfileById(id: string) {
 }
 
 export async function sendInvite(data: { email: string | null }) {
-  console.log('sendInvite data:', data);
   return apiRequest<void>('post', '/companies/invite', data);
 }
 

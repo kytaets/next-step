@@ -26,7 +26,6 @@ export default function LanguagesInput({ type = 'vacancies' }: Props) {
   });
 
   const name = type === 'vacancies' ? 'requiredLanguages' : 'languages';
-  console.log(name);
 
   return (
     <div className={classes['languages']}>

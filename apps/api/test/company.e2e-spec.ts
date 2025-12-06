@@ -24,6 +24,8 @@ describe('CompanyController (e2e)', () => {
   let prisma: PrismaService;
   let redis: RedisService;
 
+  const baseUrl = '/api/companies';
+
   const mockEmailService = {
     sendCompanyInvitation: jest.fn(),
   };
@@ -73,37 +75,60 @@ describe('CompanyController (e2e)', () => {
   });
 
   describe('POST /companies', () => {
-    const url = '/api/companies';
-
     const body: CreateCompanyDto = {
       name: 'Company Name',
       description: 'Company Description',
-      url: 'https://company.com',
-      logoUrl: 'https://company.com/logo.png',
     };
 
     it('should create a new company', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      await createRecruiter(prisma, {}, user.id);
+      const recruiter = await createRecruiter(prisma, {}, user.id);
 
-      return request(server)
-        .post(url)
+      const res = await request(server)
+        .post(baseUrl)
         .set('Cookie', [`sid=${sid}`])
         .send(body)
-        .expect(201)
-        .then((res) => {
-          expect(res.body).toEqual({
-            id: expect.any(String) as unknown as string,
-            name: body.name,
-            description: body.description,
-            url: body.url,
-            logoUrl: body.logoUrl,
-            isVerified: false,
-            createdAt: expect.any(String) as unknown as string,
-            updatedAt: expect.any(String) as unknown as string,
-          });
-        });
+        .expect(201);
+
+      const resBody = res.body as Company;
+
+      expect(resBody.id).toBeDefined();
+      expect(resBody).toMatchObject({
+        name: body.name,
+        description: body.description,
+        isVerified: false,
+      });
+
+      const createdCompany = await prisma.company.findUnique({
+        where: { id: resBody.id },
+      });
+      expect(createdCompany).not.toBeNull();
+
+      const companyCreator = await prisma.recruiter.findUnique({
+        where: { id: recruiter.id },
+      });
+
+      expect(companyCreator).toMatchObject({
+        companyId: resBody.id,
+        role: CompanyRole.ADMIN,
+      });
+    });
+
+    it('should return 401 if the user is not authenticated', async () => {
+      return request(server).post(baseUrl).send(body).expect(401);
+    });
+
+    it('should return 403 if the recruiter is a member of a company', async () => {
+      const { user, sid } = await createAuthenticatedUser(prisma, redis);
+      const company = await createCompany(prisma);
+      await createRecruiter(prisma, { companyId: company.id }, user.id);
+
+      return request(server)
+        .post(baseUrl)
+        .send(body)
+        .set('Cookie', [`sid=${sid}`])
+        .expect(403);
     });
   });
 

@@ -1,10 +1,17 @@
-import { render, screen } from '@testing-library/react';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen, waitFor } from '@testing-library/react';
 import ConfirmPage from '@/app/confirm-page/ConfirmPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useSearchParams } from 'next/navigation';
 import { checkUserConfirmed } from '@/services/userService';
 
+// ----------------------------
+// 🔧 MOCKS
+// ----------------------------
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
 }));
@@ -13,18 +20,19 @@ jest.mock('@/services/userService', () => ({
   checkUserConfirmed: jest.fn(),
 }));
 
-// Mock Next.js <Image/>
-jest.mock('next/image', () => (props: any) => {
-  return <img {...props} />;
-});
+// Mock Next.js <Image/> component
+jest.mock('next/image', () => (props: any) => <img {...props} />);
 
-// Mock framer-motion (спрощений motion.div)
+// Mock framer-motion motion.div
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
+// ----------------------------
+// 📦 RENDER HELPER
+// ----------------------------
 function renderPage() {
   const client = new QueryClient();
   return render(
@@ -34,18 +42,23 @@ function renderPage() {
   );
 }
 
+// ----------------------------
+// 🧪 TEST SUITE
+// ----------------------------
 describe('ConfirmPage — Integration Tests (API-mocked)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Default: token exists
     (useSearchParams as jest.Mock).mockReturnValue({
       get: () => 'mock-token',
     });
   });
 
+  // --------------------------------------------------
   test('shows loading state initially', async () => {
     (checkUserConfirmed as jest.Mock).mockReturnValue(
-      new Promise(() => {}) // pending forever → isLoading
+      new Promise(() => {}) // infinite pending → loading mode
     );
 
     renderPage();
@@ -53,12 +66,14 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
     expect(
       await screen.findByText(/Wait while we verifying your email/i)
     ).toBeInTheDocument();
+
     expect(screen.getByRole('img')).toHaveAttribute(
       'src',
       expect.stringContaining('loading-spin.gif')
     );
   });
 
+  // --------------------------------------------------
   test('shows success state when verification succeeds', async () => {
     (checkUserConfirmed as jest.Mock).mockResolvedValue({ ok: true });
 
@@ -73,10 +88,10 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
       expect.stringContaining('check-arrow.png')
     );
 
-    // link available only on success
     expect(screen.getByRole('link')).toHaveAttribute('href', '/sign-in');
   });
 
+  // --------------------------------------------------
   test('shows error state when verification fails', async () => {
     (checkUserConfirmed as jest.Mock).mockRejectedValue(
       new Error('Verification failed')
@@ -84,12 +99,8 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
 
     renderPage();
 
-    // Дочекайся, поки React Query встановить isError
-    await waitFor(() => expect(checkUserConfirmed).toHaveBeenCalled());
-
-    expect(
-      await screen.findByText(/Sorry! We were unable to verify your account/i)
-    ).toBeInTheDocument();
+    // Чекаємо поки з'явиться error-текст, не очікуємо на зникнення loading
+    expect(await screen.findByText(/unable to verify/i)).toBeInTheDocument();
 
     expect(screen.getByRole('img')).toHaveAttribute(
       'src',
@@ -97,17 +108,16 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
     );
   });
 
+  // --------------------------------------------------
   test('does nothing when token is missing', async () => {
     (useSearchParams as jest.Mock).mockReturnValue({
-      get: () => null,
+      get: () => null, // simulate missing token
     });
 
     renderPage();
 
-    // Немає запиту
     expect(checkUserConfirmed).not.toHaveBeenCalled();
 
-    // Немає текстів success/error/loading
     expect(screen.queryByText(/verify/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Sorry!/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Wait while/i)).not.toBeInTheDocument();

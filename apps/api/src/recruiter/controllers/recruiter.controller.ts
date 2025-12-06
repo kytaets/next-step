@@ -76,7 +76,7 @@ export class RecruiterController {
   async delete(
     @CurrentRecruiter() recruiter: Recruiter,
   ): Promise<MessageResponse> {
-    await this.service.delete(recruiter.id);
+    await this.service.delete(recruiter);
     return { message: 'Recruiter deleted successfully' };
   }
 }

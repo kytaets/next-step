@@ -16,6 +16,8 @@ describe('LanguageController (e2e)', () => {
   let prisma: PrismaService;
   let redis: RedisService;
 
+  const baseUrl = '/api/languages';
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -54,25 +56,19 @@ describe('LanguageController (e2e)', () => {
   });
 
   describe('GET /languages', () => {
-    const url = '/api/languages';
-
     it('should return all languages', async () => {
       const languages = await prisma.language.createManyAndReturn({
         data: [{ name: 'English' }, { name: 'Spanish' }, { name: 'French' }],
       });
 
-      return request(server)
-        .get(url)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toHaveLength(languages.length);
-          expect(res.body).toEqual(expect.arrayContaining(languages));
-        });
+      const res = await request(server).get(baseUrl).expect(200);
+
+      expect(res.body).toHaveLength(languages.length);
+      expect(res.body).toEqual(expect.arrayContaining(languages));
     });
   });
 
   describe('GET /languages/:id', () => {
-    const url = '/api/languages';
     const languageName = 'English';
 
     it('should return a language by id', async () => {
@@ -82,45 +78,36 @@ describe('LanguageController (e2e)', () => {
         },
       });
 
-      return request(server)
-        .get(`${url}/${language.id}`)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toEqual({ id: language.id, name: languageName });
-        });
+      const res = await request(server)
+        .get(`${baseUrl}/${language.id}`)
+        .expect(200);
+
+      expect(res.body).toEqual({ id: language.id, name: languageName });
     });
 
     it('should return 404 if language does not exist', async () => {
       const languageId = randomUUID();
 
-      return request(server).get(`${url}/${languageId}`).expect(404);
+      return request(server).get(`${baseUrl}/${languageId}`).expect(404);
     });
   });
 
   describe('POST /languages', () => {
-    const url = '/api/languages';
-
     const body: CreateLanguageDto = { name: 'English' };
 
     it('should create a new language', async () => {
-      return request(server)
-        .post(url)
-        .send(body)
-        .expect(201)
-        .then(async (res) => {
-          const resBody = res.body as Language;
+      const res = await request(server).post(baseUrl).send(body).expect(201);
 
-          expect(resBody).toEqual({
-            id: expect.any(String) as unknown as string,
-            name: body.name,
-          });
+      const resBody = res.body as Language;
 
-          const language = await prisma.language.findUnique({
-            where: { id: resBody.id },
-          });
+      expect(resBody.id).toBeDefined();
+      expect(resBody.name).toBe(body.name);
 
-          expect(language).not.toBeNull();
-        });
+      const language = await prisma.language.findUnique({
+        where: { id: resBody.id },
+      });
+
+      expect(language).not.toBeNull();
     });
 
     it('should return 400 if language already exists', async () => {
@@ -130,37 +117,31 @@ describe('LanguageController (e2e)', () => {
         },
       });
 
-      return request(server).post(url).send(body).expect(400);
+      return request(server).post(baseUrl).send(body).expect(400);
     });
   });
 
   describe('DELETE /languages/:id', () => {
-    const url = '/api/languages';
-    const languageName = 'English';
-
     it('should delete a language by id', async () => {
       const language = await prisma.language.create({
         data: {
-          name: languageName,
+          name: 'English',
         },
       });
 
-      return request(server)
-        .delete(`${url}/${language.id}`)
-        .expect(200)
-        .then(async () => {
-          const deletedLanguage = await prisma.language.findUnique({
-            where: { id: language.id },
-          });
+      await request(server).delete(`${baseUrl}/${language.id}`).expect(200);
 
-          expect(deletedLanguage).toBeNull();
-        });
+      const deletedLanguage = await prisma.language.findUnique({
+        where: { id: language.id },
+      });
+
+      expect(deletedLanguage).toBeNull();
     });
 
     it('should return 404 if language does not exist', async () => {
       const languageId = randomUUID();
 
-      return request(server).delete(`${url}/${languageId}`).expect(404);
+      return request(server).delete(`${baseUrl}/${languageId}`).expect(404);
     });
   });
 });

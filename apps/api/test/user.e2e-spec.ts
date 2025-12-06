@@ -15,6 +15,8 @@ describe('UserController (e2e)', () => {
   let prisma: PrismaService;
   let redis: RedisService;
 
+  const baseUrl = '/api/users';
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -53,49 +55,42 @@ describe('UserController (e2e)', () => {
   });
 
   describe('GET /users/me', () => {
-    const url = '/api/users/me';
-
     it('should return the authenticated user', async () => {
       const { sid, user } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .get(url)
+      const res = await request(server)
+        .get(`${baseUrl}/me`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then((res) => {
-          const resBody = res.body as UserWithoutPassword;
+        .expect(200);
 
-          expect(resBody.id).toBe(user.id);
-          expect(resBody).not.toHaveProperty('password');
-        });
+      const resBody = res.body as UserWithoutPassword;
+      expect(resBody.id).toBe(user.id);
+      expect(resBody).not.toHaveProperty('password');
     });
 
     it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(url).expect(401);
+      return request(server).get(`${baseUrl}/me`).expect(401);
     });
   });
 
   describe('DELETE /users/me', () => {
-    const url = '/api/users/me';
-
     it('should delete the authenticated user', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
 
-      return request(server)
-        .delete(url)
+      await request(server)
+        .delete(`${baseUrl}/me`)
         .set('Cookie', [`sid=${sid}`])
-        .expect(200)
-        .then(async () => {
-          const deletedUser = await prisma.user.findUnique({
-            where: { id: user.id },
-          });
+        .expect(200);
 
-          expect(deletedUser).toBeNull();
-        });
+      const deletedUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+
+      expect(deletedUser).toBeNull();
     });
 
     it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(url).expect(401);
+      return request(server).get(`${baseUrl}/me`).expect(401);
     });
   });
 });

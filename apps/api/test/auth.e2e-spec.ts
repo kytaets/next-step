@@ -275,7 +275,9 @@ describe('AuthController (e2e)', () => {
         where: { email: userData.email },
       });
       expect(verifiedUser).not.toBeNull();
-      expect(verifiedUser!.isEmailVerified).toBe(true);
+      expect(verifiedUser).toMatchObject({
+        isEmailVerified: true,
+      });
     });
 
     it('should throw 400 if the token is invalid', async () => {

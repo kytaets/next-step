@@ -394,7 +394,7 @@ describe('ApplicationController (e2e)', () => {
         where: { id: application.id },
       });
       expect(updatedApplication).not.toBeNull();
-      expect(updatedApplication!.status).toBe(body.status);
+      expect(updatedApplication).toMatchObject({ status: body.status });
     });
 
     it('should return 404 if the application does not exist', async () => {

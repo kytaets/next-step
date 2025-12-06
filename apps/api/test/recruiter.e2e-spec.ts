@@ -255,7 +255,7 @@ describe('RecruiterController (e2e)', () => {
         where: { id: recruiter.id },
       });
       expect(recruiterWithoutCompany).not.toBeNull();
-      expect(recruiterWithoutCompany!.companyId).toBeNull();
+      expect(recruiterWithoutCompany).toMatchObject({ companyId: null });
     });
 
     it('should return 403 if the recruiter is a company admin', async () => {

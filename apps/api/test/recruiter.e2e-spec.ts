@@ -154,8 +154,8 @@ describe('RecruiterController (e2e)', () => {
 
       const resBody = res.body as Recruiter;
       expect(resBody).toMatchObject({
-        firstName: 'First Name',
-        lastName: 'Last Name',
+        firstName: recruiter.firstName,
+        lastName: recruiter.lastName,
       });
       expect(resBody.id).toBe(recruiter.id);
     });

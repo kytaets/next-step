@@ -76,6 +76,10 @@ describe('ApplicationService', () => {
     jest.clearAllMocks();
   });
 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
   describe('create', () => {
     const dto: CreateApplicationDto = {
       vacancyId: mockVacancy.id,

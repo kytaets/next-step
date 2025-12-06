@@ -66,10 +66,12 @@ describe('SessionService', () => {
     service = module.get<SessionService>(SessionService);
     redis = module.get(RedisService);
     module.get(ConfigService);
+
+    jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   describe('createSession', () => {

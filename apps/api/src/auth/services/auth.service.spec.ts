@@ -94,6 +94,10 @@ describe('AuthService', () => {
     jest.clearAllMocks();
   });
 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
   describe('validateCredentials', () => {
     const dto: LoginDto = { email: mockUser.email, password: 'password123' };
 

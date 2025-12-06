@@ -39,19 +39,19 @@ export class VacancyController {
     return this.service.create(recruiter.companyId, dto);
   }
 
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<VacancyWithRelations> {
+    return this.service.findOneOrThrow({ id });
+  }
+
   @Post('search')
   @HttpCode(HttpStatus.OK)
   async findMany(
     @Body() dto: FindManyVacanciesDto,
   ): Promise<PagedDataResponse<VacancyWithRelations[]>> {
     return this.service.findMany(dto);
-  }
-
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<VacancyWithRelations> {
-    return this.service.findOneOrThrow({ id });
   }
 
   @Patch(':id')

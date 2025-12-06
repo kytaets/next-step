@@ -111,8 +111,12 @@ export const shouldFailForVacancyOfAnotherCompany = (
     const otherCompany = await createCompany(prisma);
     const vacancy = await createVacancy(prisma, otherCompany.id);
 
+    const finalUrl = url.includes(':id')
+      ? url.replace(':id', vacancy.id)
+      : `${url}/${vacancy.id}`;
+
     return request(server)
-      [method](`${url}/${vacancy.id}`)
+      [method](finalUrl)
       .set('Cookie', [`sid=${sid}`])
       .send(body)
       .expect(403);

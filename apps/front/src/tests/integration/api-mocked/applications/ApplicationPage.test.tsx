@@ -69,17 +69,15 @@ describe('ApplicationPage Integration Tests', () => {
     });
   });
 
-  test('Показує лоадер перед отриманням даних', () => {
-    (getApplication as jest.Mock).mockReturnValue(
-      new Promise(() => {}) // pending
-    );
+  test('shows loader before the data is loaded', () => {
+    (getApplication as jest.Mock).mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
     expect(screen.getByText(/Loading your application/i)).toBeInTheDocument();
   });
 
-  test('Показує помилку, якщо getApplication завершується помилкою', async () => {
+  test('shows an error message when getApplication fails', async () => {
     (getApplication as jest.Mock).mockRejectedValue({
       message: 'Application not found',
     });
@@ -91,7 +89,7 @@ describe('ApplicationPage Integration Tests', () => {
     ).toBeInTheDocument();
   });
 
-  test('Рендерить ApplicationContainer після успішного завантаження', async () => {
+  test('renders ApplicationContainer after successful data loading', async () => {
     (getApplication as jest.Mock).mockResolvedValue({
       id: '123',
       vacancyId: '555',
@@ -102,17 +100,12 @@ describe('ApplicationPage Integration Tests', () => {
 
     renderPage();
 
-    // Хедер від сторінки
     expect(await screen.findByText(/Your Application/i)).toBeInTheDocument();
-
-    // Тайтл вакансії
     expect(await screen.findByText(/Frontend Developer/i)).toBeInTheDocument();
-
-    // Назва компанії
     expect(await screen.findByText(/Test Company/i)).toBeInTheDocument();
   });
 
-  test('Vacancy запит викликається лише після отримання applicationData', async () => {
+  test('calls the vacancy request only after applicationData is received', async () => {
     (getApplication as jest.Mock).mockResolvedValue({
       id: '123',
       vacancyId: '777',

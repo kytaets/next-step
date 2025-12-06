@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ApplicationController } from './application.controller';
-import { ApplicationService } from './application.service';
-import { ApplicationRepository } from './application.repository';
+import { ApplicationController } from './controllers/application.controller';
+import { ApplicationService } from './services/application.service';
+import { ApplicationRepository } from './repositories/application.repository';
 import { JobSeekerModule } from '../job-seeker/job-seeker.module';
 import { VacancyModule } from '../vacancy/vacancy.module';
 import { CompanyModule } from '../company/company.module';

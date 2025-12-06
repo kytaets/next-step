@@ -4,6 +4,7 @@ import {
   ArrayUnique,
   IsArray,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Length,
@@ -22,13 +23,13 @@ export class CreateVacancyDto {
   @Length(50, 2000)
   description: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @Type(() => Number)
   @Min(0)
   @Max(1000000)
   salaryMin: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @Type(() => Number)
   @Min(0)
   @Max(1000000)

@@ -22,25 +22,31 @@ export default () => ({
   },
 
   session: {
-    ttl: process.env.SESSION_TTL && parseInt(process.env.SESSION_TTL, 10),
-    max: process.env.SESSION_MAX && parseInt(process.env.SESSION_MAX, 10),
+    ttl:
+      (process.env.SESSION_TTL && parseInt(process.env.SESSION_TTL, 10)) ??
+      3600,
+    max:
+      (process.env.SESSION_MAX && parseInt(process.env.SESSION_MAX, 10)) ?? 5,
   },
 
   token: {
     verify: {
       ttl:
-        process.env.TOKEN_VERIFY_TTL &&
-        parseInt(process.env.TOKEN_VERIFY_TTL, 10),
+        (process.env.TOKEN_VERIFY_TTL &&
+          parseInt(process.env.TOKEN_VERIFY_TTL, 10)) ??
+        3600,
     },
     reset: {
       ttl:
-        process.env.TOKEN_RESET_TTL &&
-        parseInt(process.env.TOKEN_RESET_TTL, 10),
+        (process.env.TOKEN_RESET_TTL &&
+          parseInt(process.env.TOKEN_RESET_TTL, 10)) ??
+        3600,
     },
     invite: {
       ttl:
-        process.env.TOKEN_INVITE_TTL &&
-        parseInt(process.env.TOKEN_INVITE_TTL, 10),
+        (process.env.TOKEN_INVITE_TTL &&
+          parseInt(process.env.TOKEN_INVITE_TTL, 10)) ??
+        3600,
     },
   },
 
@@ -54,30 +60,8 @@ export default () => ({
 
   user: {
     unverifiedTtlMs:
-      process.env.USER_UNVERIFIED_TTL_MS &&
-      parseInt(process.env.USER_UNVERIFIED_TTL_MS, 10),
-  },
-
-  search: {
-    jobSeeker: {
-      pageSize:
-        process.env.SEARCH_JOB_SEEKER_PAGE_SIZE &&
-        parseInt(process.env.SEARCH_JOB_SEEKER_PAGE_SIZE, 10),
-    },
-    company: {
-      pageSize:
-        process.env.SEARCH_COMPANY_PAGE_SIZE &&
-        parseInt(process.env.SEARCH_COMPANY_PAGE_SIZE, 10),
-    },
-    vacancy: {
-      pageSize:
-        process.env.SEARCH_VACANCY_PAGE_SIZE &&
-        parseInt(process.env.SEARCH_VACANCY_PAGE_SIZE, 10),
-    },
-    application: {
-      pageSize:
-        process.env.SEARCH_APPLICATION_PAGE_SIZE &&
-        parseInt(process.env.SEARCH_APPLICATION_PAGE_SIZE, 10),
-    },
+      (process.env.USER_UNVERIFIED_TTL_MS &&
+        parseInt(process.env.USER_UNVERIFIED_TTL_MS, 10)) ??
+      21600,
   },
 });

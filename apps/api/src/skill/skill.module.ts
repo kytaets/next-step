@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { SkillService } from './skill.service';
-import { SkillController } from './skill.controller';
-import { SkillRepository } from './skill.repository';
+import { SkillService } from './services/skill.service';
+import { SkillController } from './controllers/skill.controller';
+import { SkillRepository } from './repositories/skill.repository';
 import { CacheModule } from '../cache/cache.module';
 
 @Module({

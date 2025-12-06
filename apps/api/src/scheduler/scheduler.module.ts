@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { UserCleanupService } from './user-cleanup.service';
+import { UserCleanupService } from './services/user-cleanup.service';
 import { UserModule } from '../user/user.module';
 
 @Module({

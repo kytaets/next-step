@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { JobSeekerController } from './job-seeker.controller';
-import { JobSeekerService } from './job-seeker.service';
+import { JobSeekerController } from './controllers/job-seeker.controller';
+import { JobSeekerService } from './services/job-seeker.service';
 import { JobSeekerGuard } from './guards/job-seeker.guard';
 import { SkillModule } from '../skill/skill.module';
 import { LanguageModule } from '../language/language.module';
-import { JobSeekerRepository } from './job-seeker.repository';
+import { JobSeekerRepository } from './repositories/job-seeker.repository';
 import { SessionModule } from '../session/session.module';
 import { UserModule } from '../user/user.module';
 

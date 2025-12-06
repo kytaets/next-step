@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { RecruiterService } from '../recruiter.service';
+import { RecruiterService } from '../services/recruiter.service';
 import { RequestWithUser } from '../../user/types/request-with-user.type';
 import { RecruiterRequest } from '../types/recruiter-request.type';
 

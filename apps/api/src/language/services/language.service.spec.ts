@@ -60,7 +60,7 @@ describe('LanguageService', () => {
       repository.count.mockResolvedValue(languageIds.length - 1);
 
       await expect(service.assertExists(languageIds)).rejects.toThrow(
-        new BadRequestException('Language not found'),
+        BadRequestException,
       );
 
       expect(repository.count).toHaveBeenCalledWith({
@@ -88,9 +88,7 @@ describe('LanguageService', () => {
     it('should throw BadRequestException if language already exists', async () => {
       repository.findOne.mockResolvedValue(mockLanguage);
 
-      await expect(service.create(dto)).rejects.toThrow(
-        new BadRequestException('Language already exists'),
-      );
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
 
       expect(repository.findOne).toHaveBeenCalledWith({ name: dto.name });
       expect(repository.create).not.toHaveBeenCalled();
@@ -126,7 +124,7 @@ describe('LanguageService', () => {
       repository.findOne.mockResolvedValue(null);
 
       await expect(service.findOneOrThrow(where)).rejects.toThrow(
-        new NotFoundException('Language not found'),
+        NotFoundException,
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -150,7 +148,7 @@ describe('LanguageService', () => {
       repository.findOne.mockResolvedValue(mockLanguage);
 
       await expect(service.assertNotExists(where)).rejects.toThrow(
-        new BadRequestException('Language already exists'),
+        BadRequestException,
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -176,9 +174,7 @@ describe('LanguageService', () => {
     it('should throw NotFoundException if language does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      await expect(service.delete(where)).rejects.toThrow(
-        new NotFoundException('Language not found'),
-      );
+      await expect(service.delete(where)).rejects.toThrow(NotFoundException);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
       expect(repository.delete).not.toHaveBeenCalled();

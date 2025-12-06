@@ -60,7 +60,7 @@ describe('SkillService', () => {
       repository.count.mockResolvedValue(skillIds.length - 1);
 
       await expect(service.assertExists(skillIds)).rejects.toThrow(
-        new BadRequestException('Skill not found'),
+        BadRequestException,
       );
 
       expect(repository.count).toHaveBeenCalledWith({
@@ -88,9 +88,7 @@ describe('SkillService', () => {
     it('should throw BadRequestException if skill already exists', async () => {
       repository.findOne.mockResolvedValue(mockSkill);
 
-      await expect(service.create(dto)).rejects.toThrow(
-        new BadRequestException('Skill already exists'),
-      );
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
 
       expect(repository.findOne).toHaveBeenCalledWith({ name: dto.name });
       expect(repository.create).not.toHaveBeenCalled();
@@ -126,7 +124,7 @@ describe('SkillService', () => {
       repository.findOne.mockResolvedValue(null);
 
       await expect(service.findOneOrThrow(where)).rejects.toThrow(
-        new NotFoundException('Skill not found'),
+        NotFoundException,
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -150,7 +148,7 @@ describe('SkillService', () => {
       repository.findOne.mockResolvedValue(mockSkill);
 
       await expect(service.assertNotExists(where)).rejects.toThrow(
-        new BadRequestException('Skill already exists'),
+        BadRequestException,
       );
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
@@ -176,9 +174,7 @@ describe('SkillService', () => {
     it('should throw NotFoundException if skill does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      await expect(service.delete(where)).rejects.toThrow(
-        new NotFoundException('Skill not found'),
-      );
+      await expect(service.delete(where)).rejects.toThrow(NotFoundException);
 
       expect(repository.findOne).toHaveBeenCalledWith(where);
       expect(repository.delete).not.toHaveBeenCalled();

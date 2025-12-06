@@ -18,7 +18,7 @@ import { jobSeekerSearchDefaults } from '@/lib/jobseeker-search-data';
 import { submitJobSeekersSearchForm } from '@/utils/jobSeekerSearchValidation';
 import { JobSeekerSearchForm } from '@/types/jobSeekerSearch';
 import { validateLanguages } from '@/utils/profileValidation';
-import { applicationsDefaults } from '@/lib/appplication-data';
+import { applicationsDefaults } from '@/lib/application-data';
 import { submitApplicationsSearchForm } from '@/utils/applicationsValidation';
 
 interface Props {

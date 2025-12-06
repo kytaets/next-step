@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -29,8 +28,6 @@ export default function ApplicationItem({ data }: Props) {
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
   });
-
-  console.log('Vacancy Data:', vacancyData);
 
   useEffect(() => {
     const companyLogo = vacancyData?.company.logoUrl ?? '';

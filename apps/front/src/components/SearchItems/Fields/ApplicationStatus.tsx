@@ -3,7 +3,7 @@ import { Field } from 'formik';
 import classes from './Fields.module.css';
 
 import { capitalize } from '@/utils/convertData';
-import { statusOptions } from '@/lib/appplication-data';
+import { statusOptions } from '@/lib/application-data';
 
 export default function ApplicationStatus() {
   return (

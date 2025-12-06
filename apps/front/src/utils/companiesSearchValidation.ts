@@ -6,7 +6,6 @@ export function searchCompaniesFormValidate(values: CompaniesSearchForm) {
     errors.name = 'Name must be at least 10 characters';
   }
 
-  console.log('validate', values, errors);
   return errors;
 }
 

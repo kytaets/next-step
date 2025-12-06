@@ -32,8 +32,6 @@ export default function CompanyItem({ data }: Props) {
     });
   }, [data.logoUrl]);
 
-  console.log(data.name.trim().length > 0 ? data.name : 'No url');
-
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}

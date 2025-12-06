@@ -34,8 +34,6 @@ export default function ApplicationPage() {
     refetchOnWindowFocus: true,
   });
 
-  console.log(applicationData);
-
   return (
     <div className="container">
       <h1 className="page-header">Your Application</h1>

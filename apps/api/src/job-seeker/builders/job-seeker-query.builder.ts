@@ -1,8 +1,7 @@
 import { Prisma, SeniorityLevel } from '@prisma/client';
 
-import { VacancyLanguageDto } from '../../vacancy/dto/vacancy-language.dto';
-
 import { getLanguageLevelsFromLevel } from '@common/utils';
+import { JobSeekerLanguageDto } from '../dto/job-seeker-language.dto';
 
 type JobSeekerQueryWhere = Omit<Prisma.JobSeekerWhereInput, 'AND'> & {
   AND: Prisma.JobSeekerWhereInput[];
@@ -23,7 +22,7 @@ export class JobSeekerQueryBuilder {
     return this;
   }
 
-  withLanguages(languages?: VacancyLanguageDto[]) {
+  withLanguages(languages?: JobSeekerLanguageDto[]) {
     if (languages?.length) {
       const languageConditions = languages.map((lang) => {
         return {
@@ -59,7 +58,6 @@ export class JobSeekerQueryBuilder {
     if (AND.length) {
       return {
         ...where,
-
         AND,
       };
     }

@@ -27,6 +27,7 @@ export default function CompanyVacanciesPage() {
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
+    retry: false,
   });
 
   if (isError)

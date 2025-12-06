@@ -6,7 +6,10 @@ jest.mock('@/services/apiRequest', () => ({
 jest.mock('@/services/axios', () => ({
   __esModule: true,
   default: {
+    get: jest.fn(),
     post: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
   },
 }));
 
@@ -77,23 +80,21 @@ describe('recruiter service', () => {
   // -----------------------------
 
   it('acceptInvite returns true when confirmed = true', async () => {
-    (api.post as jest.Mock).mockResolvedValue({
+    (api.get as jest.Mock).mockResolvedValue({
       data: { confirmed: true },
     });
 
     const result = await acceptInvite('abc123');
 
-    expect(api.post).toHaveBeenCalledWith(
-      '/recruiters/invite/accept',
-      {},
-      { params: { token: 'abc123' } }
-    );
+    expect(api.get).toHaveBeenCalledWith('/companies/invitations/accept', {
+      params: { token: 'abc123' },
+    });
 
     expect(result).toBe(true);
   });
 
   it('acceptInvite returns false when confirmed = false', async () => {
-    (api.post as jest.Mock).mockResolvedValue({
+    (api.get as jest.Mock).mockResolvedValue({
       data: { confirmed: false },
     });
 
@@ -103,7 +104,7 @@ describe('recruiter service', () => {
   });
 
   it('acceptInvite throws formatted error on failure', async () => {
-    (api.post as jest.Mock).mockRejectedValue({
+    (api.get as jest.Mock).mockRejectedValue({
       response: {
         status: 404,
         data: { message: 'Token expired' },
@@ -117,7 +118,7 @@ describe('recruiter service', () => {
   });
 
   it('acceptInvite throws fallback error on failure with no message', async () => {
-    (api.post as jest.Mock).mockRejectedValue({});
+    (api.get as jest.Mock).mockRejectedValue({});
 
     await expect(acceptInvite(null)).rejects.toEqual({
       status: 500,

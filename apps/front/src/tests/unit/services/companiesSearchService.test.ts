@@ -27,7 +27,7 @@ describe('companies service', () => {
 
     const result = await searchCompanies({ name: 'Test' } as any);
 
-    expect(api.get).toHaveBeenCalledWith('/companies/search', {
+    expect(api.get).toHaveBeenCalledWith('/companies', {
       params: { name: 'Test' },
     });
 

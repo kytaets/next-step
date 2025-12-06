@@ -8,6 +8,7 @@ import { RedisService } from '../src/redis/services/redis.service';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { UserWithoutPassword } from '../src/user/types/user-without-password.type';
+import { shouldFailWithoutAuth } from './utils/guards.helper';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -68,9 +69,7 @@ describe('UserController (e2e)', () => {
       expect(resBody).not.toHaveProperty('password');
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(`${baseUrl}/me`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/me`);
   });
 
   describe('DELETE /users/me', () => {
@@ -89,8 +88,6 @@ describe('UserController (e2e)', () => {
       expect(deletedUser).toBeNull();
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(`${baseUrl}/me`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'delete', `${baseUrl}/me`);
   });
 });

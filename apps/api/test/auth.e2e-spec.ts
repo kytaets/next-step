@@ -15,6 +15,7 @@ import {
   SESSION_PREFIX,
   USER_SESSIONS_PREFIX,
 } from '../src/session/constants/session.constants';
+import { shouldFailWithoutAuth } from './utils/guards.helper';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -191,9 +192,7 @@ describe('AuthController (e2e)', () => {
       expect(session).toBeNull();
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).post(`${baseUrl}/logout`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'post', `${baseUrl}/logout`);
   });
 
   describe('POST /auth/logout-all', () => {
@@ -219,9 +218,7 @@ describe('AuthController (e2e)', () => {
       expect(sessions).toHaveLength(0);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).post(`${baseUrl}/logout-all`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'post', `${baseUrl}/logout-all`);
   });
 
   describe('GET /auth/sessions', () => {
@@ -245,9 +242,7 @@ describe('AuthController (e2e)', () => {
       );
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(`${baseUrl}/sessions`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/sessions`);
   });
 
   describe('GET /auth/verify', () => {

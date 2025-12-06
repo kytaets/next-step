@@ -13,6 +13,11 @@ import { createRecruiter } from './utils/recruiter.helper';
 import { randomUUID } from 'node:crypto';
 import { createCompany } from './utils/company.helper';
 import { UpdateRecruiterDto } from '../src/recruiter/dto/update-recruiter.dto';
+import {
+  shouldFailForRecruiterWithoutCompany,
+  shouldFailWithoutAuth,
+  shouldFailWithoutRecruiterProfile,
+} from './utils/guards.helper';
 
 describe('RecruiterController (e2e)', () => {
   let app: INestApplication;
@@ -109,9 +114,7 @@ describe('RecruiterController (e2e)', () => {
         .expect(400);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).post(baseUrl).send(body).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'post', baseUrl);
   });
 
   describe('GET /recruiters/me', () => {
@@ -130,18 +133,14 @@ describe('RecruiterController (e2e)', () => {
       expect(resBody.userId).toBe(recruiter.userId);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).get(`${baseUrl}/me`).expect(401);
-    });
-
-    it('should return 404 if the user does not have a recruiter profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .get(`${baseUrl}/me`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(404);
-    });
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/me`);
+    shouldFailWithoutRecruiterProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'get',
+      `${baseUrl}/me`,
+    );
   });
 
   describe('GET /recruiters/:id', () => {
@@ -218,19 +217,14 @@ describe('RecruiterController (e2e)', () => {
       );
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).patch(`${baseUrl}/me`).send(body).expect(401);
-    });
-
-    it('should return 404 if the user does not have a recruiter profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .patch(`${baseUrl}/me`)
-        .send(body)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(404);
-    });
+    shouldFailWithoutAuth(() => server, 'patch', `${baseUrl}/me`);
+    shouldFailWithoutRecruiterProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'patch',
+      `${baseUrl}/me`,
+    );
   });
 
   describe('DELETE /recruiters/me/company', () => {
@@ -277,28 +271,21 @@ describe('RecruiterController (e2e)', () => {
         .expect(403);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).delete(`${baseUrl}/me/company`).expect(401);
-    });
-
-    it('should return 404 if the user does not have a recruiter profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .delete(`${baseUrl}/me/company`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(404);
-    });
-
-    it('should return 403 if the recruiter is not a member of any company', async () => {
-      const { user, sid } = await createAuthenticatedUser(prisma, redis);
-      await createRecruiter(prisma, {}, user.id);
-
-      return request(server)
-        .delete(`${baseUrl}/me/company`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(403);
-    });
+    shouldFailWithoutAuth(() => server, 'delete', `${baseUrl}/me/company`);
+    shouldFailWithoutRecruiterProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'delete',
+      `${baseUrl}/me/company`,
+    );
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'delete',
+      `${baseUrl}/me/company`,
+    );
   });
 
   describe('DELETE /recruiters/me', () => {
@@ -319,19 +306,6 @@ describe('RecruiterController (e2e)', () => {
       expect(deletedRecruiter).toBeNull();
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).delete(`${baseUrl}/me`).expect(401);
-    });
-
-    it('should return 404 if the user does not have a recruiter profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .delete(`${baseUrl}/me`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(404);
-    });
-
     it('should return 403 if the recruiter is a company admin', async () => {
       const { user, sid } = await createAuthenticatedUser(prisma, redis);
       const company = await createCompany(prisma);
@@ -346,5 +320,14 @@ describe('RecruiterController (e2e)', () => {
         .set('Cookie', [`sid=${sid}`])
         .expect(403);
     });
+
+    shouldFailWithoutAuth(() => server, 'delete', `${baseUrl}/me`);
+    shouldFailWithoutRecruiterProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'delete',
+      `${baseUrl}/me`,
+    );
   });
 });

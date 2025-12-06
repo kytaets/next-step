@@ -17,6 +17,12 @@ import { FindManyApplicationsDto } from '../src/application/dto/find-many-applic
 import { createRecruiter } from './utils/recruiter.helper';
 import { ApplicationWithRelations } from '../src/application/types/application-with-relations.type';
 import { PagedDataResponse } from '@common/responses';
+import {
+  shouldFailForRecruiterWithoutCompany,
+  shouldFailForVacancyOfAnotherCompany,
+  shouldFailWithoutAuth,
+  shouldFailWithoutJobSeekerProfile,
+} from './utils/guards.helper';
 
 describe('ApplicationController (e2e)', () => {
   let app: INestApplication;
@@ -145,18 +151,14 @@ describe('ApplicationController (e2e)', () => {
         .expect(404);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server).post(baseUrl).expect(401);
-    });
-
-    it('should return 404 if the user does not have a job seeker profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .post(baseUrl)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(404);
-    });
+    shouldFailWithoutAuth(() => server, 'post', baseUrl);
+    shouldFailWithoutJobSeekerProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'post',
+      baseUrl,
+    );
   });
 
   describe('GET /applications/:id', () => {
@@ -202,10 +204,7 @@ describe('ApplicationController (e2e)', () => {
         .expect(404);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      const applicationId = randomUUID();
-      return request(server).get(`${baseUrl}/${applicationId}`).expect(401);
-    });
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/${randomUUID()}`);
   });
 
   describe('GET /applications/vacancies/:id', () => {
@@ -263,40 +262,25 @@ describe('ApplicationController (e2e)', () => {
         .expect(404);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      const vacancyId = randomUUID();
-
-      return request(server)
-        .get(`${baseUrl}/vacancies/${vacancyId}`)
-        .expect(401);
-    });
-
-    it('should return 403 if the user is a recruiter without company', async () => {
-      const vacancyId = randomUUID();
-
-      const { user, sid } = await createAuthenticatedUser(prisma, redis);
-      await createRecruiter(prisma, {}, user.id);
-
-      return request(server)
-        .get(`${baseUrl}/vacancies/${vacancyId}`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(403);
-    });
-
-    it('should return 403 if the user is not a recruiter of the vacancy company', async () => {
-      const { user, sid } = await createAuthenticatedUser(prisma, redis);
-
-      const company = await createCompany(prisma);
-      await createRecruiter(prisma, { companyId: company.id }, user.id);
-
-      const anotherCompany = await createCompany(prisma);
-      const vacancy = await createVacancy(prisma, anotherCompany.id);
-
-      return request(server)
-        .get(`${baseUrl}/vacancies/${vacancy.id}`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(403);
-    });
+    shouldFailWithoutAuth(
+      () => server,
+      'get',
+      `${baseUrl}/vacancies/${randomUUID()}`,
+    );
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'get',
+      `${baseUrl}/vacancies/${randomUUID()}`,
+    );
+    shouldFailForVacancyOfAnotherCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'get',
+      `${baseUrl}/vacancies`,
+    );
   });
 
   describe('GET /applications/job-seekers/my', () => {
@@ -342,22 +326,14 @@ describe('ApplicationController (e2e)', () => {
       expect(meta.total).toBe(1);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      return request(server)
-        .get(`${baseUrl}/job-seekers/my`)
-        .query(body)
-        .expect(401);
-    });
-
-    it('should return 404 if the user does not have a job seeker profile', async () => {
-      const { sid } = await createAuthenticatedUser(prisma, redis);
-
-      return request(server)
-        .get(`${baseUrl}/job-seekers/my`)
-        .set('Cookie', [`sid=${sid}`])
-        .query(body)
-        .expect(404);
-    });
+    shouldFailWithoutAuth(() => server, 'get', `${baseUrl}/job-seekers/my`);
+    shouldFailWithoutJobSeekerProfile(
+      () => server,
+      () => prisma,
+      () => redis,
+      'get',
+      `${baseUrl}/job-seekers/my`,
+    );
   });
 
   describe('PUT /applications/:id/status', () => {
@@ -434,24 +410,17 @@ describe('ApplicationController (e2e)', () => {
         .expect(403);
     });
 
-    it('should return 401 if the user is not authenticated', async () => {
-      const applicationId = randomUUID();
-
-      return request(server)
-        .put(`${baseUrl}/${applicationId}/status`)
-        .expect(401);
-    });
-
-    it('should return 403 if the user is a recruiter without company', async () => {
-      const applicationId = randomUUID();
-
-      const { user, sid } = await createAuthenticatedUser(prisma, redis);
-      await createRecruiter(prisma, {}, user.id);
-
-      return request(server)
-        .put(`${baseUrl}/${applicationId}/status`)
-        .set('Cookie', [`sid=${sid}`])
-        .expect(403);
-    });
+    shouldFailWithoutAuth(
+      () => server,
+      'put',
+      `${baseUrl}/${randomUUID()}/status`,
+    );
+    shouldFailForRecruiterWithoutCompany(
+      () => server,
+      () => prisma,
+      () => redis,
+      'put',
+      `${baseUrl}/${randomUUID()}/status`,
+    );
   });
 });

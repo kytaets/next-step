@@ -29,7 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/tests/unit/components/Modal/Modal.test.sx",
-    "src/tests/unit/components/ProfileItems/Skills.test,tsx"
+    "src/tests/unit/components/ProfileItems/Skills.test,tsx",
+    "src/tests/integration/routing/main-header/MainHeader.test.sx"
   ],
   "exclude": ["node_modules"]
 }

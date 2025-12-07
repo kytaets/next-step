@@ -52,7 +52,6 @@ export default function CompanyProfilePage() {
     );
 
   if (!companyData) return null;
-  else console.log(companyData);
 
   return (
     <div className="container">

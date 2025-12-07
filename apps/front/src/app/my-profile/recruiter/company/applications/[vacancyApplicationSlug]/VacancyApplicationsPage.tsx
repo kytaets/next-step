@@ -54,8 +54,6 @@ export default function VacancyApplicationsPage() {
       </MessageBox>
     );
 
-  console.log(myApplications);
-
   return (
     <div className="container">
       <h1 className="page-header">Search for top-tier jobs </h1>

@@ -21,7 +21,10 @@ jest.mock('@/services/userService', () => ({
 }));
 
 // Mock Next.js <Image/> component
-jest.mock('next/image', () => (props: any) => <img {...props} />);
+jest.mock('next/image', () => (props: any) => {
+  const { priority, ...rest } = props; // ⬅ strip unsupported props
+  return <img {...rest} />;
+});
 
 // Mock framer-motion motion.div
 jest.mock('framer-motion', () => ({

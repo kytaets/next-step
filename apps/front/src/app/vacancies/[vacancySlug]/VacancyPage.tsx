@@ -67,8 +67,6 @@ export default function VacancyPage() {
       </MessageBox>
     );
 
-  console.log(data);
-
   return (
     <div className="container">
       <div className={classes['vacancy-container']}>

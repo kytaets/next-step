@@ -32,8 +32,6 @@ export default function CompanyMembers() {
     refetchOnWindowFocus: true,
   });
 
-  console.log('myMembers:', myMembers);
-
   return (
     <div className="container">
       <h1 className="page-header">Your Company Members</h1>

@@ -37,8 +37,6 @@ export default function JobSeekersPage() {
     queryFn: () => searchJobSeekers(jobSeekerForm),
   });
 
-  console.log(jobSeekersData);
-
   const updateUrl = (values: JobSeekerSearchForm) => {
     const params = new URLSearchParams();
 

@@ -52,7 +52,6 @@ export default function RecruiterProfilePage() {
     );
 
   if (!recruiterData) return null;
-  else console.log(recruiterData);
 
   return (
     <div className="container">

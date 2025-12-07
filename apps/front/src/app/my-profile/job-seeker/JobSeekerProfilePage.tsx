@@ -56,7 +56,6 @@ export default function JobSeekerProfilePage() {
     );
 
   if (!profileData) return null;
-  else console.log(profileData);
 
   return (
     <div className="container">

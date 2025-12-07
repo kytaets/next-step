@@ -48,7 +48,7 @@ describe('ApplicationService', () => {
     companyId: 'company-uuid-1',
   };
 
-  const mockRepo = {
+  const mockRepository = {
     create: jest.fn(),
     findOne: jest.fn(),
     findMany: jest.fn(),
@@ -64,7 +64,7 @@ describe('ApplicationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationService,
-        { provide: ApplicationRepository, useValue: mockRepo },
+        { provide: ApplicationRepository, useValue: mockRepository },
         { provide: VacancyService, useValue: mockVacancyService },
       ],
     }).compile();

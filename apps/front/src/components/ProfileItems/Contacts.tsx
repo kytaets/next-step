@@ -34,6 +34,7 @@ export default function Contacts({ isEditable, data }: Props) {
       {isEditable && (
         <button
           className={classes['edit-contacts-btn']}
+          id="jobseeker-contacts-edit-btn"
           onClick={() =>
             openModal(
               <AnimatePresence>

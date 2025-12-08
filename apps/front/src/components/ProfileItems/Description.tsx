@@ -63,6 +63,7 @@ export default function Bio({ isEditable, data, type = 'bio' }: Props) {
       title={isEditable ? 'Your ' + title : title}
       isEditable={isEditable}
       onEdit={toggleEdit}
+      btnId="jobseeker-description-edit-btn"
     >
       {!isChanging ? (
         <p className={classes['bio-p']}>
@@ -101,6 +102,7 @@ export default function Bio({ isEditable, data, type = 'bio' }: Props) {
                   className={classes['info-form-btn']}
                   type="submit"
                   disabled={isPending}
+                  id="jobseeker-description-save-btn"
                 >
                   <AnimatedIcon scale={1.07}>
                     {!isPending ? 'Save changes' : 'Saving changes...'}

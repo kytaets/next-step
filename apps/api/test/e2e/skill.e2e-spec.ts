@@ -1,12 +1,12 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Server } from 'node:http';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '../src/app.module';
-import { CreateSkillDto } from '../src/skill/dto/create-skill.dto';
+import { AppModule } from '../../src/app.module';
+import { CreateSkillDto } from '../../src/skill/dto/create-skill.dto';
 import { randomUUID } from 'node:crypto';
 import { Skill } from '@prisma/client';
 

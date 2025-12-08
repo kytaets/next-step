@@ -1,29 +1,29 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { createCompany } from './utils/company.helper';
 import { createRecruiter } from './utils/recruiter.helper';
 import { createVacancy } from './utils/vacancy.helper';
 import { randomUUID } from 'crypto';
-import { CreateVacancyDto } from '../src/vacancy/dto/create-vacancy.dto';
+import { CreateVacancyDto } from '../../src/vacancy/dto/create-vacancy.dto';
 import {
   EmploymentType,
   SeniorityLevel,
   WorkFormat,
   LanguageLevel,
 } from '@prisma/client';
-import { VacancyWithRelations } from '../src/vacancy/types/vacancy-with-relations.type';
+import { VacancyWithRelations } from '../../src/vacancy/types/vacancy-with-relations.type';
 import { PagedDataResponse } from '@common/responses';
-import { FindManyVacanciesDto } from '../src/vacancy/dto/find-many-vacancies.dto';
-import { SetSkillsDto } from '../src/vacancy/dto/set-skills.dto';
-import { SetLanguagesDto } from '../src/vacancy/dto/set-languages.dto';
-import { UpdateVacancyDto } from '../src/vacancy/dto/update-vacancy.dto';
+import { FindManyVacanciesDto } from '../../src/vacancy/dto/find-many-vacancies.dto';
+import { SetSkillsDto } from '../../src/vacancy/dto/set-skills.dto';
+import { SetLanguagesDto } from '../../src/vacancy/dto/set-languages.dto';
+import { UpdateVacancyDto } from '../../src/vacancy/dto/update-vacancy.dto';
 import {
   shouldFailForRecruiterWithoutCompany,
   shouldFailForVacancyOfAnotherCompany,

@@ -12,15 +12,6 @@ import { CreateApplicationDto } from '../dto/create-application.dto';
 import { FindManyApplicationsDto } from '../dto/find-many-applications.dto';
 import { VacancyWithRelations } from '../../vacancy/types/vacancy-with-relations.type';
 import { ApplicationWithRelations } from '../types/application-with-relations.type';
-import { createPaginationMeta } from '@common/utils';
-
-jest.mock('@common/utils', () => ({
-  createPaginationMeta: jest.fn(),
-}));
-
-const mockedCreatePaginationMeta = createPaginationMeta as jest.MockedFunction<
-  typeof createPaginationMeta
->;
 
 describe('ApplicationService', () => {
   let service: ApplicationService;
@@ -249,12 +240,6 @@ describe('ApplicationService', () => {
       repository.findMany.mockResolvedValue(mockData);
       repository.count.mockResolvedValue(total);
 
-      mockedCreatePaginationMeta.mockReturnValue({
-        total,
-        page: 2,
-        totalPages: 3,
-      });
-
       const result = await service.search(dto, {
         jobSeekerId: mockJobSeeker.id,
       });
@@ -279,12 +264,6 @@ describe('ApplicationService', () => {
           totalPages: 3,
         },
       });
-
-      expect(mockedCreatePaginationMeta).toHaveBeenCalledWith(
-        total,
-        dto.page,
-        dto.take,
-      );
     });
 
     it('should use default values', async () => {

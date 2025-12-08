@@ -13,31 +13,6 @@ import { SetLanguagesDto } from '../dto/set-languages.dto';
 import { SetContactsDto } from '../dto/set-contacts.dto';
 import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 import { JobSeekerWithRelations } from '../types/job-seeker-with-relations.type';
-import { createPaginationMeta } from '@common/utils';
-
-jest.mock('@common/utils', () => ({
-  createPaginationMeta: jest.fn(),
-}));
-
-const mockedCreatePaginationMeta = createPaginationMeta as jest.MockedFunction<
-  typeof createPaginationMeta
->;
-
-jest.mock('../builders/job-seeker-query.builder', () => {
-  return {
-    JobSeekerQueryBuilder: jest.fn().mockImplementation(() => {
-      return {
-        withLanguages: jest.fn().mockReturnThis(),
-        withSkillIds: jest.fn().mockReturnThis(),
-        withSeniorityLevels: jest.fn().mockReturnThis(),
-
-        build: jest.fn().mockReturnValue({
-          isOpenToWork: true,
-        }),
-      };
-    }),
-  };
-});
 
 describe('JobSeekerService', () => {
   let service: JobSeekerService;
@@ -156,11 +131,6 @@ describe('JobSeekerService', () => {
 
       repository.findMany.mockResolvedValue(data);
       repository.count.mockResolvedValue(total);
-      mockedCreatePaginationMeta.mockReturnValue({
-        total,
-        page: 2,
-        totalPages: 3,
-      });
 
       const result = await service.findMany(defaultDto);
 
@@ -171,11 +141,6 @@ describe('JobSeekerService', () => {
         { updatedAt: Prisma.SortOrder.desc },
         10,
         10,
-      );
-      expect(mockedCreatePaginationMeta).toHaveBeenCalledWith(
-        total,
-        defaultDto.page,
-        defaultDto.take,
       );
 
       expect(result.data).toEqual(data);

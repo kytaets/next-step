@@ -1,6 +1,6 @@
-import { PrismaService } from '../../src/prisma/services/prisma.service';
-import { ApplicationWithRelations } from '../../src/application/types/application-with-relations.type';
-import { applicationInclude } from '../../src/application/repositories/includes/application.include';
+import { PrismaService } from '../../../src/prisma/services/prisma.service';
+import { ApplicationWithRelations } from '../../../src/application/types/application-with-relations.type';
+import { applicationInclude } from '../../../src/application/repositories/includes/application.include';
 import { ApplicationStatus } from '@prisma/client';
 
 export async function createApplication(

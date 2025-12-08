@@ -1,7 +1,7 @@
 import { Server } from 'node:http';
 import * as request from 'supertest';
-import { PrismaService } from '../../src/prisma/services/prisma.service';
-import { RedisService } from '../../src/redis/services/redis.service';
+import { PrismaService } from '../../../src/prisma/services/prisma.service';
+import { RedisService } from '../../../src/redis/services/redis.service';
 import { createAuthenticatedUser } from './auth.helper';
 import { createRecruiter } from './recruiter.helper';
 import { createCompany } from './company.helper';

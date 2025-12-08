@@ -13,18 +13,9 @@ import {
 import { Company, CompanyRole, Recruiter } from '@prisma/client';
 import { TokenType } from '../../token/enums/token-type.enum';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import { createPaginationMeta } from '@common/utils';
 import { UserWithoutPassword } from '../../user/types/user-without-password.type';
 import { InviteDto } from '../dto/invite.dto';
 import { AcceptInviteDto } from '../dto/accept-invite.dto';
-
-jest.mock('@common/utils', () => ({
-  createPaginationMeta: jest.fn(),
-}));
-
-const mockedCreatePaginationMeta = createPaginationMeta as jest.MockedFunction<
-  typeof createPaginationMeta
->;
 
 describe('CompanyService', () => {
   let service: CompanyService;
@@ -160,12 +151,6 @@ describe('CompanyService', () => {
       const total = 20;
       repository.count.mockResolvedValue(total);
 
-      mockedCreatePaginationMeta.mockReturnValue({
-        total,
-        page: 2,
-        totalPages: 2,
-      });
-
       const result = await service.findMany(dto);
 
       expect(result).toEqual({
@@ -178,12 +163,6 @@ describe('CompanyService', () => {
         { name: 'desc' },
         10,
         10,
-      );
-
-      expect(mockedCreatePaginationMeta).toHaveBeenCalledWith(
-        total,
-        dto.page,
-        dto.take,
       );
     });
   });

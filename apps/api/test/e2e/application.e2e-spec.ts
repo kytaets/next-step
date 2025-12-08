@@ -1,9 +1,9 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 import * as cookieParser from 'cookie-parser';
 import * as request from 'supertest';
 import { createAuthenticatedUser } from './utils/auth.helper';
@@ -13,9 +13,9 @@ import { createJobSeekerWithProps } from './utils/job-seeker.helper';
 import { ApplicationStatus } from '@prisma/client';
 import { createApplication } from './utils/application.helper';
 import { randomUUID } from 'node:crypto';
-import { FindManyApplicationsDto } from '../src/application/dto/find-many-applications.dto';
+import { FindManyApplicationsDto } from '../../src/application/dto/find-many-applications.dto';
 import { createRecruiter } from './utils/recruiter.helper';
-import { ApplicationWithRelations } from '../src/application/types/application-with-relations.type';
+import { ApplicationWithRelations } from '../../src/application/types/application-with-relations.type';
 import { PagedDataResponse } from '@common/responses';
 import {
   shouldFailForRecruiterWithoutCompany,

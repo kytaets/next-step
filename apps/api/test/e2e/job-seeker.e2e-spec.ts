@@ -1,21 +1,21 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '../src/app.module';
-import { CreateJobSeekerDto } from '../src/job-seeker/dto/create-job-seeker.dto';
+import { AppModule } from '../../src/app.module';
+import { CreateJobSeekerDto } from '../../src/job-seeker/dto/create-job-seeker.dto';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { LanguageLevel, SeniorityLevel } from '@prisma/client';
-import { FindManyJobSeekersDto } from '../src/job-seeker/dto/find-many-job-seekers.dto';
+import { FindManyJobSeekersDto } from '../../src/job-seeker/dto/find-many-job-seekers.dto';
 import { createJobSeekerWithProps } from './utils/job-seeker.helper';
 import { PagedDataResponse } from '@common/responses';
-import { UpdateJobSeekerDto } from '../src/job-seeker/dto/update-job-seeker.dto';
-import { JobSeekerWithRelations } from '../src/job-seeker/types/job-seeker-with-relations.type';
-import { SetLanguagesDto } from '../src/job-seeker/dto/set-languages.dto';
-import { SetContactsDto } from '../src/job-seeker/dto/set-contacts.dto';
+import { UpdateJobSeekerDto } from '../../src/job-seeker/dto/update-job-seeker.dto';
+import { JobSeekerWithRelations } from '../../src/job-seeker/types/job-seeker-with-relations.type';
+import { SetLanguagesDto } from '../../src/job-seeker/dto/set-languages.dto';
+import { SetContactsDto } from '../../src/job-seeker/dto/set-contacts.dto';
 import { randomUUID } from 'node:crypto';
 import {
   shouldFailWithoutAuth,

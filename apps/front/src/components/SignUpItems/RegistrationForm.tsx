@@ -28,7 +28,6 @@ export default function RegistrationForm() {
     onSuccess: (result) => {
       if (result.status === 'error') {
         setErrors([result.error]);
-        console.log('Error:', result.error);
         return;
       }
       router.push('/sign-up?step=confirm');

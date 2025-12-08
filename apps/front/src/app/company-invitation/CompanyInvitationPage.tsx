@@ -24,6 +24,8 @@ export default function CompanyInvitationPage() {
   });
 
   useEffect(() => {
+    if (!token) return;
+
     if (isSuccess) {
       router.replace('/my-profile/recruiter/company');
       return;

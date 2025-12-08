@@ -44,7 +44,7 @@ export default function JobSeekerProfilePage() {
     return () => {
       closeModal();
     };
-  }, [isError, error, profileData, openModal, closeModal, router]);
+  }, [isError, error, profileData, openModal, closeModal]);
 
   if (isError && error?.status !== 403)
     return (
@@ -56,7 +56,6 @@ export default function JobSeekerProfilePage() {
     );
 
   if (!profileData) return null;
-  else console.log(profileData);
 
   return (
     <div className="container">

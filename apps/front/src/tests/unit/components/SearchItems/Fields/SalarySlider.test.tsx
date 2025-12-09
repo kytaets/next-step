@@ -63,6 +63,6 @@ describe('SalarySlider Component', () => {
 
     fireEvent.change(input, { target: { value: '2000' } });
 
-    expect(setFieldValueMock).toHaveBeenCalledWith('salaryMin', '2000');
+    expect(setFieldValueMock).toHaveBeenCalledWith('salaryMin', 2000);
   });
 });

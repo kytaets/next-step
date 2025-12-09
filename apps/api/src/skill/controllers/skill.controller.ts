@@ -12,7 +12,7 @@ import { SkillService } from '../services/skill.service';
 import { Skill } from '@prisma/client';
 import { CreateSkillDto } from '../dto/create-skill.dto';
 import { MessageResponse } from '@common/responses';
-import { CacheInterceptor } from '../../cache/interceptors/cache.Interceptor';
+import { CacheInterceptor } from '../../cache/interceptors/cache.interceptor';
 import { CacheTTL } from '../../cache/decorators/cache-ttl';
 import { CacheKey } from '../../cache/decorators/cache-key';
 import { InvalidateCacheInterceptor } from '../../cache/interceptors/invalidate-cache.interceptor';

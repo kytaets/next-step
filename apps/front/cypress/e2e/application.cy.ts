@@ -1,7 +1,6 @@
+import { VacancyData } from '@/types/vacancies';
+
 describe('Vacancy Application Submission (mocked)', () => {
-  //
-  // ---------- MOCK VACANCY DATA (FULL STRUCTURE) ----------
-  //
   const vacancy: VacancyData = {
     id: 'v1',
     title: 'Senior React Developer',
@@ -38,11 +37,8 @@ describe('Vacancy Application Submission (mocked)', () => {
     updatedAt: new Date().toISOString(),
   };
 
-  //
-  // ---------- BEFORE EACH ----------
-  //
   beforeEach(() => {
-    cy.setCookie('role', 'JOB_SEEKER'); // must be job seeker → ApplyBtn visible
+    cy.setCookie('role', 'JOB_SEEKER');
 
     cy.intercept('GET', '**/api/vacancies/*', {
       statusCode: 200,
@@ -53,31 +49,22 @@ describe('Vacancy Application Submission (mocked)', () => {
     cy.wait('@fetchVacancy');
   });
 
-  //
-  // -----------------------------------------------------
-  // 1) SUCCESSFUL APPLICATION SUBMISSION
-  // -----------------------------------------------------
-  //
   it('submits a job application successfully', () => {
     cy.intercept('POST', '**/api/applications', {
       statusCode: 201,
       body: { status: 'ok' },
     }).as('submitApplication');
 
-    // Open modal
     cy.get('#apply-btn').click({ force: true });
 
     cy.contains('Send invitation').should('exist');
 
-    // Fill cover letter
     cy.get('textarea[name="coverLetter"]').type(
       'Hello recruiter, I am highly interested in this role.'
     );
 
-    // Submit form
     cy.contains('button', 'Send invitation').click();
 
-    // Verify request body
     cy.wait('@submitApplication').then((interception) => {
       expect(interception.request.body).to.have.property('vacancyId', 'v1');
       expect(interception.request.body.coverLetter).to.equal(
@@ -85,15 +72,9 @@ describe('Vacancy Application Submission (mocked)', () => {
       );
     });
 
-    // Success message displayed
     cy.contains('Application sent successfully!').should('exist');
   });
 
-  //
-  // -----------------------------------------------------
-  // 2) APPLICATION SUBMISSION FAILURE (API ERROR)
-  // -----------------------------------------------------
-  //
   it('shows an error message when submission fails', () => {
     cy.intercept('POST', '**/api/applications', {
       statusCode: 400,

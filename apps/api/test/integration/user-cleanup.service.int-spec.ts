@@ -8,9 +8,10 @@ describe('UserCleanupService (Integration)', () => {
   let service: UserCleanupService;
   let prisma: PrismaService;
   let config: ConfigService;
+  let moduleFixture: TestingModule;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
@@ -25,6 +26,7 @@ describe('UserCleanupService (Integration)', () => {
 
   afterAll(async () => {
     await prisma.user.deleteMany({});
+    await moduleFixture.close();
     await prisma.$disconnect();
   });
 

@@ -170,9 +170,9 @@ describe('Edit Job Seeker Profile Flow', () => {
       },
     }).as('refetchProfileAfterBio');
 
-    cy.get('#jobseeker-description-edit-btn').click();
+    cy.get('#description-edit-btn').click();
     cy.get('textarea[name="bio"]').clear().type('Updated bio text');
-    cy.get('#jobseeker-description-save-btn').click();
+    cy.get('#description-save-btn').click();
 
     cy.wait('@updateBio');
     cy.wait('@refetchProfileAfterBio');

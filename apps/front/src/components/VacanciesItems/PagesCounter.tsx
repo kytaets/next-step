@@ -69,7 +69,7 @@ export default function PagesCounter({ currentPage, totalPages }: Props) {
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className={classes['pages-counter']}>
+    <div className={classes['pages-counter']} id="pages-counter">
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}

@@ -71,8 +71,8 @@
 
 .search-btn div {
   position: absolute;
-  top: 7;
-  right: 8;
+  top: 7px;
+  right: 8px;
   padding: 7px 10px;
   background-color: #1f1f21;
   border: none;

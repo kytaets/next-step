@@ -17,7 +17,6 @@ import Cookies from 'js-cookie';
 import ProfileFormModal from '@/components/ProfileItems/ProfileFormModal';
 
 export default function JobSeekerProfilePage() {
-  const router = useRouter();
   const openModal = useModalStore((state) => state.openModal);
   const closeModal = useModalStore((state) => state.closeModal);
 

@@ -11,6 +11,7 @@ interface Props {
   title: string;
   isEditable?: boolean;
   onEdit?: () => void;
+  btnId?: string;
 }
 
 export default function InfoBox({
@@ -18,6 +19,7 @@ export default function InfoBox({
   title,
   isEditable,
   onEdit,
+  btnId,
 }: Props) {
   return (
     <div className={classes['info-box']}>
@@ -25,7 +27,11 @@ export default function InfoBox({
         <h3>{title}</h3>
         {isEditable && onEdit && (
           <div className="row-align-center">
-            <button className={classes['edit-info-btn']} onClick={onEdit}>
+            <button
+              className={classes['edit-info-btn']}
+              onClick={onEdit}
+              id={btnId && btnId}
+            >
               <AnimatedIcon iconType={faPencil} />
             </button>
           </div>

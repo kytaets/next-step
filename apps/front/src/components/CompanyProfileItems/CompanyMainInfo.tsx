@@ -76,6 +76,7 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
               <button
                 className={classes['edit-main-info-btn']}
                 onClick={() => setIsChanging(true)}
+                id="edit-company-main-info"
               >
                 <AnimatedIcon iconType={faPencil} />
               </button>
@@ -146,6 +147,7 @@ export default function CompanyMainInfo({ isEditable, data }: Props) {
                   className={profileClasses['personal-info-btn']}
                   type="submit"
                   disabled={isPending}
+                  id="save-company-main-info"
                 >
                   <AnimatedIcon iconType={faCheck} />
                 </button>

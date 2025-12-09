@@ -55,6 +55,7 @@ export default function OpenToWork({
         style={{
           cursor: isEditable && type === 'isOpen' ? 'pointer' : 'default',
         }}
+        id="open-to-work-btn"
       >
         <AnimatedIcon scale={isEditable && type === 'isOpen' ? 1.1 : 1}>
           {isTrue ? variants[0] : variants[1]}

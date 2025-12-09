@@ -140,7 +140,7 @@ export default function SignInForm() {
 
         {forgetPassIsClicked && (
           <MessageBox type="info">
-            Check your email to reset the password
+            <p id="check-text"> Check your email to reset the password</p>
           </MessageBox>
         )}
 

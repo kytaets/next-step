@@ -75,6 +75,7 @@ type RequiredLanguage = {
 type VacancySearchForm = {
   title: string;
   salaryMin: number | undefined;
+  salaryMax?: number | undefined;
   experienceRequired: number | undefined;
   workFormats: ('OFFICE' | 'REMOTE' | 'HYBRID')[];
   employmentTypes: ('FULL_TIME' | 'PART_TIME' | 'INTERNSHIP' | 'CONTRACT')[];

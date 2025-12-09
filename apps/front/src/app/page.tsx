@@ -1,12 +1,10 @@
 'use client';
 
-import { Suspense } from 'react';
 import Image from 'next/image';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 import CompanyInfos from '@/components/CompanyInfos/CompanyInfos';
-import LoadingPage from './loading-out';
 
 import classes from './page.module.css';
 
@@ -60,9 +58,7 @@ export default function Home() {
             Partnering with industry leaders to drive innovation and growth.
           </h3>
         </div>
-        <Suspense fallback={<LoadingPage />}>
-          <CompanyInfos />
-        </Suspense>
+        <CompanyInfos />
       </div>
     </>
   );

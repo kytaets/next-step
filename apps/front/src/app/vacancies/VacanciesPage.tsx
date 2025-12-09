@@ -16,7 +16,7 @@ import { VacancyFormValues } from '@/types/vacancy';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Cookies from 'js-cookie';
 
@@ -52,8 +52,14 @@ export default function VacanciesPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const queryData = Object.fromEntries(searchParams.entries());
-  const vacancyForm = mapQueryToVacancyForm(queryData);
+  const queryData = useMemo(() => {
+    return Object.fromEntries(searchParams.entries());
+  }, [searchParams]);
+
+  const vacancyForm = useMemo(
+    () => mapQueryToVacancyForm(queryData),
+    [queryData]
+  );
 
   const [role, setRole] = useState<string | undefined>();
 
@@ -69,6 +75,7 @@ export default function VacanciesPage() {
   } = useQuery({
     queryKey: ['vacancies', queryData],
     queryFn: () => searchVacancies(vacancyForm),
+    retry: false,
   });
 
   const updateUrl = (values: VacancyFormValues) => {
@@ -96,7 +103,9 @@ export default function VacanciesPage() {
   return (
     <div className="container">
       <h1 className={classes['page-header']}>Search for top-tier jobs </h1>
+
       <SearchBar onSubmit={updateUrl} fieldsValues={vacancyForm} />
+
       {role && (
         <Link href={role === 'JOB_SEEKER' ? '/companies' : '/job-seekers'}>
           <div className={classes['link-to-companies']}>
@@ -125,6 +134,7 @@ export default function VacanciesPage() {
             />
           ))}
       </div>
+
       {vacanciesData && (
         <PagesCounter
           currentPage={vacanciesData.meta.page}

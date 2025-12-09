@@ -19,6 +19,7 @@ export default function ProfileFormModal({ role }: Props) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      id="profile-modal"
     >
       {role === 'job-seeker' ? (
         <JobSeekerProfileForm />

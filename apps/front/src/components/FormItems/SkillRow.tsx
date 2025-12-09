@@ -30,7 +30,7 @@ export default function SkillsRow({
           <div className={classes['skills']}>
             {values.skills.map((s: SkillData, index: number) => (
               <div key={s.skill.id} className={classes['del-btn-box']}>
-                <span>{s.skill.name}</span>
+                <span>{s.skill.name}</span>{' '}
                 <button
                   type="button"
                   className={classes['del-skill-btn']}

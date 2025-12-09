@@ -43,6 +43,7 @@
     "@types/react-dom": "^19",
     "babel-jest": "^29.7.0",
     "cross-fetch": "^4.1.0",
+    "cypress": "^15.7.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "html-encoding-sniffer": "^4.0.0",

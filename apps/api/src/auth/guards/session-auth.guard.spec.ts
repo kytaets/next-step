@@ -137,7 +137,7 @@ describe('SessionAuthGuard', () => {
       const context = createMockContext(request);
 
       sessionService.getSession.mockResolvedValue(mockSession);
-      userService.findOneOrThrow.mockRejectedValue(NotFoundException);
+      userService.findOneOrThrow.mockRejectedValue(new NotFoundException());
 
       await expect(guard.canActivate(context)).rejects.toThrow(
         NotFoundException,

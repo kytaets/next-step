@@ -1,22 +1,22 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 import * as cookieParser from 'cookie-parser';
-import { EmailService } from '../src/email/services/email.service';
-import { CreateCompanyDto } from '../src/company/dto/create-company.dto';
+import { EmailService } from '../../src/email/services/email.service';
+import { CreateCompanyDto } from '../../src/company/dto/create-company.dto';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { createRecruiter } from './utils/recruiter.helper';
 import { createCompany } from './utils/company.helper';
 import { Company, CompanyRole } from '@prisma/client';
-import { FindManyCompaniesDto } from '../src/company/dto/find-many-companies.dto';
+import { FindManyCompaniesDto } from '../../src/company/dto/find-many-companies.dto';
 import { PagedDataResponse } from '@common/responses';
 import { randomUUID } from 'node:crypto';
-import { TokenType } from '../src/token/enums/token-type.enum';
-import { UpdateCompanyDto } from '../src/company/dto/update-company.dto';
+import { TokenType } from '../../src/token/enums/token-type.enum';
+import { UpdateCompanyDto } from '../../src/company/dto/update-company.dto';
 import {
   shouldFailForRecruiterWithoutCompany,
   shouldFailIfRecruiterHasCompany,

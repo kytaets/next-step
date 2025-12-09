@@ -1,13 +1,13 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../src/prisma/services/prisma.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
 import { Server } from 'node:http';
 import * as request from 'supertest';
 import { createAuthenticatedUser } from './utils/auth.helper';
-import { RedisService } from '../src/redis/services/redis.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '../src/app.module';
-import { UserWithoutPassword } from '../src/user/types/user-without-password.type';
+import { AppModule } from '../../src/app.module';
+import { UserWithoutPassword } from '../../src/user/types/user-without-password.type';
 import { shouldFailWithoutAuth } from './utils/guards.helper';
 
 describe('UserController (e2e)', () => {

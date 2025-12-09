@@ -1,9 +1,9 @@
-import { CreateVacancyDto } from '../../src/vacancy/dto/create-vacancy.dto';
-import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { CreateVacancyDto } from '../../../src/vacancy/dto/create-vacancy.dto';
+import { PrismaService } from '../../../src/prisma/services/prisma.service';
 import { EmploymentType, SeniorityLevel, WorkFormat } from '@prisma/client';
-import { VacancyWithRelations } from '../../src/vacancy/types/vacancy-with-relations.type';
-import { vacancyInclude } from '../../src/vacancy/repositories/includes/vacancy.include';
-import { VacancyLanguageDto } from '../../src/vacancy/dto/vacancy-language.dto';
+import { VacancyWithRelations } from '../../../src/vacancy/types/vacancy-with-relations.type';
+import { vacancyInclude } from '../../../src/vacancy/repositories/includes/vacancy.include';
+import { VacancyLanguageDto } from '../../../src/vacancy/dto/vacancy-language.dto';
 
 export async function createVacancy(
   prisma: PrismaService,

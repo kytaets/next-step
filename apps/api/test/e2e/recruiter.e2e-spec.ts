@@ -1,18 +1,18 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Server } from 'node:http';
-import { PrismaService } from '../src/prisma/services/prisma.service';
-import { RedisService } from '../src/redis/services/redis.service';
+import { PrismaService } from '../../src/prisma/services/prisma.service';
+import { RedisService } from '../../src/redis/services/redis.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 import { createAuthenticatedUser } from './utils/auth.helper';
 import { CompanyRole, Recruiter } from '@prisma/client';
-import { CreateRecruiterDto } from '../src/recruiter/dto/create-recruiter.dto';
+import { CreateRecruiterDto } from '../../src/recruiter/dto/create-recruiter.dto';
 import { createRecruiter } from './utils/recruiter.helper';
 import { randomUUID } from 'node:crypto';
 import { createCompany } from './utils/company.helper';
-import { UpdateRecruiterDto } from '../src/recruiter/dto/update-recruiter.dto';
+import { UpdateRecruiterDto } from '../../src/recruiter/dto/update-recruiter.dto';
 import {
   shouldFailForRecruiterWithoutCompany,
   shouldFailWithoutAuth,

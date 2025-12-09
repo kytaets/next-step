@@ -38,19 +38,16 @@ describe('Vacancies Search Page (mocked)', () => {
       body: vacanciesResponse,
     }).as('searchVacancies');
 
-    cy.visit('/vacancies'); // твій route може бути інший
+    cy.visit('/vacancies');
     cy.wait('@searchVacancies');
 
-    // UI shows vacancies
     cy.contains('Frontend Developer').should('exist');
     cy.contains('Backend Developer').should('exist');
 
-    // Pagination
     cy.get('#pages-counter').should('exist');
   });
 
   it('updates results when URL query params change', () => {
-    // FIRST SEARCH (initial load)
     cy.intercept('POST', '**/api/vacancies/search', {
       statusCode: 200,
       body: vacanciesResponse,
@@ -59,13 +56,11 @@ describe('Vacancies Search Page (mocked)', () => {
     cy.visit('/vacancies');
     cy.wait('@firstSearch');
 
-    // FILTERED SEARCH
     cy.intercept('POST', '**/api/vacancies/search', {
       statusCode: 200,
       body: singleVacancyFiltered,
     }).as('filteredSearch');
 
-    // change URL (simulates search form submit)
     cy.visit('/vacancies?title=Frontend');
     cy.wait('@filteredSearch');
 

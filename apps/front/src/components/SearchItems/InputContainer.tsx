@@ -24,7 +24,7 @@ export default function InputContainer({ type = 'vacancies' }: Props) {
         placeholder="Search for jobs..."
       />
       <ErrorMessage name={name} component="div" />
-      <button className={classes['search-btn']} type="submit">
+      <button className={classes['search-btn']} type="submit" id="search-btn">
         <AnimatedIcon iconType={faMagnifyingGlass} />
       </button>
     </div>

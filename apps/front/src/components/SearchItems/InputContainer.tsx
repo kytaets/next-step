@@ -3,7 +3,6 @@ import AnimatedIcon from '../HoveredItem/HoveredItem';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import classes from './SearchVacancies.module.css';
 import { ErrorMessage, Field } from 'formik';
-import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
 interface Props {
   type?: 'vacancies' | 'companies' | 'jobSeekers';

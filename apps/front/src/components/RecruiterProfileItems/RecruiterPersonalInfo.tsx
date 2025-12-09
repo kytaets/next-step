@@ -65,6 +65,7 @@ export default function RecruiterPersonalInfo({ isEditable, data }: Props) {
             <button
               className={classes['edit-personal-info-btn']}
               onClick={() => setIsChanging(true)}
+              id="edit-recruiter-personal-info"
             >
               <AnimatedIcon iconType={faPencil} />
             </button>
@@ -114,6 +115,7 @@ export default function RecruiterPersonalInfo({ isEditable, data }: Props) {
                   className={classes['personal-info-btn']}
                   type="submit"
                   disabled={isPending}
+                  id="save-recruiter-personal-info"
                 >
                   <AnimatedIcon iconType={faCheck} />
                 </button>

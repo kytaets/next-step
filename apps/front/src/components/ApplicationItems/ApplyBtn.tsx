@@ -22,7 +22,11 @@ export default function ApplyBtn({ vacancyId }: Props) {
   };
 
   return (
-    <button className={classes['apply-btn']} onClick={handleClick}>
+    <button
+      className={classes['apply-btn']}
+      id="apply-btn"
+      onClick={handleClick}
+    >
       <HoveredItem>Apply for a job</HoveredItem>
     </button>
   );

@@ -1,5 +1,12 @@
+export const dynamic = 'force-dynamic';
+
+import { Suspense } from 'react';
 import VacanciesPage from './VacanciesPage';
 
 export default function Page() {
-  return <VacanciesPage />;
+  return (
+    <Suspense fallback={null}>
+      <VacanciesPage />
+    </Suspense>
+  );
 }

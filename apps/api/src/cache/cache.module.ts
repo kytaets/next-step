@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CacheInterceptor } from './interceptors/cache.Interceptor';
-import { CacheService } from './cache.service';
+import { CacheInterceptor } from './interceptors/cache.interceptor';
+import { CacheService } from './services/cache.service';
 
 @Module({
   providers: [CacheInterceptor, CacheService],

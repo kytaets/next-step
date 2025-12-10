@@ -17,8 +17,6 @@ interface Props {
 }
 
 export default function CompanyProfileContainer({ companyData }: Props) {
-  console.log(companyData);
-
   const recruiterRole = Cookies.get('recruiter-role');
   const companyId = Cookies.get('company-id');
 

@@ -41,7 +41,6 @@ export function submitJobSeekersSearchForm(
   values: JobSeekerSearchForm,
   onSubmit: (values: any) => void
 ) {
-  console.log(values);
   const cleaned = Object.fromEntries(
     Object.entries(values).filter(([key, value]) => {
       if (key === 'newSkill') return false;

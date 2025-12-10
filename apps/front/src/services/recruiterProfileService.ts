@@ -24,11 +24,9 @@ export async function leaveCompany() {
 
 export async function acceptInvite(token: string | null) {
   try {
-    const response = await api.post(
-      `/recruiters/invite/accept`,
-      {},
-      { params: { token } }
-    );
+    const response = await api.get(`/companies/invitations/accept`, {
+      params: { token },
+    });
 
     return !!response.data.confirmed;
   } catch (error: any) {

@@ -36,7 +36,6 @@ export default function SignInForm() {
     onSuccess: (result) => {
       if (result.status === 'error') {
         setErrors([result.error]);
-        console.log('Error:', result.error);
         return;
       }
       setIsLogged(true);
@@ -57,7 +56,6 @@ export default function SignInForm() {
     onSuccess: (result) => {
       if (result.status === 'error') {
         setErrors([result.error]);
-        console.log('Error:', result.error);
         return;
       }
       setErrors([]);
@@ -142,7 +140,7 @@ export default function SignInForm() {
 
         {forgetPassIsClicked && (
           <MessageBox type="info">
-            Check your email to reset the password
+            <p id="check-text"> Check your email to reset the password</p>
           </MessageBox>
         )}
 

@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
-import { UserController } from './user.controller';
+import { UserService } from './services/user.service';
+import { UserRepository } from './repositories/user.repository';
+import { UserController } from './controllers/user.controller';
+import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
 import { SessionModule } from '../session/session.module';
-import { TokenModule } from '../token/token.module';
-import { EmailModule } from '../email/email.module';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { SessionAuthGuard } from './guards/session-auth.guard';
 
 @Module({
-  imports: [SessionModule, TokenModule, EmailModule],
-  controllers: [UserController, AuthController],
-  providers: [UserService, AuthService, UserRepository, SessionAuthGuard],
-  exports: [UserService, SessionAuthGuard],
+  imports: [SessionModule],
+  controllers: [UserController],
+  providers: [UserService, UserRepository, SessionAuthGuard],
+  exports: [UserService],
 })
 export class UserModule {}

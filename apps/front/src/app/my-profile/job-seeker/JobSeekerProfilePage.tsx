@@ -17,7 +17,6 @@ import Cookies from 'js-cookie';
 import ProfileFormModal from '@/components/ProfileItems/ProfileFormModal';
 
 export default function JobSeekerProfilePage() {
-  const router = useRouter();
   const openModal = useModalStore((state) => state.openModal);
   const closeModal = useModalStore((state) => state.closeModal);
 
@@ -44,7 +43,7 @@ export default function JobSeekerProfilePage() {
     return () => {
       closeModal();
     };
-  }, [isError, error, profileData, openModal, closeModal, router]);
+  }, [isError, error, profileData, openModal, closeModal]);
 
   if (isError && error?.status !== 403)
     return (
@@ -56,7 +55,6 @@ export default function JobSeekerProfilePage() {
     );
 
   if (!profileData) return null;
-  else console.log(profileData);
 
   return (
     <div className="container">

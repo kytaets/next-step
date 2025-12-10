@@ -18,6 +18,7 @@ export default function ConfirmPage() {
     queryKey: ['checkUserConfirmed', token],
     queryFn: ({ queryKey }) => checkUserConfirmed(queryKey[1]),
     enabled: !!token,
+    retry: false,
   });
 
   let message;

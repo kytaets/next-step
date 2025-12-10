@@ -28,7 +28,7 @@ export class VacancyQueryBuilder {
   }
 
   withExperience(experience?: number) {
-    if (experience) {
+    if (experience !== undefined) {
       this.where.experienceRequired = { lte: experience };
     }
     return this;

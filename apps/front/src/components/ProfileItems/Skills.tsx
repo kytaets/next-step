@@ -82,6 +82,7 @@ export default function Skills({ isEditable, skills }: Props) {
               type="button"
               className={classes['edit-skills-btn']}
               onClick={() => setEditMode(true)}
+              id="skills-edit-btn"
             >
               <AnimatedIcon iconType={faPlus} />
             </button>
@@ -121,7 +122,11 @@ export default function Skills({ isEditable, skills }: Props) {
                 >
                   <AnimatedIcon iconType={faXmark} />
                 </button>
-                <button type="submit" className={classes['skills-check-btn']}>
+                <button
+                  type="submit"
+                  className={classes['skills-check-btn']}
+                  id="skills-save-btn"
+                >
                   <AnimatedIcon iconType={faCheck} />
                 </button>
               </div>

@@ -83,7 +83,6 @@ export default function VacancyForm({ data, type = 'CREATE' }: Props) {
       }
 
       setRequestError(null);
-      console.log('Created vacancy, id:', vacancyId);
       router.push(
         '/my-profile/recruiter/company/vacancies?companyId=' + companyId
       );

@@ -38,6 +38,7 @@ export default function MultiSelect({
       <div
         className={`${type === 'search' ? classes['form-input-search'] : classes['form-input']} ${classes['multi-select-display']}`}
         onClick={() => setOpen((prev) => !prev)}
+        id={`${field.name}-select`}
       >
         {field.value.length > 0
           ? capitalize(
@@ -50,7 +51,9 @@ export default function MultiSelect({
         <div className={classes['multi-select-options']}>
           {options.map((option: string) => (
             <label key={option} className={classes['multi-select-option']}>
-              <span>{capitalize(toKebabCase(option))}</span>
+              <span id={`${field.name}-${option}`}>
+                {capitalize(toKebabCase(option))}
+              </span>
               <input
                 type="checkbox"
                 checked={field.value.includes(option)}

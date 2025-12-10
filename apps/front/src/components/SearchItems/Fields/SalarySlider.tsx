@@ -21,7 +21,9 @@ export default function SalarySlider() {
               step="100"
               {...field}
               value={field.value}
-              onChange={(e) => form.setFieldValue('salaryMin', e.target.value)}
+              onChange={(e) =>
+                form.setFieldValue('salaryMin', Number(e.target.value))
+              }
             />
             <span style={{ marginLeft: '10px' }}>{field.value} $</span>
           </div>

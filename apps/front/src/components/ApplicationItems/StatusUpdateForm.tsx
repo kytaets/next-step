@@ -4,7 +4,7 @@ import { Formik, Form, Field } from 'formik';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import classes from './ApplicationItems.module.css';
-import { statusOptions } from '@/lib/appplication-data';
+import { statusOptions } from '@/lib/application-data';
 import { updateApplicationStatus } from '@/services/application';
 import MessageBox from '@/components/MessageBox/MessageBox';
 import { useRouter } from 'next/navigation';

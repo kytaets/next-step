@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { VacancyService } from '../vacancy.service';
+import { VacancyService } from '../services/vacancy.service';
 import { RecruiterRequest } from '../../recruiter/types/recruiter-request.type';
 
 @Injectable()
@@ -13,10 +13,10 @@ export class VacancyOwnerGuard implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest<RecruiterRequest>();
-    const vacancyId = req.params['id'];
+    const vacancyId = req.params['id'] || req.params['vacancyId'];
 
     if (!vacancyId) {
-      throw new ForbiddenException('Vacancy id not found');
+      throw new ForbiddenException('Vacancy id not found in request url');
     }
 
     const vacancy = await this.service.findOneOrThrow({ id: vacancyId });

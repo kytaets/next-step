@@ -32,11 +32,7 @@ export default function ContactsModal({ data }: Props) {
 
   const queryClient = useQueryClient();
 
-  const {
-    mutate: updateContacts,
-    isPending,
-    isError,
-  } = useMutation({
+  const { mutate: updateContacts, isPending } = useMutation({
     mutationFn: updateUserContacts,
     onSuccess: async (result) => {
       if (result.status === 'error') {
@@ -48,8 +44,6 @@ export default function ContactsModal({ data }: Props) {
       closeModal();
     },
   });
-
-  console.log(isError);
 
   return (
     <motion.div
@@ -94,6 +88,7 @@ export default function ContactsModal({ data }: Props) {
                 className={classes['contacts-form-btn']}
                 type="submit"
                 disabled={isPending}
+                id="jobseeker-contacts-save-btn"
               >
                 <AnimatedIcon>Save changes</AnimatedIcon>
               </button>

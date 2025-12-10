@@ -15,8 +15,6 @@ export default function CompanyVacancies() {
   const searchParams = useSearchParams();
   const companyId = searchParams.get('companyId');
 
-  console.log('Company ID:', companyId);
-
   const {
     data: vacanciesResponse,
     isPending,
@@ -28,8 +26,6 @@ export default function CompanyVacancies() {
     enabled: !!companyId,
     staleTime: 0,
   });
-
-  console.log('My Vacancies:', vacanciesResponse);
 
   if (isError)
     return (

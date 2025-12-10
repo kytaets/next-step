@@ -34,8 +34,6 @@ export default function VacancyApplicationItem({ data }: Props) {
     refetchOnWindowFocus: true,
   });
 
-  console.log('Application Data:', data);
-
   useEffect(() => {
     const jobSeekerAvatar = jobseekerData?.avatarUrl ?? '';
     setIsLoaded(false);

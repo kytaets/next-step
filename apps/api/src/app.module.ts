@@ -16,6 +16,7 @@ import { ApplicationModule } from './application/application.module';
 import { RecruiterModule } from './recruiter/recruiter.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CacheModule } from './cache/cache.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CacheModule } from './cache/cache.module';
     ApplicationModule,
     RecruiterModule,
     CacheModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

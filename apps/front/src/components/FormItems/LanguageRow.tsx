@@ -36,6 +36,7 @@ export default function LanguageRow({
             : `requiredLanguages[${index}].language.id`
         }
         className={classes['form-input']}
+        id="languages-name-select"
       >
         <option value="" disabled>
           Select language
@@ -55,6 +56,7 @@ export default function LanguageRow({
             : `requiredLanguages[${index}].level`
         }
         className={classes['form-input']}
+        id="languages-level-select"
       >
         <option value="" disabled>
           Select level

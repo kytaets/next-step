@@ -40,10 +40,12 @@ export default function CompaniesPage() {
   const {
     data: companiesData,
     isError,
+    isLoading,
     error,
   } = useQuery({
-    queryKey: ['companies', queryData],
+    queryKey: ['companies', minimalQuery],
     queryFn: () => searchCompanies(minimalQuery),
+    retry: false,
   });
 
   const updateUrl = (values: CompaniesSearchForm) => {
@@ -60,6 +62,8 @@ export default function CompaniesPage() {
         <p>Error loading companies: {error?.message || 'Unexpected error'}</p>
       </MessageBox>
     );
+
+  if (isLoading) return <MessageBox type="info">Loading...</MessageBox>;
 
   return (
     <div className="container">

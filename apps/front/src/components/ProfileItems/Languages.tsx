@@ -54,7 +54,12 @@ export default function Languages({ isEditable, data }: Props) {
   };
 
   return (
-    <InfoBox title="Languages" isEditable={isEditable} onEdit={toggleEdit}>
+    <InfoBox
+      title="Languages"
+      isEditable={isEditable}
+      onEdit={toggleEdit}
+      btnId="jobseeker-languages-edit-btn"
+    >
       {!editMode ? (
         <>
           {data.length > 0 ? (

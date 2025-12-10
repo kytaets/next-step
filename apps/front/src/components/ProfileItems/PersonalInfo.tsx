@@ -76,6 +76,7 @@ export default function PersonalInfo({ isEditable, data }: Props) {
             <button
               className={classes['edit-personal-info-btn']}
               onClick={() => setIsChanging(true)}
+              id="edit-jobseeker-main-info"
             >
               <AnimatedIcon iconType={faPencil} />
             </button>
@@ -135,6 +136,7 @@ export default function PersonalInfo({ isEditable, data }: Props) {
                   className={classes['personal-info-btn']}
                   type="submit"
                   disabled={isPending}
+                  id="save-jobseeker-main-info"
                 >
                   <AnimatedIcon iconType={faCheck} />
                 </button>

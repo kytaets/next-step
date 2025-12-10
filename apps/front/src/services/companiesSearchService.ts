@@ -3,7 +3,7 @@ import api from './axios';
 
 export async function searchCompanies(params: CompaniesSearchForm) {
   return api
-    .get('/companies/search', { params })
+    .get('/companies', { params })
     .then((response) => {
       const payload = Array.isArray(response?.data)
         ? response.data
@@ -27,7 +27,6 @@ export async function getCompanyVacancies(companyId: string) {
   return api
     .get(`/vacancies/company/${companyId}`)
     .then((res) => {
-      // normalize to array to avoid .map on null
       const payload = res?.data?.data ?? res?.data ?? [];
       return payload ?? [];
     })

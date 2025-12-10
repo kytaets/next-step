@@ -11,7 +11,11 @@ export default function MessageBox({ type = 'info', children }: Props) {
   if (type === 'info') color = '#ffffff';
 
   return (
-    <div className={classes['error-box']} style={{ borderColor: color, color }}>
+    <div
+      className={classes['error-box']}
+      id="message-box"
+      style={{ borderColor: color, color }}
+    >
       {children}
     </div>
   );

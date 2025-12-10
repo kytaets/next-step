@@ -191,3 +191,44 @@ jobs:
       - name: Run Frontend Unit Tests
         working-directory: ./apps/front
         run: npm test
+
+  front-e2e:
+    name: Frontend Cypress Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start frontend
+        working-directory: ./apps/front
+        run: npm run dev &
+
+      - name: Wait until frontend is ready
+        run: |
+          echo "Waiting for Frontend at http://localhost:3000..."
+          for i in {1..40}; do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "Frontend is UP!"
+              exit 0
+            fi
+            echo "Waiting..."
+            sleep 3
+          done
+          echo "Frontend did NOT start!"
+          exit 1
+
+      - name: Run Cypress tests
+        working-directory: ./apps/front
+        env:
+          CYPRESS_baseUrl: http://localhost:3000
+          CI: true
+        run: npx cypress run

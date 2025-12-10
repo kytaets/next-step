@@ -1,3 +1,5 @@
+import { ProfileData } from '@/types/profile';
+
 describe('Create Job Seeker Profile Flow ', () => {
   it('opens modal when profile is missing and creates a new job seeker profile', () => {
     const testProfile = {
@@ -73,7 +75,7 @@ describe('Create Job Seeker Profile Flow ', () => {
 });
 
 describe('Edit Job Seeker Profile Flow', () => {
-  let dynamicProfile;
+  let dynamicProfile: ProfileData;
 
   const existingProfile = {
     id: 'p1',
@@ -93,7 +95,6 @@ describe('Edit Job Seeker Profile Flow', () => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  let callCount = 0;
 
   const mockFullEnvironment = () => {
     dynamicProfile = { ...existingProfile };

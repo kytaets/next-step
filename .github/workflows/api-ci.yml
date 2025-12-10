@@ -168,7 +168,7 @@ jobs:
         run: npm run test:int
 
   front-test:
-    name: Frontend Unit Tests
+    name: Frontend Unit & Integration Tests
     runs-on: ubuntu-latest
     needs: unit-test
 
@@ -193,7 +193,7 @@ jobs:
         run: npm test
 
   front-e2e:
-    name: Frontend Cypress Tests
+    name: Frontend e2e Tests
     runs-on: ubuntu-latest
 
     steps:

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -13,7 +9,6 @@ jest.mock('@/services/jobseekerService', () => ({
   getProfile: jest.fn(),
 }));
 
-// ---------- MOCK ZUSTAND ----------
 jest.mock('@/store/modalSlice', () => ({
   useModalStore: jest.fn((selector) =>
     selector({
@@ -23,7 +18,6 @@ jest.mock('@/store/modalSlice', () => ({
   ),
 }));
 
-// ---------- MOCK Skills & Languages BEFORE Import ----------
 jest.mock('@/components/ProfileItems/Skills', () => () => (
   <div>Mocked Skills</div>
 ));
@@ -111,19 +105,15 @@ describe('JobSeekerProfilePage', () => {
 
     renderPage();
 
-    // UI error should show
     expect(
       await screen.findByText(/error loading profile/i)
     ).toBeInTheDocument();
     expect(screen.getByText(/server exploded/i)).toBeInTheDocument();
 
-    // openModal must NOT be called
     expect(openModal).not.toHaveBeenCalled();
 
-    // closeModal IS called — exactly once (cleanup)
     expect(closeModal).toHaveBeenCalledTimes(1);
 
-    // cookies not changed
     expect(Cookies.set).not.toHaveBeenCalled();
   });
 
@@ -150,7 +140,6 @@ describe('JobSeekerProfilePage', () => {
       expect(openModal).toHaveBeenCalledTimes(1);
     });
 
-    // No ProfileContainer
     expect(
       screen.queryByText(/your next level profile/i)
     ).not.toBeInTheDocument();
@@ -175,15 +164,12 @@ describe('JobSeekerProfilePage', () => {
 
     renderPage();
 
-    // Should NOT display error box
     expect(
       screen.queryByText(/error loading profile/i)
     ).not.toBeInTheDocument();
 
-    // Should NOT open modal
     expect(openModal).not.toHaveBeenCalled();
 
-    // Should not show profile
     expect(
       screen.queryByText(/your next level profile/i)
     ).not.toBeInTheDocument();
@@ -205,7 +191,6 @@ describe('JobSeekerProfilePage', () => {
 
     renderPage();
 
-    // Should render nothing
     await waitFor(() => {
       expect(
         screen.queryByText(/your next level profile/i)

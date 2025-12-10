@@ -2,21 +2,18 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import CompanyItem from '@/components/CompaniesSearchItems/CompanyItem';
 
-// Моки CSS
 jest.mock('../VacanciesItems/VacanciesItems.module.css', () => ({
   'vacancy-item-container': 'vacancy-item-container',
   'vacancy-item': 'vacancy-item',
   'short-info': 'short-info',
 }));
 
-// Мок next/link
 jest.mock('next/link', () => {
   return function LinkMock({ href, children }) {
     return <a href={href}>{children}</a>;
   };
 });
 
-// Моки утиліт
 jest.mock('@/utils/validation', () => ({
   validateImageUrl: jest.fn(),
 }));
@@ -25,7 +22,6 @@ jest.mock('@/utils/convertData', () => ({
   isoToDate: () => 'Converted Date',
 }));
 
-// Мок motion.div
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children }) => <div>{children}</div>,

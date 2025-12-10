@@ -8,9 +8,10 @@ jest.mock('@/components/CompanyProfileItems/CompanyProfile.module.css', () => ({
 }));
 
 jest.mock('next/image', () => (props: any) => {
-  // next/image replacement to render a native img for tests; omit priority prop
   const { src, alt, priority, ...rest } = props;
-  return <img src={typeof src === 'string' ? src : src?.src} alt={alt} {...rest} />;
+  return (
+    <img src={typeof src === 'string' ? src : src?.src} alt={alt} {...rest} />
+  );
 });
 
 jest.mock('next/link', () => (props: any) => (

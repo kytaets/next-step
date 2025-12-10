@@ -2,16 +2,10 @@ import { render, screen } from '@testing-library/react';
 import WorkFormatsInput from '@/components/SearchItems/Fields/WorkFormats';
 import '@testing-library/jest-dom';
 
-// ===========================
-// MOCK workFormatOptions
-// ===========================
 jest.mock('@/lib/vacancy-data', () => ({
   workFormatOptions: ['remote', 'office', 'hybrid'],
 }));
 
-// ===========================
-// MOCK MultiSelect
-// ===========================
 jest.mock('@/components/MultiSelect/MultiSelect', () => ({
   __esModule: true,
   default: ({ options, placeholder }: any) => (
@@ -23,9 +17,6 @@ jest.mock('@/components/MultiSelect/MultiSelect', () => ({
   ),
 }));
 
-// ===========================
-// MOCK Formik Field + ErrorMessage
-// ===========================
 jest.mock('formik', () => ({
   Field: ({ component: Component, ...props }: any) => (
     <Component data-testid="field" {...props} />

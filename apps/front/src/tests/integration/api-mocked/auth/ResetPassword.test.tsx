@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ResetPasswordForm from '@/components/SignUpItems/ResetPasswordForm';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,9 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { resetPass } from '@/services/userService';
 
-// ---------------------------------------------
-// MOCKS
-// ---------------------------------------------
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
 }));
@@ -37,9 +30,6 @@ jest.mock('framer-motion', () => ({
   },
 }));
 
-// ---------------------------------------------
-// RENDER HELPER
-// ---------------------------------------------
 function renderForm() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
@@ -52,9 +42,6 @@ function renderForm() {
   );
 }
 
-// ---------------------------------------------
-// TESTS
-// ---------------------------------------------
 describe('ResetPasswordForm — Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();

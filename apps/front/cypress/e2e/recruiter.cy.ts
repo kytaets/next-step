@@ -77,7 +77,6 @@ describe('Recruiter Profile Flow (mocked)', () => {
   });
 
   it('allows editing recruiter personal info', () => {
-    // PATCH update
     cy.intercept('PATCH', '**/api/recruiters/me', {
       statusCode: 200,
       body: { status: 'ok' },

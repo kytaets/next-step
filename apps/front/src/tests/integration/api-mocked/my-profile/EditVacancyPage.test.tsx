@@ -16,7 +16,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// ---- UNIVERSAL FLUSH ----
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const mockVacancy: VacancyData = {
@@ -78,15 +77,12 @@ describe('EditVacancy', () => {
     await flushPromises();
     await flushPromises();
 
-    // Заголовок є
     expect(
       screen.getByRole('heading', { name: /edit your vacancy/i })
     ).toBeInTheDocument();
 
-    // ФОРМА Є (але без role="form")
     expect(document.getElementById('vacancy-form')).toBeInTheDocument();
 
-    // Перевірка наявності поля
     expect(screen.getByPlaceholderText(/cool vacancy/i)).toBeInTheDocument();
   });
 

@@ -2,7 +2,7 @@ import {
   mapQueryToJobSeekerForm,
   validateLanguages,
   submitJobSeekersSearchForm,
-} from '@/utils/jobSeekerSearchValidation'; // поправ шлях, якщо у тебе інший
+} from '@/utils/jobSeekerSearchValidation';
 
 describe('mapQueryToJobSeekerForm', () => {
   it('parses languages and orderBy JSON', () => {
@@ -68,9 +68,9 @@ describe('submitJobSeekersSearchForm', () => {
     const onSubmit = jest.fn();
 
     const values: any = {
-      newSkill: 'ignore_me', // should be removed
-      page: 0, // removed because number === 0
-      orderBy: {}, // removed because empty object
+      newSkill: 'ignore_me',
+      page: 0,
+      orderBy: {},
       languages: [
         {
           language: { id: 10 },

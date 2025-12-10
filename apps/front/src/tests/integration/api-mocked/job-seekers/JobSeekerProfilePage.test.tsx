@@ -4,9 +4,6 @@ import { getProfileById } from '@/services/jobseekerService';
 import { useParams } from 'next/navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ============================
-// 🔧 MOCK next/navigation
-// ============================
 jest.mock('next/navigation', () => ({
   useParams: jest.fn(),
   useRouter: jest.fn(() => ({
@@ -16,39 +13,27 @@ jest.mock('next/navigation', () => ({
   })),
 }));
 
-// ============================
-// 🔧 MOCK zustand stores
-// ============================
 jest.mock('@/store/authSlice', () => ({
   useAuthStore: jest.fn(() => ({
     setIsLogged: jest.fn(),
   })),
 }));
 
-// ============================
-// 🔧 MOCK ALL jobseekerService
-// including: getSkills, updateSkills, getLanguages, updateUserLanguages
-// ============================
 jest.mock('@/services/jobseekerService', () => ({
   getProfileById: jest.fn(),
 
-  // Skills
   getSkills: jest.fn(() => Promise.resolve([])),
   createNewSkill: jest.fn(() =>
     Promise.resolve({ status: 'success', data: {} })
   ),
   updateSkills: jest.fn(() => Promise.resolve({ status: 'success' })),
 
-  // Languages
   getLanguages: jest.fn(() => Promise.resolve([])),
   updateUserLanguages: jest.fn(() => Promise.resolve({ status: 'success' })),
 }));
 
 const mockedGetProfileById = getProfileById as jest.Mock;
 
-// ============================
-// 📦 Helper to render
-// ============================
 function renderWithClient(ui: React.ReactNode) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -59,17 +44,11 @@ function renderWithClient(ui: React.ReactNode) {
   );
 }
 
-// ============================
-// 📌 Mock route params
-// ============================
 beforeEach(() => {
   (useParams as jest.Mock).mockReturnValue({ profileId: '123' });
   jest.clearAllMocks();
 });
 
-// ============================
-// 📦 Mock Profile
-// ============================
 const mockProfile = {
   id: '123',
   userId: '1',
@@ -95,14 +74,11 @@ const mockProfile = {
   updatedAt: '2023-01-02',
 };
 
-// ============================
-// 🧪 TESTS
-// ============================
 describe('ProfilePage — Integration Tests (API-mocked)', () => {
   const renderPage = () => renderWithClient(<ProfilePage />);
 
   test('shows loader while data is loading', () => {
-    mockedGetProfileById.mockReturnValue(new Promise(() => {})); // pending forever
+    mockedGetProfileById.mockReturnValue(new Promise(() => {}));
 
     renderPage();
 

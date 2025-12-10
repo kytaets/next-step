@@ -6,7 +6,7 @@ jest.mock('@/services/axios', () => ({
 }));
 
 import api from '@/services/axios';
-import { searchJobSeekers } from '@/services/jobSeekerSearchService'; // 👈 шлях підкоригуй під себе
+import { searchJobSeekers } from '@/services/jobSeekerSearchService'; 
 
 describe('searchJobSeekers', () => {
   beforeEach(() => {

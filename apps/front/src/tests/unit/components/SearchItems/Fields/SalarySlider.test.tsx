@@ -2,9 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SalarySlider from '@/components/SearchItems/Fields/SalarySlider';
 import '@testing-library/jest-dom';
 
-// ===========================================
-// MOCK Formik Field
-// ===========================================
 jest.mock('formik', () => ({
   Field: ({ children, name }: any) => {
     const mockField = {
@@ -48,7 +45,6 @@ describe('SalarySlider Component', () => {
   test('onChange calls form.setFieldValue', () => {
     const setFieldValueMock = jest.fn();
 
-    // override mock for this test
     jest
       .spyOn(require('formik'), 'Field')
       .mockImplementation(({ children, name }: any) => {

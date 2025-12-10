@@ -2,16 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import LanguagesInput from '@/components/SearchItems/Fields/Languages';
 import '@testing-library/jest-dom';
 
-// ======================================================
-// MOCK react-query useQuery
-// ======================================================
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
 }));
 
-// ======================================================
-// MOCK LanguageRow
-// ======================================================
 jest.mock('@/components/FormItems/LanguageRow', () => ({
   __esModule: true,
   default: ({ index }: any) => (
@@ -19,17 +13,11 @@ jest.mock('@/components/FormItems/LanguageRow', () => ({
   ),
 }));
 
-// ======================================================
-// MOCK HoveredItem
-// ======================================================
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({
   __esModule: true,
   default: ({ children }: any) => <span>{children}</span>,
 }));
 
-// ======================================================
-// MOCK Formik FieldArray
-// ======================================================
 jest.mock('formik', () => ({
   FieldArray: ({ name, children }: any) => {
     const mockForm = {
@@ -49,7 +37,6 @@ jest.mock('formik', () => ({
   ),
 }));
 
-// mock useQuery actual implementation
 const mockUseQuery = require('@tanstack/react-query').useQuery;
 
 describe('LanguagesInput Component', () => {
@@ -57,9 +44,6 @@ describe('LanguagesInput Component', () => {
     jest.clearAllMocks();
   });
 
-  // ======================================================
-  // BASE RENDER
-  // ======================================================
   test('renders Languages label', () => {
     mockUseQuery.mockReturnValue({
       data: [],
@@ -71,9 +55,6 @@ describe('LanguagesInput Component', () => {
     expect(screen.getByText('Languages')).toBeInTheDocument();
   });
 
-  // ======================================================
-  // TYPE = vacancies → name = requiredLanguages
-  // ======================================================
   test('uses correct name for FieldArray when type="vacancies"', () => {
     mockUseQuery.mockReturnValue({
       data: [],
@@ -82,15 +63,11 @@ describe('LanguagesInput Component', () => {
 
     render(<LanguagesInput type="vacancies" />);
 
-    // FieldArray mocked to show ErrorMessage with name
     expect(screen.getByTestId('error-msg')).toHaveTextContent(
       'requiredLanguages'
     );
   });
 
-  // ======================================================
-  // TYPE = jobSeekers → name = languages
-  // ======================================================
   test('uses correct name for FieldArray when type="jobSeekers"', () => {
     mockUseQuery.mockReturnValue({
       data: [],
@@ -102,9 +79,6 @@ describe('LanguagesInput Component', () => {
     expect(screen.getByTestId('error-msg')).toHaveTextContent('languages');
   });
 
-  // ======================================================
-  // LanguageRow renders based on form.values array
-  // ======================================================
   test('renders LanguageRow items from FieldArray', () => {
     mockUseQuery.mockReturnValue({
       data: [{ id: 1, name: 'English' }],
@@ -116,9 +90,6 @@ describe('LanguagesInput Component', () => {
     expect(screen.getByTestId('language-row-0')).toBeInTheDocument();
   });
 
-  // ======================================================
-  // Add button works (calls push)
-  // ======================================================
   test('Add + button triggers push function', () => {
     const pushMock = jest.fn();
 
@@ -127,7 +98,6 @@ describe('LanguagesInput Component', () => {
       error: null,
     });
 
-    // Override FieldArray with controllable push mock
     jest
       .spyOn(require('formik'), 'FieldArray')
       .mockImplementation(({ name, children }: any) => {
@@ -150,9 +120,6 @@ describe('LanguagesInput Component', () => {
     });
   });
 
-  // ======================================================
-  // Error from React Query
-  // ======================================================
   test('renders fetch error when useQuery returns error', () => {
     mockUseQuery.mockReturnValue({
       data: [],

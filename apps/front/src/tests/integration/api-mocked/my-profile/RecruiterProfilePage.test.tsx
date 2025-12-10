@@ -1,13 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ===============================
-// 🔧 MOCK STORES
-// ===============================
 const openModalMock = jest.fn();
 const closeModalMock = jest.fn();
 
@@ -19,25 +12,16 @@ jest.mock('@/store/modalSlice', () => ({
     }),
 }));
 
-// ===============================
-// 🔧 MOCK Cookies
-// ===============================
 const setCookieMock = jest.fn();
 
 jest.mock('js-cookie', () => ({
   set: (...args) => setCookieMock(...args),
 }));
 
-// ===============================
-// 🔧 MOCK next/navigation
-// ===============================
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-// ===============================
-// 🔧 MOCK RecruiterProfileContainer
-// ===============================
 jest.mock(
   '@/components/RecruiterProfileItems/RecruiterProfileContainer',
   () => (props: any) => (
@@ -45,9 +29,6 @@ jest.mock(
   )
 );
 
-// ===============================
-// 🔧 MOCK ProfileFormModal (іменована функція)
-// ===============================
 jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   function ProfileFormModalMock(props: any) {
     return <div>ProfileFormModal {props.role}</div>;
@@ -55,9 +36,6 @@ jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   return ProfileFormModalMock;
 });
 
-// ===============================
-// 🔧 MOCK SERVICE
-// ===============================
 jest.mock('@/services/recruiterProfileService', () => ({
   getMyRecruiterProfile: jest.fn(),
 }));
@@ -65,9 +43,6 @@ jest.mock('@/services/recruiterProfileService', () => ({
 import RecruiterProfilePage from '@/app/my-profile/recruiter/page';
 import { getMyRecruiterProfile } from '@/services/recruiterProfileService';
 
-// ===============================
-// 🔧 Helper renderer
-// ===============================
 function renderPage() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -80,15 +55,11 @@ function renderPage() {
   );
 }
 
-// ===============================
-// 🧪 TESTS
-// ===============================
 describe('RecruiterProfilePage tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // -------------------------------------------
   test('opens modal when profile is missing (404)', async () => {
     (getMyRecruiterProfile as jest.Mock).mockRejectedValue({
       status: 404,
@@ -103,11 +74,9 @@ describe('RecruiterProfilePage tests', () => {
 
     const modalElement = openModalMock.mock.calls[0][0];
 
-    // важливо: перевіряємо props, а не type.name
     expect(modalElement.props.role).toBe('recruiter');
   });
 
-  // -------------------------------------------
   test('displays error message for non-403 errors', async () => {
     (getMyRecruiterProfile as jest.Mock).mockRejectedValue({
       status: 500,
@@ -123,7 +92,6 @@ describe('RecruiterProfilePage tests', () => {
     expect(screen.getByText(/server error/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('renders profile and sets cookies on success', async () => {
     (getMyRecruiterProfile as jest.Mock).mockResolvedValue({
       id: 10,
@@ -143,7 +111,6 @@ describe('RecruiterProfilePage tests', () => {
     expect(closeModalMock).toHaveBeenCalledTimes(1);
   });
 
-  // -------------------------------------------
   test('returns null while loading', async () => {
     (getMyRecruiterProfile as jest.Mock).mockReturnValue(new Promise(() => {}));
 

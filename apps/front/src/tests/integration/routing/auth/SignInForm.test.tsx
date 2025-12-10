@@ -78,7 +78,6 @@ describe('SignInForm routing and behaviour', () => {
     jest.clearAllMocks();
   });
 
-  // ---------- LOGIN ROUTING ----------
   it('redirects job seeker to /my-profile/job-seeker after login', async () => {
     jest.spyOn(Cookies, 'get').mockReturnValue('JOB_SEEKER');
 

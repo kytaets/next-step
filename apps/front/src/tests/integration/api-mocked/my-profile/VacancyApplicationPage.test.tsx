@@ -1,22 +1,12 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ===============================
-// 🔧 MOCK next/navigation
-// ===============================
 jest.mock('next/navigation', () => ({
   useParams: () => ({
     applicationSlug: '123',
   }),
 }));
 
-// ===============================
-// 🔧 MOCK SERVICES
-// ===============================
 jest.mock('@/services/application', () => ({
   getApplication: jest.fn(),
 }));
@@ -25,9 +15,6 @@ jest.mock('@/services/jobseekerService', () => ({
   getProfileById: jest.fn(),
 }));
 
-// ===============================
-// 🔧 MOCK ApplicationContainer
-// ===============================
 jest.mock(
   '@/components/ApplicationItems/ApplicationContainer',
   () => (props: any) => (
@@ -38,16 +25,10 @@ jest.mock(
   )
 );
 
-// ===============================
-// Imports
-// ===============================
 import VacancyApplicationPage from '@/app/my-profile/recruiter/company/applications/[vacancyApplicationSlug]/[applicationSlug]/VacancyApplicationPage';
 import { getApplication } from '@/services/application';
 import { getProfileById } from '@/services/jobseekerService';
 
-// ===============================
-// Helper render
-// ===============================
 function renderPage() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -60,15 +41,11 @@ function renderPage() {
   );
 }
 
-// ===============================
-// TESTS
-// ===============================
 describe('VacancyApplicationPage tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // -------------------------------------------
   test('shows loading message while fetching application', async () => {
     (getApplication as jest.Mock).mockReturnValue(new Promise(() => {}));
 
@@ -79,7 +56,6 @@ describe('VacancyApplicationPage tests', () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('shows error message when application request fails', async () => {
     (getApplication as jest.Mock).mockRejectedValue({
       message: 'Server error',
@@ -90,7 +66,6 @@ describe('VacancyApplicationPage tests', () => {
     expect(await screen.findByText(/server error/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('renders application data when request succeeds', async () => {
     (getApplication as jest.Mock).mockResolvedValue({
       id: 123,
@@ -109,7 +84,6 @@ describe('VacancyApplicationPage tests', () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('fetches jobSeekerData only when applicationData exists', async () => {
     (getApplication as jest.Mock).mockResolvedValue({
       id: 123,

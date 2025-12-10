@@ -3,22 +3,15 @@ import VacancyForm from '@/components/VacanciesItems/VacancyForm/VacancyForm';
 import React from 'react';
 import '@testing-library/jest-dom';
 
-// ======================================================
-// GLOBAL MOCKS
-// ======================================================
-
-// router
 const pushMock = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-// cookies
 jest.mock('js-cookie', () => ({
   get: jest.fn(() => 'company123'),
 }));
 
-// motion
 jest.mock('framer-motion', () => {
   const React = require('react');
   const strip = (props) => {
@@ -51,7 +44,6 @@ jest.mock('framer-motion', () => {
   };
 });
 
-// react-query mutations
 jest.mock('@tanstack/react-query', () => ({
   useMutation: ({ mutationFn, onSuccess }) => ({
     mutate: (vars) => {
@@ -71,7 +63,6 @@ jest.mock('@tanstack/react-query', () => ({
   }),
 }));
 
-// vacancy service mocks
 const createVacancyMock = jest.fn();
 const editVacancyMock = jest.fn();
 const updateLangMock = jest.fn();
@@ -84,7 +75,6 @@ jest.mock('@/services/vacanciesService', () => ({
   updateVacancySkills: (...args) => updateSkillsMock(...args),
 }));
 
-// job seeker service mocks
 const getSkillsMock = jest.fn();
 const createNewSkillMock = jest.fn();
 
@@ -93,12 +83,10 @@ jest.mock('@/services/jobseekerService', () => ({
   createNewSkill: (...args) => createNewSkillMock(...args),
 }));
 
-// validation
 jest.mock('@/utils/vacancyValidation', () => ({
   validateVacancyForm: () => ({}),
 }));
 
-// addMissingSkills
 const addMissingSkillsMock = jest.fn(async () => [
   { skill: { id: '111' }, level: 'B2' },
 ]);
@@ -106,11 +94,6 @@ jest.mock('@/utils/skillsConvertData', () => ({
   addMissingSkills: (...args) => addMissingSkillsMock(...args),
 }));
 
-// ======================================================
-// CHILD COMPONENTS
-// ======================================================
-
-// MainInfoFields
 jest.mock('@/components/VacanciesItems/VacancyForm/MainInfoFields', () => {
   return () => (
     <div data-testid="main-info-fields">
@@ -120,7 +103,6 @@ jest.mock('@/components/VacanciesItems/VacancyForm/MainInfoFields', () => {
   );
 });
 
-// SkillsFields
 jest.mock('@/components/VacanciesItems/VacancyForm/SkillsFields', () => {
   const { useFormikContext } = require('formik');
   const React = require('react');
@@ -135,7 +117,6 @@ jest.mock('@/components/VacanciesItems/VacancyForm/SkillsFields', () => {
   };
 });
 
-// LanguagesFields
 jest.mock('@/components/VacanciesItems/VacancyForm/LanguagesFields', () => {
   const { useFormikContext } = require('formik');
   const React = require('react');
@@ -149,10 +130,6 @@ jest.mock('@/components/VacanciesItems/VacancyForm/LanguagesFields', () => {
     return <div data-testid="languages-fields">Mock Lang</div>;
   };
 });
-
-// ======================================================
-// TEST
-// ======================================================
 
 describe('VacancyForm FULL INTEGRATION', () => {
   beforeEach(() => {
@@ -189,10 +166,8 @@ describe('VacancyForm FULL INTEGRATION', () => {
 
     const payload = createVacancyMock.mock.calls[0][0];
 
-    // Languages
     expect(payload.languages).toEqual([{ languageId: 'EN', level: 'B2' }]);
 
-    // Skills (from addMissingSkillsMock)
     expect(payload.skills).toEqual([{ skill: { id: '111' }, level: 'B2' }]);
 
     expect(updateLangMock).toHaveBeenCalledWith({

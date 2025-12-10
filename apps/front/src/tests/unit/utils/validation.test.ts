@@ -5,11 +5,8 @@ import {
   validateRegistrationForm,
   validateLogInForm,
   validateImageUrl,
-} from '@/utils/validation'; // поправ шлях, якщо інший
+} from '@/utils/validation';
 
-// ------------------------------------------------------------
-// validateEmail
-// ------------------------------------------------------------
 describe('validateEmail', () => {
   it('returns error for empty or short email', () => {
     expect(validateEmail('')).toBe('Invalid email address');
@@ -25,9 +22,6 @@ describe('validateEmail', () => {
   });
 });
 
-// ------------------------------------------------------------
-// validatePassword
-// ------------------------------------------------------------
 describe('validatePassword', () => {
   it('returns error when empty or too short', () => {
     expect(validatePassword('')).toBe('Password must be at least 6 characters');
@@ -41,9 +35,6 @@ describe('validatePassword', () => {
   });
 });
 
-// ------------------------------------------------------------
-// checkPasswords
-// ------------------------------------------------------------
 describe('checkPasswords', () => {
   it('returns password validation error + mismatch error', () => {
     const result = checkPasswords('123', '456');
@@ -62,9 +53,6 @@ describe('checkPasswords', () => {
   });
 });
 
-// ------------------------------------------------------------
-// validateRegistrationForm
-// ------------------------------------------------------------
 describe('validateRegistrationForm', () => {
   it('validates email and passwords', () => {
     const result = validateRegistrationForm({
@@ -89,9 +77,6 @@ describe('validateRegistrationForm', () => {
   });
 });
 
-// ------------------------------------------------------------
-// validateLogInForm
-// ------------------------------------------------------------
 describe('validateLogInForm', () => {
   it('validates email and password', () => {
     const result = validateLogInForm({
@@ -113,9 +98,6 @@ describe('validateLogInForm', () => {
   });
 });
 
-// ------------------------------------------------------------
-// validateImageUrl
-// ------------------------------------------------------------
 describe('validateImageUrl', () => {
   let originalImage: any;
 
@@ -140,7 +122,6 @@ describe('validateImageUrl', () => {
 
       set src(_url: string) {}
     }
-    // @ts-ignore
     global.Image = MockImage;
   }
 

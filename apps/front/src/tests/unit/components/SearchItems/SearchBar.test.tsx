@@ -3,9 +3,6 @@ import SearchBar from '@/components/SearchItems/SearchBar';
 import '@testing-library/jest-dom';
 import React from 'react';
 
-// =======================
-// MOCK SUBMIT FUNCTIONS
-// =======================
 jest.mock('@/utils/vacancyValidation', () => ({
   searchFormValidate: jest.fn(),
   submitSearchForm: jest.fn(),
@@ -27,10 +24,6 @@ jest.mock('@/utils/profileValidation', () => ({
   validateLanguages: jest.fn(),
 }));
 
-// =======================
-// MOCK CHILD COMPONENTS
-// =======================
-
 jest.mock('@/components/SearchItems/InputContainer', () => ({
   __esModule: true,
   default: ({ type }) => (
@@ -43,10 +36,6 @@ jest.mock('@/components/SearchItems/SearchTagBox', () => ({
   default: ({ type }) => <div data-testid="tag-box">TagBox {type}</div>,
 }));
 
-// =======================
-// TEST DATA
-// =======================
-
 const baseValues = { title: '', name: '', skills: [], languages: [] };
 
 describe('SearchBar Component', () => {
@@ -54,7 +43,6 @@ describe('SearchBar Component', () => {
     jest.clearAllMocks();
   });
 
-  // VACANCIES
   test('renders InputContainer and TagBox for type="vacancies"', () => {
     render(
       <SearchBar
@@ -68,7 +56,6 @@ describe('SearchBar Component', () => {
     expect(screen.getByTestId('tag-box')).toBeInTheDocument();
   });
 
-  // COMPANIES
   test('renders InputContainer but NOT TagBox for type="companies"', () => {
     render(
       <SearchBar
@@ -82,7 +69,6 @@ describe('SearchBar Component', () => {
     expect(screen.queryByTestId('tag-box')).toBeNull();
   });
 
-  // JOB SEEKERS
   test('does NOT render InputContainer for jobSeekers', () => {
     render(
       <SearchBar
@@ -96,7 +82,6 @@ describe('SearchBar Component', () => {
     expect(screen.getByTestId('tag-box')).toBeInTheDocument();
   });
 
-  // APPLICATIONS
   test('does NOT render InputContainer but renders TagBox for type="applications"', () => {
     render(
       <SearchBar

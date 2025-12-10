@@ -5,11 +5,8 @@ import {
   isEmptyValue,
   searchFormValidate,
   submitSearchForm,
-} from '@/utils/vacancyValidation'; // ← поправ шлях, якщо інший
+} from '@/utils/vacancyValidation';
 
-// -------------------------------------------------------------
-// validateVacancyForm
-// -------------------------------------------------------------
 describe('validateVacancyForm', () => {
   it('requires title and description', () => {
     const values = {
@@ -134,9 +131,6 @@ describe('validateVacancyForm', () => {
   });
 });
 
-// -------------------------------------------------------------
-// mapVacancyToFormValues
-// -------------------------------------------------------------
 describe('mapVacancyToFormValues', () => {
   it('maps vacancy data to form values', () => {
     const data = {
@@ -172,9 +166,6 @@ describe('mapVacancyToFormValues', () => {
   });
 });
 
-// -------------------------------------------------------------
-// mapQueryToVacancyForm
-// -------------------------------------------------------------
 describe('mapQueryToVacancyForm', () => {
   it('maps query params correctly', () => {
     const result = mapQueryToVacancyForm({
@@ -209,9 +200,6 @@ describe('mapQueryToVacancyForm', () => {
   });
 });
 
-// -------------------------------------------------------------
-// isEmptyValue
-// -------------------------------------------------------------
 describe('isEmptyValue', () => {
   it('detects empty values', () => {
     expect(isEmptyValue(undefined)).toBe(true);
@@ -228,9 +216,6 @@ describe('isEmptyValue', () => {
   });
 });
 
-// -------------------------------------------------------------
-// searchFormValidate
-// -------------------------------------------------------------
 describe('searchFormValidate', () => {
   it('validates title length', () => {
     const result = searchFormValidate({
@@ -260,9 +245,6 @@ describe('searchFormValidate', () => {
   });
 });
 
-// -------------------------------------------------------------
-// submitSearchForm
-// -------------------------------------------------------------
 describe('submitSearchForm', () => {
   it('cleans empty fields and transforms language & skill objects', () => {
     const onSubmit = jest.fn();

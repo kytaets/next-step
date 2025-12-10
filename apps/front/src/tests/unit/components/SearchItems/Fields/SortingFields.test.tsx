@@ -2,9 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SortingFields from '@/components/SearchItems/Fields/SortingFields';
 import '@testing-library/jest-dom';
 
-// ==================================
-// MOCK useFormikContext
-// ==================================
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(),
 }));
@@ -16,9 +13,6 @@ describe('SortingFields Component', () => {
     jest.clearAllMocks();
   });
 
-  // ==================================
-  // RENDERS
-  // ==================================
   test('renders both selects', () => {
     mockUseFormikContext.mockReturnValue({
       values: { orderBy: {} },
@@ -56,9 +50,6 @@ describe('SortingFields Component', () => {
     expect(screen.queryByText('Salary')).toBeNull();
   });
 
-  // ==================================
-  // LOGIC
-  // ==================================
   test('changing field sets orderBy with default asc direction', () => {
     const setFieldValueMock = jest.fn();
 

@@ -103,27 +103,21 @@ describe('CompanyMainInfo', () => {
     const mutate = jest.fn();
     mockUseMutation.mockReturnValue({ mutate, isPending: false } as any);
 
-    // 😈 ВАЖЛИВО: завжди повертати помилку, а не один раз
     const validateMock = require('@/utils/companyProfileValidation')
       .validateCompanyInfoData as jest.Mock;
     validateMock.mockReturnValue({ name: 'Name required' });
 
     const { container } = render(<CompanyMainInfo {...baseProps} />);
 
-    // відкриваємо режим редагування
     fireEvent.click(screen.getByRole('button'));
 
     const nameInput = screen.getByPlaceholderText('Company Name');
 
-    // робимо поле пустим
     fireEvent.change(nameInput, { target: { value: '' } });
-    // необовʼязково, але додатково позначає поле як "touched"
     fireEvent.blur(nameInput);
 
-    // сабмітимо форму
     fireEvent.submit(container.querySelector('form')!);
 
-    // ЧЕКАЄМО, поки Formik оновить DOM і зʼявиться помилка
     const msg = await screen.findByText('Name required');
 
     expect(msg).toBeInTheDocument();

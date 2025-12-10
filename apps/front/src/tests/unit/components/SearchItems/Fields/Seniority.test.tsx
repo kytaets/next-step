@@ -2,23 +2,14 @@ import { render, screen } from '@testing-library/react';
 import SeniorityInput from '@/components/SearchItems/Fields/Seniority';
 import '@testing-library/jest-dom';
 
-// ===============================
-// MOCK vacancy-data
-// ===============================
 jest.mock('@/lib/vacancy-data', () => ({
   seniorityOptions: ['junior', 'middle', 'senior'],
 }));
 
-// ===============================
-// MOCK capitalize
-// ===============================
 jest.mock('@/utils/convertData', () => ({
   capitalize: (str: string) => str.toUpperCase(),
 }));
 
-// ===============================
-// MOCK Formik Field
-// ===============================
 jest.mock('formik', () => ({
   Field: ({ children, ...props }: any) => (
     <select data-testid="field" {...props}>

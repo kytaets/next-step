@@ -1,7 +1,6 @@
 import { act } from 'react';
 import { useAuthStore } from '@/store/authSlice';
 
-// ВАЖЛИВО: перед кожним тестом чистимо localStorage і Zustand state
 beforeEach(() => {
   localStorage.clear();
   useAuthStore.setState({ isLogged: false });
@@ -49,7 +48,6 @@ describe('useAuthStore (Zustand)', () => {
       })
     );
 
-    // 👇 це змусить Zustand перечитати localStorage
     useAuthStore.persist.rehydrate();
 
     expect(useAuthStore.getState().isLogged).toBe(true);

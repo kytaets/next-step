@@ -1,13 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ===============================
-// 🔧 MOCK next/navigation
-// ===============================
 const pushMock = jest.fn();
 
 jest.mock('next/navigation', () => ({
@@ -19,16 +12,10 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// ===============================
-// 🔧 MOCK SERVICES
-// ===============================
 jest.mock('@/services/application', () => ({
   getVacancyApplications: jest.fn(),
 }));
 
-// ===============================
-// 🔧 MOCK COMPONENTS
-// ===============================
 jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   <button onClick={() => props.onSubmit({ page: 1 })}>MockSearchBar</button>
 ));
@@ -41,9 +28,6 @@ jest.mock(
 import VacancyApplicationsPage from '@/app/my-profile/recruiter/company/applications/[vacancyApplicationSlug]/VacancyApplicationsPage';
 import { getVacancyApplications } from '@/services/application';
 
-// ===============================
-// render helper
-// ===============================
 function renderPage() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -56,15 +40,11 @@ function renderPage() {
   );
 }
 
-// ===============================
-// TESTS
-// ===============================
 describe('VacancyApplicationsPage tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // -------------------------------------------
   test('renders error message when query fails', async () => {
     (getVacancyApplications as jest.Mock).mockRejectedValue({
       message: 'Server error',
@@ -78,7 +58,6 @@ describe('VacancyApplicationsPage tests', () => {
     expect(screen.getByText(/server error/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('renders applications list when data loads successfully', async () => {
     (getVacancyApplications as jest.Mock).mockResolvedValue({
       data: [
@@ -95,7 +74,6 @@ describe('VacancyApplicationsPage tests', () => {
     expect(screen.getByText(/VacancyApplicationItem 2/)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('SearchBar triggers router.push with correct params', async () => {
     (getVacancyApplications as jest.Mock).mockResolvedValue({ data: [] });
 

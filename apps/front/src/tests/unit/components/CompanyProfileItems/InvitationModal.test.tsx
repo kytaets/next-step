@@ -2,41 +2,32 @@ import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import InvitationModal from '@/components/CompanyProfileItems/InvitationModal';
 
-// ========== MOCKS ==========
-
-// AnimatedIcon (motion-safe)
 jest.mock('@/components/HoveredItem/HoveredItem', () => {
   return function MockAnimatedIcon({ children }: any) {
     return <span data-testid="animated-icon">{children}</span>;
   };
 });
 
-// MessageBox
 jest.mock('@/components/MessageBox/MessageBox', () => {
   return function MockMessageBox({ children }: any) {
     return <div data-testid="message-box">{children}</div>;
   };
 });
 
-// Validation
 const mockValidate = jest.fn(() => ({}));
 jest.mock('@/utils/recruiterValidation', () => ({
   validateInvitationForm: (v: any) => mockValidate(v),
 }));
 
-// Service
 const mockSendInvite = jest.fn();
 jest.mock('@/services/companyProfileService', () => ({
   sendInvite: (data: any) => mockSendInvite(data),
 }));
 
-// useMutation
 const mockUseMutation = jest.fn();
 jest.mock('@tanstack/react-query', () => ({
   useMutation: (opts: any) => mockUseMutation(opts),
 }));
-
-// ========== TESTS ==========
 
 describe('InvitationModal', () => {
   beforeEach(() => {

@@ -4,21 +4,14 @@ import SkillsFields from '@/components/VacanciesItems/VacancyForm/SkillsFields';
 import React from 'react';
 import '@testing-library/jest-dom';
 
-// -------------------------
-// MOCKS
-// -------------------------
-
-// mock getSkills
 jest.mock('@/services/jobseekerService', () => ({
   getSkills: jest.fn(),
 }));
 
-// mock react-query
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
 }));
 
-// mock SkillsRow
 jest.mock('@/components/FormItems/SkillRow', () => {
   return ({
     values,
@@ -36,10 +29,6 @@ jest.mock('@/components/FormItems/SkillRow', () => {
   );
 });
 
-// -------------------------
-// Helper для Formik
-// -------------------------
-
 function renderWithFormik(initialValues: any) {
   return render(
     <Formik initialValues={initialValues} onSubmit={() => {}}>
@@ -48,14 +37,9 @@ function renderWithFormik(initialValues: any) {
   );
 }
 
-// -------------------------
-// TESTS
-// -------------------------
-
 describe('SkillsFields', () => {
   const initialValues = {
     skills: [],
-    // інші поля форми VacancyFormValues нам не потрібні
   };
 
   beforeEach(() => {

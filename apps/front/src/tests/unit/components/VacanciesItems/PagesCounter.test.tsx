@@ -1,9 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import PagesCounter from '@/components/VacanciesItems/PagesCounter';
 
-// -----------------------
-// Mock next/navigation
-// -----------------------
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -12,9 +9,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// -----------------------
-// Mock CSS module
-// -----------------------
 jest.mock('@/components/PagesCounter/PagesCounter.module.css', () => ({
   'pages-counter': 'pages-counter',
   'nav-btn': 'nav-btn',
@@ -23,9 +17,6 @@ jest.mock('@/components/PagesCounter/PagesCounter.module.css', () => ({
   active: 'active',
 }));
 
-// -----------------------
-// Mock FontAwesome (avoid SVG spam)
-// -----------------------
 jest.mock('@fortawesome/react-fontawesome', () => ({
   FontAwesomeIcon: () => <span data-testid="icon" />,
 }));

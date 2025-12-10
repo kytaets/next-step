@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ApplyFormModal from '@/components/ApplicationItems/ApplyFormModal';
 
-// mock CSS
 jest.mock('@/components/CompanyProfileItems/CompanyProfile.module.css', () => ({
   'invitation-modal': 'invitation-modal',
   'invitation-form': 'invitation-form',
@@ -14,28 +13,24 @@ jest.mock('@/components/CompanyProfileItems/CompanyProfile.module.css', () => ({
   'info-form-btn': 'info-form-btn',
 }));
 
-// mock HoveredItem
 jest.mock('@/components/HoveredItem/HoveredItem', () => {
   return function MockHoveredItem({ children }) {
     return <div data-testid="hovered-item">{children}</div>;
   };
 });
 
-// mock MessageBox
 jest.mock('@/components/MessageBox/MessageBox', () => {
   return function MockMessageBox({ children, type }) {
     return <div data-testid={`msg-${type}`}>{children}</div>;
   };
 });
 
-// mock sendApplication
 const mockSendApplication = jest.fn();
 
 jest.mock('@/services/application', () => ({
   sendApplication: (...args) => mockSendApplication(...args),
 }));
 
-// mock useMutation
 jest.mock('@tanstack/react-query', () => ({
   useMutation: ({ mutationFn, onSuccess, onError }) => ({
     mutate: (data) => {
@@ -60,7 +55,6 @@ describe('ApplyFormModal', () => {
   test('renders form elements', () => {
     render(<ApplyFormModal vacancyId="123" />);
 
-    // унікальний heading
     expect(
       screen.getByRole('heading', { name: /send invitation/i })
     ).toBeInTheDocument();

@@ -30,7 +30,6 @@ describe('CompanyMembers routing', () => {
     const pushMock = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({ push: pushMock });
 
-    // IMPORTANT — no company-id in cookies
     (Cookies.get as jest.Mock).mockReturnValue(undefined);
 
     render(<CompanyMembers />);
@@ -42,7 +41,7 @@ describe('CompanyMembers routing', () => {
     const pushMock = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({ push: pushMock });
 
-    (Cookies.get as jest.Mock).mockReturnValue('123'); // valid_company_id
+    (Cookies.get as jest.Mock).mockReturnValue('123');
 
     render(<CompanyMembers />);
 

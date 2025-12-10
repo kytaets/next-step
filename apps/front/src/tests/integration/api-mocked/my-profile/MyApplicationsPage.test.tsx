@@ -1,31 +1,22 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ---------- GLOBAL MOCKS ----------
 const pushMock = jest.fn();
 const searchParamsMock = {
   entries: () => [],
   get: () => null,
 };
 
-// ---------- MOCK next/navigation BEFORE IMPORTS ----------
 jest.mock('next/navigation', () => ({
   __esModule: true,
   useRouter: () => ({ push: pushMock }),
   useSearchParams: () => searchParamsMock,
 }));
 
-// ---------- MOCK SERVICES ----------
 jest.mock('@/services/application', () => ({
   getMyApplications: jest.fn(),
 }));
 
-// ---------- MOCK COMPONENTS ----------
-// ✔ Мок працює як реальний SearchBar — викликає onSubmit({ page: 1 })
 jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   <button onClick={() => props.onSubmit({ page: 1 })}>MockedSearchBar</button>
 ));
@@ -38,7 +29,6 @@ jest.mock(
 import MyApplicationsPage from '@/app/my-profile/job-seeker/applications/page';
 import { getMyApplications } from '@/services/application';
 
-// ---------- HELPER ----------
 function renderPage(searchParams: Record<string, string> = {}) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -54,7 +44,6 @@ function renderPage(searchParams: Record<string, string> = {}) {
   );
 }
 
-// ---------- TESTS ----------
 describe('MyApplicationsPage — Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -95,7 +84,6 @@ describe('MyApplicationsPage — Integration Tests', () => {
 
     fireEvent.click(screen.getByText(/mockedsearchbar/i));
 
-    // ✔ push must be called with "?page=1"
     expect(pushMock).toHaveBeenCalledTimes(1);
     expect(pushMock).toHaveBeenCalledWith('?page=1');
   });

@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import PageSelect from '@/components/MainHeader/PageSelect';
 
-// ----------------------
-// next/navigation mock
-// ----------------------
 const pushMock = jest.fn();
 
 jest.mock('next/navigation', () => ({
@@ -14,9 +11,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// ----------------------
-// Cookies mock
-// ----------------------
 import Cookies from 'js-cookie';
 
 jest.mock('js-cookie', () => ({

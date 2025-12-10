@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -9,8 +5,6 @@ import VacancyPage from '@/app/vacancies/[vacancySlug]/page';
 import { getVacancyById, deleteVacancy } from '@/services/vacanciesService';
 import { useRouter, useParams } from 'next/navigation';
 import Cookies from 'js-cookie';
-
-// -------------------- MOCKS --------------------
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -41,8 +35,6 @@ jest.mock('framer-motion', () => ({
     },
   },
 }));
-
-// -------------------- VALID MOCK --------------------
 
 const createMockVacancy = (overrides = {}) => ({
   id: '123',
@@ -84,8 +76,6 @@ const createMockVacancy = (overrides = {}) => ({
   ...overrides,
 });
 
-// -------------------- RENDER FUNCTION --------------------
-
 function renderPage(params: any = { vacancySlug: '123' }) {
   (useParams as jest.Mock).mockReturnValue(params);
   (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
@@ -100,8 +90,6 @@ function renderPage(params: any = { vacancySlug: '123' }) {
     </QueryClientProvider>
   );
 }
-
-// -------------------- TESTS --------------------
 
 describe('VacancyPage — Integration Tests', () => {
   beforeEach(() => jest.clearAllMocks());

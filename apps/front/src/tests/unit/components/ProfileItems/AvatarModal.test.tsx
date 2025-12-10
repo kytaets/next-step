@@ -29,8 +29,6 @@ jest.mock('@/components/MessageBox/MessageBox', () => ({
   default: ({ children }: any) => <div>{children}</div>,
 }));
 
-// ------------------ CORRECT useMutation MOCK ------------------
-
 let mutationQueue: any[] = [];
 
 (useMutation as jest.Mock).mockImplementation(
@@ -52,8 +50,6 @@ let mutationQueue: any[] = [];
     };
   }
 );
-
-// --------------------------------------------------------------
 
 describe('AvatarModal', () => {
   const invalidateQueriesMock = jest.fn();
@@ -153,7 +149,6 @@ describe('AvatarModal', () => {
   });
 
   test('button is disabled when loading AND shows Saving...', () => {
-    // override useMutation for this test
     (useMutation as jest.Mock).mockReturnValueOnce({
       mutate: jest.fn(),
       isPending: true,

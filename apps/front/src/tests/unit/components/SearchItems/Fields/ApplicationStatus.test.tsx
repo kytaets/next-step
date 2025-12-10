@@ -2,17 +2,14 @@ import { render, screen } from '@testing-library/react';
 import ApplicationStatus from '@/components/SearchItems/Fields/ApplicationStatus';
 import '@testing-library/jest-dom';
 
-// Mock data module
 jest.mock('@/lib/application-data', () => ({
   statusOptions: ['pending', 'accepted', 'rejected'],
 }));
 
-// Mock capitalize
 jest.mock('@/utils/convertData', () => ({
   capitalize: (str: string) => str.toUpperCase(),
 }));
 
-// Mock Formik Field
 jest.mock('formik', () => ({
   Field: ({ children, ...props }: any) => (
     <select data-testid="mock-field" {...props}>

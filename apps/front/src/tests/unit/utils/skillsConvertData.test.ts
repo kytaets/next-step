@@ -1,4 +1,4 @@
-import { addMissingSkills } from '@/utils/skillsConvertData'; // поправ шлях
+import { addMissingSkills } from '@/utils/skillsConvertData';
 
 describe('addMissingSkills', () => {
   it('returns original skills when all exist in skillsList', async () => {
@@ -56,7 +56,6 @@ describe('addMissingSkills', () => {
       { skill: { name: 'UnknownSkill', id: 10 } },
     ]);
 
-    // ensure values.skills was mutated as function requires
     expect(values.skills[1]).toEqual({
       skill: { name: 'UnknownSkill', id: 10 },
     });
@@ -113,7 +112,6 @@ describe('addMissingSkills', () => {
       setRequestError
     );
 
-    // Only first missing skill triggers skill update & return
     expect(result).toEqual([
       { skill: { name: 'S1', id: 1 } },
       { skill: { name: 'S2' } },

@@ -4,20 +4,11 @@ import { Formik } from 'formik';
 import '@testing-library/jest-dom';
 import React from 'react';
 
-// =========================
-// Mocks
-// =========================
-
-// Mock AnimatedIcon
 jest.mock('@/components/HoveredItem/HoveredItem', () => {
   return ({ iconType }) => (
     <span data-testid="animated-icon">{iconType.iconName || 'icon'}</span>
   );
 });
-
-// =========================
-// Helper render with Formik
-// =========================
 
 const renderWithFormik = (ui: React.ReactNode, initialValues = {}) => {
   return render(
@@ -26,10 +17,6 @@ const renderWithFormik = (ui: React.ReactNode, initialValues = {}) => {
     </Formik>
   );
 };
-
-// =========================
-// Tests
-// =========================
 
 describe('InputContainer Component', () => {
   test('renders Field with default name "title" when type="vacancies"', () => {
@@ -56,7 +43,6 @@ describe('InputContainer Component', () => {
   test('renders ErrorMessage for proper field', () => {
     renderWithFormik(<InputContainer />, { title: '' });
 
-    // Formik ErrorMessage creates a div after validation, but field exists
     expect(
       screen.getByPlaceholderText('Search for jobs...')
     ).toBeInTheDocument();

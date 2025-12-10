@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import MultiSelect from '@/components/MultiSelect/MultiSelect';
 
-// ----------------------------
-// convertData mocks
-// ----------------------------
 jest.mock('@/utils/convertData', () => ({
   capitalize: (s: string) => s.charAt(0).toUpperCase() + s.slice(1),
   toKebabCase: (s: string) => s.toLowerCase().replace(/\s+/g, '-'),
@@ -50,7 +47,6 @@ describe('MultiSelect component', () => {
   test('selecting option triggers setFieldValue', () => {
     render(<MultiSelect field={field} form={form} options={['JavaScript']} />);
 
-    // open
     fireEvent.click(screen.getByText('Select options'));
 
     const checkbox = screen.getByRole('checkbox');
@@ -60,11 +56,10 @@ describe('MultiSelect component', () => {
   });
 
   test('unselecting option removes it', () => {
-    field.value = ['JavaScript']; // already selected
+    field.value = ['JavaScript'];
 
     render(<MultiSelect field={field} form={form} options={['JavaScript']} />);
 
-    // open
     fireEvent.click(screen.getByText('Javascript'));
 
     const checkbox = screen.getByRole('checkbox');
@@ -84,7 +79,6 @@ describe('MultiSelect component', () => {
       />
     );
 
-    // должен рендериться: "Javascript, react"
     expect(screen.getByText(/javascript, react/i)).toBeInTheDocument();
   });
 });

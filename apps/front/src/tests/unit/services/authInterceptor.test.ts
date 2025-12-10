@@ -6,7 +6,6 @@ jest.mock('@/services/authInterceptor', () => ({
   handleResponseError: jest.fn((err) => Promise.reject(err)),
 }));
 
-// ⬇ Імпортуємо ТІЛЬКИ ПІСЛЯ jest.mock
 import {
   clearAuthCookies,
   redirectToSignIn,

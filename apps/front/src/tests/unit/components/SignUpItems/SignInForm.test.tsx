@@ -2,26 +2,17 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import SignInForm from '@/components/SignUpItems/SignInForm';
 
-// --------------------------------------------------
-// Mock framer-motion (важливо передавати props і ref!)
-// --------------------------------------------------
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children }: any) => <div>{children}</div>,
   },
 }));
 
-// --------------------------------------------------
-// Mock next/navigation
-// --------------------------------------------------
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-// --------------------------------------------------
-// Mock Zustand useAuthStore
-// --------------------------------------------------
 const mockSetIsLogged = jest.fn();
 
 jest.mock('@/store/authSlice', () => ({
@@ -33,9 +24,6 @@ jest.mock('@/store/authSlice', () => ({
   ),
 }));
 
-// --------------------------------------------------
-// Mock loginUser + forgetPass
-// --------------------------------------------------
 const loginMock = jest.fn();
 const forgotMock = jest.fn();
 
@@ -44,9 +32,6 @@ jest.mock('@/services/userService', () => ({
   forgetPass: (...args: any[]) => forgotMock(...args),
 }));
 
-// --------------------------------------------------
-// Mock validation
-// --------------------------------------------------
 jest.mock('@/utils/validation', () => ({
   validateLogInForm: jest.fn((data) => {
     const errors: string[] = [];
@@ -58,18 +43,14 @@ jest.mock('@/utils/validation', () => ({
   }),
 
   validateEmail: jest.fn((email) => {
-    return !email || !email.includes('@'); // true → invalid
+    return !email || !email.includes('@');
   }),
 }));
 
-// Mock Cookies (role = null → redirect /my-profile)
 jest.mock('js-cookie', () => ({
   get: jest.fn(() => null),
 }));
 
-// --------------------------------------------------
-// Helper: wrap with react-query provider
-// --------------------------------------------------
 function renderWithQuery(ui: React.ReactElement) {
   const client = new QueryClient();
   return render(
@@ -86,7 +67,6 @@ describe('SignInForm', () => {
     jest.clearAllMocks();
   });
 
-  // ---------------------------------------------------------
   test('does NOT submit when validation fails', () => {
     renderWithQuery(<SignInForm />);
 
@@ -98,7 +78,6 @@ describe('SignInForm', () => {
     expect(screen.getByText(/password must/i)).toBeInTheDocument();
   });
 
-  // ---------------------------------------------------------
   test('successful login triggers setIsLogged and navigation', async () => {
     loginMock.mockResolvedValue({ status: 'success' });
 
@@ -120,7 +99,6 @@ describe('SignInForm', () => {
     });
   });
 
-  // ---------------------------------------------------------
   test('shows error on failed login', async () => {
     loginMock.mockResolvedValue({
       status: 'error',
@@ -143,7 +121,6 @@ describe('SignInForm', () => {
     });
   });
 
-  // ---------------------------------------------------------
   test('forgot password with VALID email calls mutation', async () => {
     renderWithQuery(<SignInForm />);
 
@@ -159,7 +136,6 @@ describe('SignInForm', () => {
     });
   });
 
-  // ---------------------------------------------------------
   test('forgot password with INVALID email shows error', async () => {
     renderWithQuery(<SignInForm />);
 

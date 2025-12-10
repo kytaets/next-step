@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import ResetPasswordForm from '@/components/SignUpItems/ResetPasswordForm';
 
-// ---------------------------
-// mock next/navigation
-// ---------------------------
 let mockToken: string | null = 'test-token';
 
 jest.mock('next/navigation', () => ({
@@ -14,48 +11,30 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// ---------------------------
-// mock framer-motion
-// ---------------------------
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
-// ---------------------------
-// mock HoveredItem
-// ---------------------------
 jest.mock('@/components/HoveredItem/HoveredItem', () => (props: any) => (
   <div data-testid="mock-hovered">{props.children}</div>
 ));
 
-// ---------------------------
-// mock MessageBox
-// ---------------------------
 jest.mock('@/components/MessageBox/MessageBox', () => (props: any) => (
   <div data-testid="mock-messagebox">{props.children}</div>
 ));
 
-// ---------------------------
-// mock validation
-// ---------------------------
 let validationReturn: string[] = [];
 jest.mock('@/utils/validation', () => ({
   checkPasswords: () => validationReturn,
 }));
 
-// ---------------------------
-// mock resetPass API
-// ---------------------------
 const resetPassMock = jest.fn();
 jest.mock('@/services/userService', () => ({
   resetPass: (...args: any) => resetPassMock(...args),
 }));
 
-// ---------------------------
-// mock useMutation
-// ---------------------------
 let mutationState = {
   isError: false,
   isPending: false,
@@ -67,9 +46,6 @@ jest.mock('@tanstack/react-query', () => ({
   useMutation: () => mutationState,
 }));
 
-// ---------------------------
-// Tests
-// ---------------------------
 describe('ResetPasswordForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();

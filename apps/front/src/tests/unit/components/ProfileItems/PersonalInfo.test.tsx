@@ -32,14 +32,14 @@ describe('PersonalInfo Component', () => {
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('01.01.1990')).toBeInTheDocument(); // fixed date format
+    expect(screen.getByText('01.01.1990')).toBeInTheDocument();
     expect(screen.getByText('Berlin')).toBeInTheDocument();
   });
 
   test('switches to edit mode on Edit click', () => {
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button'));
 
     expect(screen.getByPlaceholderText('First Name')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Last Name')).toBeInTheDocument();
@@ -49,13 +49,13 @@ describe('PersonalInfo Component', () => {
   test('shows validation errors', async () => {
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit mode
+    fireEvent.click(screen.getByRole('button')); 
 
     fireEvent.change(screen.getByPlaceholderText('First Name'), {
       target: { value: '' },
     });
 
-    const submitBtn = screen.getAllByRole('button')[1]; // submit icon
+    const submitBtn = screen.getAllByRole('button')[1];
     fireEvent.click(submitBtn);
 
     await waitFor(() =>
@@ -75,9 +75,9 @@ describe('PersonalInfo Component', () => {
 
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button')); 
 
-    const submitBtn = screen.getAllByRole('button')[1]; // submit
+    const submitBtn = screen.getAllByRole('button')[1]; 
     fireEvent.click(submitBtn);
 
     await waitFor(() => expect(mockMutate).toHaveBeenCalled());
@@ -94,7 +94,7 @@ describe('PersonalInfo Component', () => {
 
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button')); 
 
     const submitBtn = screen.getAllByRole('button')[1];
     fireEvent.click(submitBtn);
@@ -107,9 +107,9 @@ describe('PersonalInfo Component', () => {
   test('Cancel button exits edit mode', () => {
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit mode
+    fireEvent.click(screen.getByRole('button')); 
 
-    const cancelBtn = screen.getAllByRole('button')[0]; // first button is cancel (X)
+    const cancelBtn = screen.getAllByRole('button')[0]; 
     fireEvent.click(cancelBtn);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -124,7 +124,7 @@ describe('PersonalInfo Component', () => {
 
     render(<PersonalInfo isEditable={true} data={mockData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit mode
+    fireEvent.click(screen.getByRole('button')); 
 
     const submitBtn = screen.getAllByRole('button')[1];
     expect(submitBtn).toBeDisabled();

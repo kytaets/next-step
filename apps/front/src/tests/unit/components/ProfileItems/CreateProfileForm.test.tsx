@@ -6,7 +6,6 @@ jest.mock('@/store/modalSlice', () => ({
   useModalStore: jest.fn(),
 }));
 
-// mock ProfileFormModal
 jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   const Mock = ({ role }: any) => (
     <div data-testid="profile-form-modal">ProfileForm:{role}</div>
@@ -15,7 +14,6 @@ jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   return { __esModule: true, default: Mock };
 });
 
-// mock ChooseRoleForm
 jest.mock('@/components/ProfileItems/ChooseRoleForm', () => {
   const Mock = () => <div data-testid="choose-role-form">ChooseRole</div>;
   Mock.displayName = 'ChooseRoleForm';

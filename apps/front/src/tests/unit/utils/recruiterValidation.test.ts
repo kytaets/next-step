@@ -1,7 +1,7 @@
 import {
   validateCreateRecruiterForm,
   validateInvitationForm,
-} from '@/utils/recruiterValidation'; // ← поправ шлях якщо інший
+} from '@/utils/recruiterValidation';
 
 describe('validateCreateRecruiterForm', () => {
   it('returns errors when first and last names are missing', () => {

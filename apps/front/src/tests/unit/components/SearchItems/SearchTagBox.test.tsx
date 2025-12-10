@@ -2,9 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SearchTagBox from '@/components/SearchItems/SearchTagBox';
 import '@testing-library/jest-dom';
 
-// =========================
-// MOCK CHILD COMPONENTS
-// =========================
 jest.mock('@/components/SearchItems/Fields/SalarySlider', () => ({
   __esModule: true,
   default: () => <div data-testid="salary-slider">SalarySlider</div>,
@@ -51,9 +48,6 @@ jest.mock('@/components/SearchItems/Fields/ApplicationStatus', () => ({
 }));
 
 describe('SearchTagBox Component', () => {
-  // ============================================================
-  // VACANCIES
-  // ============================================================
   test('renders correct filters for vacancies', () => {
     render(<SearchTagBox type="vacancies" />);
 
@@ -64,12 +58,10 @@ describe('SearchTagBox Component', () => {
     expect(screen.getByTestId('work-formats')).toBeInTheDocument();
     expect(screen.getByTestId('employment-types')).toBeInTheDocument();
 
-    // More Filters button exists
     expect(
       screen.getByRole('button', { name: /more filters/i })
     ).toBeInTheDocument();
 
-    // No Search button for vacancies
     expect(screen.queryByRole('button', { name: /search/i })).toBeNull();
   });
 
@@ -78,61 +70,46 @@ describe('SearchTagBox Component', () => {
 
     const btn = screen.getByRole('button', { name: /more filters/i });
 
-    // Initially hidden
     expect(screen.queryByTestId('languages-input')).toBeNull();
     expect(screen.queryByTestId('skills-input')).toBeNull();
     expect(screen.queryByTestId('sorting-fields')).toBeNull();
 
     fireEvent.click(btn);
 
-    // After clicking - visible
     expect(screen.getByTestId('languages-input')).toBeInTheDocument();
     expect(screen.getByTestId('skills-input')).toBeInTheDocument();
     expect(screen.getByTestId('sorting-fields')).toBeInTheDocument();
 
-    // Button changes text
     expect(btn.textContent?.toLowerCase()).toContain('less filters');
 
     fireEvent.click(btn);
 
-    // Hidden again
     expect(screen.queryByTestId('languages-input')).toBeNull();
     expect(screen.queryByTestId('skills-input')).toBeNull();
     expect(screen.queryByTestId('sorting-fields')).toBeNull();
   });
 
-  // ============================================================
-  // JOB SEEKERS
-  // ============================================================
   test('jobSeekers: moreFilters is always enabled, no main filters', () => {
     render(<SearchTagBox type="jobSeekers" />);
 
-    // Should NOT render vacancy-only fields
     expect(screen.queryByTestId('salary-slider')).toBeNull();
     expect(screen.queryByTestId('experience-input')).toBeNull();
     expect(screen.queryByTestId('seniority-input')).toBeNull();
 
-    // Should show secondary filters immediately
     expect(screen.getByTestId('languages-input')).toBeInTheDocument();
     expect(screen.getByTestId('skills-input')).toBeInTheDocument();
     expect(screen.getByTestId('sorting-fields')).toBeInTheDocument();
 
-    // Should show Search button
     expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
   });
 
-  // ============================================================
-  // APPLICATIONS
-  // ============================================================
   test('applications: renders ApplicationStatus and Search button', () => {
     render(<SearchTagBox type="applications" />);
 
     expect(screen.getByTestId('application-status')).toBeInTheDocument();
 
-    // Search button should exist
     expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
 
-    // Should NOT show More filters button
     expect(screen.queryByRole('button', { name: /more filters/i })).toBeNull();
   });
 });

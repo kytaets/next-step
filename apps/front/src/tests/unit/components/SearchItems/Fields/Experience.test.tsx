@@ -2,9 +2,6 @@ import { render, screen } from '@testing-library/react';
 import ExperienceInput from '@/components/SearchItems/Fields/Experience';
 import '@testing-library/jest-dom';
 
-// ===============================
-// MOCK Formik Field
-// ===============================
 jest.mock('formik', () => ({
   Field: (props: any) => <input data-testid="field" {...props} />,
 }));

@@ -1,4 +1,4 @@
-import { submitApplicationsSearchForm } from '@/utils/applicationsValidation'; // ← підкоригуй шлях, якщо інший
+import { submitApplicationsSearchForm } from '@/utils/applicationsValidation';
 
 describe('submitApplicationsSearchForm', () => {
   it('removes undefined and null fields except page, keeps defined values', () => {
@@ -6,8 +6,8 @@ describe('submitApplicationsSearchForm', () => {
 
     const input = {
       name: undefined,
-      status: undefined, // status undefined → should NOT pass
-      page: undefined, // allowed, but will become 1
+      status: undefined,
+      page: undefined,
       vacancyId: null,
       recruiterId: '123',
     };

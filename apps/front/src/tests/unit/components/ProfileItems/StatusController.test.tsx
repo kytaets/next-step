@@ -82,7 +82,6 @@ describe('OpenToWork component', () => {
 
     const button = screen.getByRole('button');
 
-    // trigger mutate()
     await user.click(button);
 
     expect(await screen.findByText(/Some error occurred/i)).toBeInTheDocument();

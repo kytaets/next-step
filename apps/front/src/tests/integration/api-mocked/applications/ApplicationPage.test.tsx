@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import ApplicationPage from '@/app/applications/[applicationSlug]/ApplicationPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

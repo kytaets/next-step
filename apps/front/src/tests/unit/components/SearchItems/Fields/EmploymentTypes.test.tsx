@@ -2,16 +2,10 @@ import { render, screen } from '@testing-library/react';
 import EmploymentTypesInput from '@/components/SearchItems/Fields/EmploymentTypes';
 import '@testing-library/jest-dom';
 
-// ===============================
-// MOCK vacancy-data
-// ===============================
 jest.mock('@/lib/vacancy-data', () => ({
   employmentTypeOptions: ['full-time', 'part-time', 'contract'],
 }));
 
-// ===============================
-// MOCK MultiSelect
-// ===============================
 jest.mock('@/components/MultiSelect/MultiSelect', () => ({
   __esModule: true,
   default: ({ options, placeholder }: any) => (
@@ -23,9 +17,6 @@ jest.mock('@/components/MultiSelect/MultiSelect', () => ({
   ),
 }));
 
-// ===============================
-// MOCK Formik Field + ErrorMessage
-// ===============================
 jest.mock('formik', () => ({
   Field: ({ component: Component, ...props }: any) => (
     <Component data-testid="field" {...props} />
@@ -44,7 +35,6 @@ describe('EmploymentTypesInput', () => {
   test('renders MultiSelect through Formik Field', () => {
     render(<EmploymentTypesInput />);
 
-    // Field rendered MultiSelect
     expect(screen.getByTestId('multiselect')).toBeInTheDocument();
   });
 

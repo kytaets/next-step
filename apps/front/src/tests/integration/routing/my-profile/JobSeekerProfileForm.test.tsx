@@ -23,7 +23,6 @@ jest.mock('@/services/jobseekerService', () => ({
   createProfile: jest.fn(),
 }));
 
-// KEY FIX: Formik пропустить форму
 jest.mock('@/utils/profileValidation', () => ({
   validateProfileForm: jest.fn(() => ({})),
 }));

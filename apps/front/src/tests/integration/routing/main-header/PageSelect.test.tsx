@@ -3,7 +3,6 @@ import Cookies from 'js-cookie';
 
 import PageSelect from '@/components/MainHeader/PageSelect';
 
-// ---- MOCKS ----
 const pushMock = jest.fn();
 
 jest.mock('next/navigation', () => ({
@@ -22,20 +21,16 @@ describe('PageSelect routing behavior', () => {
   });
 
   it('opens dropdown and navigates to selected page', () => {
-    (Cookies.get as jest.Mock).mockReturnValue(null); // no role
+    (Cookies.get as jest.Mock).mockReturnValue(null);
 
     const { getByText, queryByText } = render(<PageSelect />);
 
-    // Dropdown closed initially
     expect(queryByText('Search for Vacancies')).toBeNull();
 
-    // Open dropdown
     fireEvent.click(getByText('Make your first step →'));
 
-    // Now options should appear
     expect(getByText('Search for Vacancies')).toBeInTheDocument();
 
-    // Click on option
     fireEvent.click(getByText('Search for Vacancies'));
 
     expect(pushMock).toHaveBeenCalledWith('/vacancies?page=1');

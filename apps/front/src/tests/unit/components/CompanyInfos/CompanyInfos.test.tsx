@@ -2,12 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CompanyInfos from '@/components/CompanyInfos/CompanyInfos';
 
-// mock CSS module
 jest.mock('@/components/CompanyInfos/CompanyInfos.module.css', () => ({
   'companies-container': 'companies-container',
 }));
 
-// mock CompanyInfoBox
 jest.mock('@/components/CompanyInfos/CompanyInfoBox', () => {
   return function MockCompanyInfoBox() {
     return <div data-testid="company-info-box">Mock Box</div>;

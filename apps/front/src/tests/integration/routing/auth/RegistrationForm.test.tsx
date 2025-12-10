@@ -27,7 +27,6 @@ jest.mock('@/utils/validation', () => ({
   }),
 }));
 
-// отключаем анимацию фрэймера
 jest.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: any) => <div>{children}</div>,
 }));
@@ -68,7 +67,6 @@ describe('RegistrationForm routing and behaviour', () => {
       push: pushMock,
     });
 
-    // mock step=account by default
     (useSearchParams as jest.Mock).mockReturnValue({
       get: () => 'account',
     });
@@ -89,7 +87,6 @@ describe('RegistrationForm routing and behaviour', () => {
     jest.clearAllMocks();
   });
 
-  // ---------- UI DISPLAY ----------
   it('renders CreateAccountItem when step=account', () => {
     const { getByText } = render(<RegistrationForm />);
     expect(getByText('CreateAccountMock')).toBeInTheDocument();
@@ -104,7 +101,6 @@ describe('RegistrationForm routing and behaviour', () => {
     expect(getByText('ConfirmMock:')).toBeInTheDocument();
   });
 
-  // ---------- SUCCESS REGISTER ----------
   it('redirects to /sign-up?step=confirm after successful registration', async () => {
     mutateMock.mockImplementation((_, { onSuccess }) =>
       onSuccess({ status: 'success' })

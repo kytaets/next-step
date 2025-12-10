@@ -77,7 +77,6 @@ describe('Avatar component', () => {
 
     const img = screen.getByAltText('avatar-image');
 
-    // после загрузки validateImageUrl
     await waitFor(() => {
       expect(img).toHaveStyle('opacity: 1');
     });

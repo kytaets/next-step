@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import CompanyVacanciesPage from '@/app/company/[companyId]/vacancies/page';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -54,7 +50,6 @@ describe('CompanyVacanciesPage — Integration Tests (API-mocked)', () => {
   });
 
   test('shows loading state while request is pending', async () => {
-    // never resolve → stays pending
     (getCompanyVacancies as jest.Mock).mockReturnValue(new Promise(() => {}));
 
     renderPage();

@@ -29,10 +29,6 @@ describe('recruiter service', () => {
     jest.clearAllMocks();
   });
 
-  // -----------------------------
-  // apiRequest-based functions
-  // -----------------------------
-
   it('createRecruiterProfile calls apiRequest correctly', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({ id: 1 });
 
@@ -74,10 +70,6 @@ describe('recruiter service', () => {
 
     expect(apiRequest).toHaveBeenCalledWith('delete', '/recruiters/me/company');
   });
-
-  // -----------------------------
-  // acceptInvite
-  // -----------------------------
 
   it('acceptInvite returns true when confirmed = true', async () => {
     (api.get as jest.Mock).mockResolvedValue({

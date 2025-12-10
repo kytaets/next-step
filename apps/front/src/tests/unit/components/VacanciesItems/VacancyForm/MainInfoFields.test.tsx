@@ -4,10 +4,6 @@ import MainInfoForm from '@/components/VacanciesItems/VacancyForm/MainInfoFields
 import React from 'react';
 import '@testing-library/jest-dom';
 
-// -------------------------
-// MOCKS
-// -------------------------
-
 jest.mock('framer-motion', () => {
   const React = require('react');
   const forbidden = [
@@ -48,10 +44,6 @@ jest.mock('@/components/MultiSelect/MultiSelect', () => {
   return ({ field }) => <div data-testid={`multiselect-${field.name}`} />;
 });
 
-// -------------------------
-// Helper
-// -------------------------
-
 function renderWithFormik(initialValues: any) {
   return render(
     <Formik initialValues={initialValues} onSubmit={() => {}}>
@@ -59,10 +51,6 @@ function renderWithFormik(initialValues: any) {
     </Formik>
   );
 }
-
-// -------------------------
-// TESTS
-// -------------------------
 
 describe('MainInfoForm', () => {
   const initialValues = {

@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import Modal from '@/components/Modal/Modal';
 
-// --------------------
-// mock modal store
-// --------------------
 const closeModalMock = jest.fn();
 
 jest.mock('@/store/modalSlice', () => ({
@@ -52,7 +49,6 @@ describe('Modal component', () => {
 
     render(<Modal />);
 
-    // кликаем по backdrop
     const backdrop =
       screen.getByText('Test Content').parentElement!.parentElement!;
     fireEvent.click(backdrop);

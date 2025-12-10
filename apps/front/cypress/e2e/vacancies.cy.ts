@@ -1,4 +1,4 @@
-describe('Vacancies Search Page (mocked)', () => {
+describe('Vacancies Search Page', () => {
   const vacanciesResponse = {
     data: [
       {

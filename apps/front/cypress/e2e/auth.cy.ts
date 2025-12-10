@@ -1,4 +1,4 @@
-describe('User Sign-Up and Resend Confirmation Flow (mocked)', () => {
+describe('User Sign-Up and Resend Confirmation Flow', () => {
   it('registers user, shows confirm step, and resends confirmation email', () => {
     const uniqueEmail = `user_${Date.now()}@test.com`;
 
@@ -95,11 +95,18 @@ describe('Logout Flow', () => {
   });
 
   it('logs the user out correctly', () => {
+    cy.intercept('POST', 'http://localhost:8020/api/auth/logout', {
+      statusCode: 200,
+      body: { status: 'ok' },
+    }).as('mockLogout');
+
     cy.on('window:confirm', () => true);
 
     cy.contains('Log Out').should('exist');
 
     cy.contains('Log Out').click({ force: true });
+
+    cy.wait('@mockLogout');
 
     cy.url({ timeout: 5000 }).should('include', '/sign-in');
 
@@ -111,7 +118,7 @@ describe('Logout Flow', () => {
   });
 });
 
-describe('Forgot Password Flow (mocked)', () => {
+describe('Forgot Password Flow', () => {
   it('sends reset password email successfully', () => {
     cy.fixture('user').then((user) => {
       cy.intercept('POST', 'http://localhost:8020/api/auth/forgot-password', {

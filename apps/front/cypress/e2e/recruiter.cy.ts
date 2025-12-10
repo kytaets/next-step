@@ -1,4 +1,4 @@
-describe('Recruiter Profile Flow (mocked)', () => {
+describe('Recruiter Profile Flow', () => {
   const existingProfile = {
     id: 'r1',
     firstName: 'John',

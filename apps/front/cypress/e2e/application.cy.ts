@@ -1,6 +1,6 @@
 import { VacancyData } from '@/types/vacancies';
 
-describe('Vacancy Application Submission (mocked)', () => {
+describe('Vacancy Application Submission', () => {
   const vacancy: VacancyData = {
     id: 'v1',
     title: 'Senior React Developer',

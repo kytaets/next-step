@@ -1,4 +1,4 @@
-describe('Company Profile Flow (mocked)', () => {
+describe('Company Profile Flow', () => {
   const companyInitial = {
     id: 'c1',
     name: 'Tech Corp',

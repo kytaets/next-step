@@ -131,6 +131,7 @@ export default function Languages({ isEditable, data }: Props) {
                           className={classes['info-form-btn']}
                           type="submit"
                           disabled={isPending}
+                          id="languages-save-btn"
                         >
                           <AnimatedIcon>Save changes</AnimatedIcon>
                         </button>

@@ -73,6 +73,8 @@ describe('Create Job Seeker Profile Flow ', () => {
 });
 
 describe('Edit Job Seeker Profile Flow', () => {
+  let dynamicProfile;
+
   const existingProfile = {
     id: 'p1',
     userId: 'u1',
@@ -94,19 +96,29 @@ describe('Edit Job Seeker Profile Flow', () => {
   let callCount = 0;
 
   const mockFullEnvironment = () => {
+    dynamicProfile = { ...existingProfile };
+
     cy.intercept('GET', '**/api/job-seekers/me', (req) => {
-      callCount++;
       req.reply({
         statusCode: 200,
-        body: existingProfile,
+        body: dynamicProfile,
       });
     }).as('profileDynamic');
 
-    cy.intercept('PATCH', '**/api/job-seekers/me', {
-      statusCode: 200,
-      body: { status: 'ok' },
+    cy.intercept('PATCH', '**/api/job-seekers/me', (req) => {
+      dynamicProfile = {
+        ...dynamicProfile,
+        ...req.body,
+        updatedAt: new Date().toISOString(),
+      };
+
+      req.reply({
+        statusCode: 200,
+        body: { status: 'ok' },
+      });
     }).as('updateMainData');
 
+    // Skills list
     cy.intercept('GET', '**/api/skills', {
       statusCode: 200,
       body: [
@@ -115,9 +127,13 @@ describe('Edit Job Seeker Profile Flow', () => {
       ],
     }).as('skillsList');
 
-    cy.intercept('PUT', '**/api/job-seekers/me/skills', {
-      statusCode: 200,
-      body: { status: 'ok' },
+    cy.intercept('PUT', '**/api/job-seekers/me/skills', (req) => {
+      dynamicProfile = {
+        ...dynamicProfile,
+        skills: req.body,
+      };
+
+      req.reply({ status: 200, body: { status: 'ok' } });
     }).as('updateSkills');
 
     cy.intercept('GET', '**/api/languages', {
@@ -128,9 +144,13 @@ describe('Edit Job Seeker Profile Flow', () => {
       ],
     }).as('languagesList');
 
-    cy.intercept('PUT', '**/api/job-seekers/me/languages', {
-      statusCode: 200,
-      body: { status: 'ok' },
+    cy.intercept('PUT', '**/api/job-seekers/me/languages', (req) => {
+      dynamicProfile = {
+        ...dynamicProfile,
+        languages: req.body,
+      };
+
+      req.reply({ status: 200, body: { status: 'ok' } });
     }).as('updateLanguages');
   };
 
@@ -236,7 +256,7 @@ describe('Edit Job Seeker Profile Flow', () => {
     cy.get('input[name="newSkill"]').type('jav');
     cy.contains('li', 'JavaScript').click({ force: true });
 
-    cy.get('#skills-save-btn').click();
+    cy.get('#skills-save-btn').should('be.visible').click({ force: true });
     cy.wait('@updateSkills');
 
     cy.contains('JavaScript').should('exist');
@@ -246,12 +266,14 @@ describe('Edit Job Seeker Profile Flow', () => {
     cy.get('#jobseeker-languages-edit-btn').click();
     cy.wait('@languagesList');
 
-    cy.contains('Add +').click();
+    cy.contains('Add +', { timeout: 5000 })
+      .should('be.visible')
+      .click({ force: true });
 
     cy.get('select[name="languages[0].language.id"]').select('English');
     cy.get('select[name="languages[0].level"]').select('INTERMEDIATE');
 
-    cy.contains('Save changes').click();
+    cy.get('#languages-save-btn').should('be.visible').click({ force: true });
     cy.wait('@updateLanguages');
 
     cy.contains('English').should('exist');

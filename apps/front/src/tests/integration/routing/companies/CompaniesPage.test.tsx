@@ -3,13 +3,11 @@ import CompaniesPage from '@/app/companies/page';
 import router from 'next-router-mock';
 import { useSearchParams } from 'next/navigation';
 
-// Mock next/navigation routing
 jest.mock('next/navigation', () => ({
   useRouter: () => router,
   useSearchParams: jest.fn(),
 }));
 
-// Mock SearchBar so we can trigger updateUrl manually
 jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   <button
     data-testid="submit-search"
@@ -19,18 +17,15 @@ jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   </button>
 ));
 
-// Mock role cookie
 jest.mock('js-cookie', () => ({
   get: jest.fn(() => 'JOB_SEEKER'),
 }));
 
-// Mock CompanyItem (we are NOT testing rendering here)
 jest.mock(
   '@/components/CompaniesSearchItems/CompanyItem',
   () => (props: any) => <div data-testid="company-item">{props.data.name}</div>
 );
 
-// Mock data returned from React Query (we don't test API here)
 jest.mock('@tanstack/react-query', () => ({
   useQuery: () => ({
     data: { data: [{ id: '1', name: 'TestCo' }] },
@@ -54,11 +49,8 @@ describe('CompaniesPage routing behavior', () => {
 
     render(<CompaniesPage />);
 
-    // Перевіряємо, що заголовок сторінки відрендерився
     expect(screen.getByText('Search for top-tier jobs')).toBeInTheDocument();
 
-    // Перевіряємо, що SearchBar отримав правильні initial values
-    // (через наявність кнопки ми знаємо, що мок рендериться)
     expect(screen.getByTestId('submit-search')).toBeInTheDocument();
   });
 

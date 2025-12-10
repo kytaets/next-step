@@ -13,7 +13,6 @@ jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
 }));
 
-// МОК SearchBar для симуляції submit
 jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   <button onClick={() => props.onSubmit({ status: 'NEW', page: 3 })}>
     MockSearchBar
@@ -33,7 +32,7 @@ describe('MyApplicationsPage routing', () => {
     });
 
     (useSearchParams as jest.Mock).mockReturnValue({
-      entries: () => new Map().entries(), // no query params initially
+      entries: () => new Map().entries(),
     });
 
     (useQuery as jest.Mock).mockReturnValue({

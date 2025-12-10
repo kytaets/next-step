@@ -6,13 +6,11 @@ jest.mock('@/components/HoveredItem/HoveredItem', () => ({
   default: ({ children }: any) => <div>{children}</div>,
 }));
 
-// mock next/link
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ href, children }: any) => <a href={href}>{children}</a>,
 }));
 
-// mock clipboard
 Object.assign(navigator, {
   clipboard: {
     writeText: jest.fn(),
@@ -92,10 +90,8 @@ describe('ContactLink', () => {
 
     fireEvent.click(screen.getByRole('button'));
 
-    // дочекайся коли React оновить стан
     expect(await screen.findByText('Copied!')).toBeInTheDocument();
 
-    // прогортаємо час
     jest.advanceTimersByTime(1500);
 
     await waitFor(() => expect(screen.queryByText('Copied!')).toBeNull());

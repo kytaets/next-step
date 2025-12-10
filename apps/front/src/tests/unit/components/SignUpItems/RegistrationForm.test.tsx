@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import RegistrationForm from '@/components/SignUpItems/RegistrationForm';
 
-// ---------------------------
-// Mock next/navigation
-// ---------------------------
 const pushMock = jest.fn();
 let searchStep: string | null = 'account';
 
@@ -16,9 +13,6 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => ({ get: () => searchStep }),
 }));
 
-// ---------------------------
-// Mock CreateAccountItem — includes real inputs
-// ---------------------------
 jest.mock('@/components/SignUpItems/CreateAccountItem', () => (props: any) => (
   <div data-testid="mock-create-account">
     <input placeholder="Enter your e-mail address" name="email" />
@@ -33,32 +27,20 @@ jest.mock('@/components/SignUpItems/CreateAccountItem', () => (props: any) => (
   </div>
 ));
 
-// ---------------------------
-// Mock ConfirmBoxItem
-// ---------------------------
 jest.mock('@/components/SignUpItems/ConfirmBoxItem', () => (props: any) => (
   <div data-testid="mock-confirm">Confirm: {props.email}</div>
 ));
 
-// ---------------------------
-// Mock validation
-// ---------------------------
 let validationErrorsMock: string[] = [];
 jest.mock('@/utils/validation', () => ({
   validateRegistrationForm: () => validationErrorsMock,
 }));
 
-// ---------------------------
-// Mock registerUser
-// ---------------------------
 const registerMock = jest.fn();
 jest.mock('@/services/userService', () => ({
   registerUser: (...args: any) => registerMock(...args),
 }));
 
-// ---------------------------
-// Mock react-query useMutation
-// ---------------------------
 let mutationConfig: any = null;
 
 jest.mock('@tanstack/react-query', () => ({
@@ -77,9 +59,6 @@ jest.mock('@tanstack/react-query', () => ({
   },
 }));
 
-// ---------------------------
-// Tests
-// ---------------------------
 describe('RegistrationForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();

@@ -16,7 +16,6 @@ jest.mock('@tanstack/react-query', () => ({
   })),
 }));
 
-// Мокаємо SearchBar так, щоб у нас був прямий доступ до updateUrl
 jest.mock('@/components/SearchItems/SearchBar', () => (props: any) => (
   <button onClick={() => props.onSubmit({ title: 'Frontend', salary: 5000 })}>
     MockSearchBar
@@ -32,12 +31,11 @@ describe('VacanciesPage routing', () => {
     });
 
     (useSearchParams as jest.Mock).mockReturnValue({
-      entries: () => new Map().entries(), // initial empty query params
+      entries: () => new Map().entries(),
     });
 
     const { getByText } = render(<VacanciesPage />);
 
-    // Натискаємо на наш мок SearchBar кнопки
     getByText('MockSearchBar').click();
 
     expect(pushMock).toHaveBeenCalledTimes(1);

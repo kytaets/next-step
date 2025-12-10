@@ -23,7 +23,6 @@ jest.mock('@/services/vacanciesService', () => ({
   getVacancyById: jest.fn(),
 }));
 
-// Мокаємо важкі компоненти, щоб не заважали
 jest.mock('@/components/ApplicationItems/ApplyBtn', () => () => null);
 jest.mock('@/components/VacanciesItems/VacancyPage/SideBox', () => () => null);
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({ children }: any) => (
@@ -38,9 +37,8 @@ describe('VacancyPage routing', () => {
     (useRouter as jest.Mock).mockReturnValue({ push: pushMock });
     (useParams as jest.Mock).mockReturnValue({ vacancySlug: '123' });
 
-    (Cookies.get as jest.Mock).mockReturnValue('42'); // company-id = 42
+    (Cookies.get as jest.Mock).mockReturnValue('42');
 
-    // Vacancy belongs to company 42 → кнопка Delete буде доступна
     (useQuery as jest.Mock).mockReturnValue({
       data: {
         id: '123',
@@ -56,7 +54,6 @@ describe('VacancyPage routing', () => {
       isError: false,
     });
 
-    // Емуляція мутації deleteVacancy
     (useMutation as jest.Mock).mockImplementation(({ onSuccess }) => ({
       mutate: (id: string) =>
         mutateMock(id) || onSuccess({ status: 'success' }),

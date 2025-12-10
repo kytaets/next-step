@@ -16,10 +16,6 @@ describe('companies service', () => {
     jest.clearAllMocks();
   });
 
-  // -----------------------
-  // searchCompanies
-  // -----------------------
-
   it('searchCompanies: returns normalized array when API returns array', async () => {
     (api.get as jest.Mock).mockResolvedValue({
       data: [{ id: 1 }, { id: 2 }],
@@ -81,10 +77,6 @@ describe('companies service', () => {
       data: [],
     });
   });
-
-  // -----------------------
-  // getCompanyVacancies
-  // -----------------------
 
   it('getCompanyVacancies: normalizes data.data → array', async () => {
     (api.get as jest.Mock).mockResolvedValue({

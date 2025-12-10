@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignInForm from '@/components/SignUpItems/SignInForm';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,7 +15,6 @@ jest.mock('@/services/userService', () => ({
   forgetPass: jest.fn(),
 }));
 
-// prevent framer-motion props leaking into DOM
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => {
@@ -119,7 +114,7 @@ describe('SignInForm — Integration Tests', () => {
   });
 
   it('calls forgetPass with email when clicking "I have forgot my password"', async () => {
-    renderForm(); // <-- викликаємо правильний рендер з QueryClientProvider
+    renderForm();
 
     fireEvent.change(
       screen.getByPlaceholderText(/enter your e-mail address/i),

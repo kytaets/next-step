@@ -3,33 +3,21 @@ import '@testing-library/jest-dom';
 
 import RecruiterPersonalInfo from '@/components/RecruiterProfileItems/RecruiterPersonalInfo';
 
-// ---------------------------
-// Mock capitalize
-// ---------------------------
 jest.mock('@/utils/convertData', () => ({
   capitalize: (s: string) => s.charAt(0).toUpperCase() + s.slice(1),
 }));
 
-// ---------------------------
-// Mock validation
-// ---------------------------
 jest.mock('@/utils/recruiterValidation', () => ({
   validateCreateRecruiterForm: jest.fn(() => {
     return {};
   }),
 }));
 
-// ---------------------------
-// Mock API service
-// ---------------------------
 const updateMock = jest.fn();
 jest.mock('@/services/recruiterProfileService', () => ({
   updateRecruiterProfile: (...args: any) => updateMock(...args),
 }));
 
-// ---------------------------
-// react-query mocks
-// ---------------------------
 const invalidateMock = jest.fn();
 jest.mock('@tanstack/react-query', () => ({
   useMutation: (opts: any) => ({
@@ -83,9 +71,9 @@ describe('RecruiterPersonalInfo', () => {
   test('clicking cancel returns to view mode', () => {
     render(<RecruiterPersonalInfo data={mockData} isEditable={true} />);
 
-    fireEvent.click(screen.getByRole('button')); // enter edit mode
+    fireEvent.click(screen.getByRole('button'));
 
-    const cancelBtn = screen.getAllByRole('button')[0]; // cross button
+    const cancelBtn = screen.getAllByRole('button')[0];
     fireEvent.click(cancelBtn);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -98,10 +86,8 @@ describe('RecruiterPersonalInfo', () => {
       <RecruiterPersonalInfo data={mockData} isEditable={true} />
     );
 
-    // enter edit mode
     fireEvent.click(screen.getByRole('button'));
 
-    // submit button is the one with type="submit"
     const submitBtn = container.querySelector('button[type="submit"]')!;
     fireEvent.click(submitBtn);
 
@@ -122,10 +108,8 @@ describe('RecruiterPersonalInfo', () => {
       <RecruiterPersonalInfo data={mockData} isEditable={true} />
     );
 
-    // enter edit mode
     fireEvent.click(screen.getByRole('button'));
 
-    // submit
     const submitBtn = container.querySelector('button[type="submit"]')!;
     fireEvent.click(submitBtn);
 

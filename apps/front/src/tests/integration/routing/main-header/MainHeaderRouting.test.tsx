@@ -55,7 +55,6 @@ describe('MainHeader routing behavior', () => {
 
     fireEvent.click(getByText('Log Out'));
 
-    // 🔥 Симуляція відповіді API
     onSuccessCapture({ statusCode: 200 });
 
     await waitFor(() => {

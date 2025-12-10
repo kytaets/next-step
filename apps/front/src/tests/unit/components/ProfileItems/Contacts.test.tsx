@@ -15,7 +15,6 @@ jest.mock('@/components/ProfileItems/ContactLink', () => ({
   ),
 }));
 
-// Properly named mock for ContactsModal
 jest.mock('@/components/ProfileItems/ContactsModal', () => {
   const MockedModal = ({ data }: any) => (
     <div data-testid="contacts-modal">Modal {JSON.stringify(data)}</div>
@@ -24,7 +23,6 @@ jest.mock('@/components/ProfileItems/ContactsModal', () => {
   return { __esModule: true, default: MockedModal };
 });
 
-// Make AnimatePresence transparent (and preserve children)
 jest.mock('framer-motion', () => ({
   __esModule: true,
   AnimatePresence: ({ children }: any) => <>{children}</>,
@@ -87,12 +85,10 @@ describe('Contacts component', () => {
 
     const modalArg = openModalMock.mock.calls[0][0];
 
-    // Extract first child in case children is array
     const child = Array.isArray(modalArg.props.children)
       ? modalArg.props.children[0]
       : modalArg.props.children;
 
-    // Validate correct modal component passed
     expect(child.type.displayName).toBe('ContactsModal');
   });
 });

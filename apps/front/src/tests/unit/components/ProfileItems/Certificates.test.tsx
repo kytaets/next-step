@@ -102,12 +102,10 @@ describe('Certificates', () => {
     fireEvent.click(screen.getByText('Edit'));
     fireEvent.click(screen.getByText('Go Back'));
 
-    // поля форми зникли
     expect(
       screen.queryByPlaceholderText('Certificate Name')
     ).not.toBeInTheDocument();
 
-    // знову рендеряться сертифікати
     expect(screen.getByText('Cert A')).toBeInTheDocument();
   });
 

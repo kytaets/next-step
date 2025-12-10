@@ -2,7 +2,7 @@ import {
   removeEmpty,
   replaceNulls,
   validateCompanyInfoData,
-} from '@/utils/companyProfileValidation'; // ← поправ шлях, якщо інший
+} from '@/utils/companyProfileValidation';
 
 describe('removeEmpty', () => {
   it('replaces empty strings with null', () => {

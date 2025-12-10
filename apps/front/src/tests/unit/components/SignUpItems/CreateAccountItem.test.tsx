@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import CreateAccountItem from '@/components/SignUpItems/CreateAccountItem';
 
-// ---------------------------
-// Mock next/navigation
-// ---------------------------
 const pushMock = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -13,25 +10,16 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// ---------------------------
-// Mock framer-motion
-// ---------------------------
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
-// ---------------------------
-// Mock HoveredItem
-// ---------------------------
 jest.mock('@/components/HoveredItem/HoveredItem', () => (props: any) => (
   <div data-testid="mock-hovered">{props.children}</div>
 ));
 
-// ---------------------------
-// Mock MessageBox
-// ---------------------------
 jest.mock('@/components/MessageBox/MessageBox', () => (props: any) => (
   <div data-testid="mock-messagebox">{props.children}</div>
 ));

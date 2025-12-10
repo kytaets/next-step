@@ -179,7 +179,6 @@ describe('Bio component', () => {
 
     fireEvent.click(screen.getByText('Edit'));
 
-    // Кнопка тепер містить текст "Saving changes..."
     const btn = screen.getByRole('button', { name: /Saving/i });
 
     expect(btn).toBeDisabled();

@@ -33,10 +33,6 @@ describe('vacancies service', () => {
     jest.clearAllMocks();
   });
 
-  // --------------------------
-  // getMyVacancies
-  // --------------------------
-
   it('getMyVacancies calls apiRequest correctly', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({ items: [] });
 
@@ -48,10 +44,6 @@ describe('vacancies service', () => {
 
     expect(res).toEqual({ items: [] });
   });
-
-  // --------------------------
-  // createVacancy
-  // --------------------------
 
   it('createVacancy returns ok with data', async () => {
     (api.post as jest.Mock).mockResolvedValue({
@@ -84,10 +76,6 @@ describe('vacancies service', () => {
     });
   });
 
-  // --------------------------
-  // getVacancyById
-  // --------------------------
-
   it('getVacancyById returns data', async () => {
     (api.get as jest.Mock).mockResolvedValue({
       data: { id: 10 },
@@ -119,10 +107,6 @@ describe('vacancies service', () => {
     });
   });
 
-  // --------------------------
-  // deleteVacancy
-  // --------------------------
-
   it('deleteVacancy returns ok', async () => {
     (api.delete as jest.Mock).mockResolvedValue({});
 
@@ -145,10 +129,6 @@ describe('vacancies service', () => {
       error: 'Cannot delete',
     });
   });
-
-  // --------------------------
-  // updateVacancyLanguages
-  // --------------------------
 
   it('updateVacancyLanguages returns ok', async () => {
     (api.put as jest.Mock).mockResolvedValue({});
@@ -181,10 +161,6 @@ describe('vacancies service', () => {
     });
   });
 
-  // --------------------------
-  // updateVacancySkills
-  // --------------------------
-
   it('updateVacancySkills returns ok', async () => {
     (api.put as jest.Mock).mockResolvedValue({});
 
@@ -215,10 +191,6 @@ describe('vacancies service', () => {
       error: 'Bad skills',
     });
   });
-
-  // --------------------------
-  // editVacancy
-  // --------------------------
 
   it('editVacancy returns ok with response.data', async () => {
     (api.patch as jest.Mock).mockResolvedValue({
@@ -257,10 +229,6 @@ describe('vacancies service', () => {
       data: null,
     });
   });
-
-  // --------------------------
-  // searchVacancies
-  // --------------------------
 
   it('searchVacancies returns data on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({

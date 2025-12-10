@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
 import ConfirmPage from '@/app/confirm-page/ConfirmPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,9 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { checkUserConfirmed } from '@/services/userService';
 
-// ----------------------------
-// 🔧 MOCKS
-// ----------------------------
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
 }));
@@ -20,22 +13,17 @@ jest.mock('@/services/userService', () => ({
   checkUserConfirmed: jest.fn(),
 }));
 
-// Mock Next.js <Image/> component
 jest.mock('next/image', () => (props: any) => {
-  const { priority, ...rest } = props; // ⬅ strip unsupported props
+  const { priority, ...rest } = props;
   return <img {...rest} />;
 });
 
-// Mock framer-motion motion.div
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
-// ----------------------------
-// 📦 RENDER HELPER
-// ----------------------------
 function renderPage() {
   const client = new QueryClient();
   return render(
@@ -45,24 +33,17 @@ function renderPage() {
   );
 }
 
-// ----------------------------
-// 🧪 TEST SUITE
-// ----------------------------
 describe('ConfirmPage — Integration Tests (API-mocked)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Default: token exists
     (useSearchParams as jest.Mock).mockReturnValue({
       get: () => 'mock-token',
     });
   });
 
-  // --------------------------------------------------
   test('shows loading state initially', async () => {
-    (checkUserConfirmed as jest.Mock).mockReturnValue(
-      new Promise(() => {}) // infinite pending → loading mode
-    );
+    (checkUserConfirmed as jest.Mock).mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
@@ -76,7 +57,6 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
     );
   });
 
-  // --------------------------------------------------
   test('shows success state when verification succeeds', async () => {
     (checkUserConfirmed as jest.Mock).mockResolvedValue({ ok: true });
 
@@ -94,7 +74,6 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '/sign-in');
   });
 
-  // --------------------------------------------------
   test('shows error state when verification fails', async () => {
     (checkUserConfirmed as jest.Mock).mockRejectedValue(
       new Error('Verification failed')
@@ -102,7 +81,6 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
 
     renderPage();
 
-    // Чекаємо поки з'явиться error-текст, не очікуємо на зникнення loading
     expect(await screen.findByText(/unable to verify/i)).toBeInTheDocument();
 
     expect(screen.getByRole('img')).toHaveAttribute(
@@ -111,10 +89,9 @@ describe('ConfirmPage — Integration Tests (API-mocked)', () => {
     );
   });
 
-  // --------------------------------------------------
   test('does nothing when token is missing', async () => {
     (useSearchParams as jest.Mock).mockReturnValue({
-      get: () => null, // simulate missing token
+      get: () => null,
     });
 
     renderPage();

@@ -9,11 +9,8 @@ import {
   validateLanguages,
   handleExperienceSubmit,
   handleEducationSubmit,
-} from '@/utils/profileValidation'; // поправ шлях до файлу!
+} from '@/utils/profileValidation';
 
-// -------------------------------------------------------------
-// validateProfileForm
-// -------------------------------------------------------------
 describe('validateProfileForm', () => {
   it('requires first and last name', () => {
     const errors = validateProfileForm({
@@ -63,9 +60,6 @@ describe('validateProfileForm', () => {
   });
 });
 
-// -------------------------------------------------------------
-// validateUpdatedPersonalData (same logic)
-// -------------------------------------------------------------
 describe('validateUpdatedPersonalData', () => {
   it('validates same rules as validateProfileForm', () => {
     const errors = validateUpdatedPersonalData({
@@ -80,9 +74,6 @@ describe('validateUpdatedPersonalData', () => {
   });
 });
 
-// -------------------------------------------------------------
-// validateAvatarUrl
-// -------------------------------------------------------------
 describe('validateAvatarUrl', () => {
   it('accepts valid URL', () => {
     const errors = validateAvatarUrl({ url: 'https://example.com' });
@@ -95,9 +86,6 @@ describe('validateAvatarUrl', () => {
   });
 });
 
-// -------------------------------------------------------------
-// validateContacts
-// -------------------------------------------------------------
 describe('validateContacts', () => {
   it('validates incorrect links & formats', () => {
     const errors = validateContacts({
@@ -128,9 +116,6 @@ describe('validateContacts', () => {
   });
 });
 
-// -------------------------------------------------------------
-// removeEmpty / replaceNulls
-// -------------------------------------------------------------
 describe('removeEmpty & replaceNulls', () => {
   it('removeEmpty replaces "" with null', () => {
     const result = removeEmpty({
@@ -153,9 +138,6 @@ describe('removeEmpty & replaceNulls', () => {
   });
 });
 
-// -------------------------------------------------------------
-// handleCertificatesSubmit
-// -------------------------------------------------------------
 describe('handleCertificatesSubmit', () => {
   const helpers = { setErrors: jest.fn() };
 
@@ -211,9 +193,6 @@ describe('handleCertificatesSubmit', () => {
   });
 });
 
-// -------------------------------------------------------------
-// validateLanguages
-// -------------------------------------------------------------
 describe('validateLanguages', () => {
   it('detects duplicate languages', () => {
     const result = validateLanguages({
@@ -249,9 +228,6 @@ describe('validateLanguages', () => {
   });
 });
 
-// -------------------------------------------------------------
-// handleExperienceSubmit
-// -------------------------------------------------------------
 describe('handleExperienceSubmit', () => {
   const helpers = { setErrors: jest.fn() };
 
@@ -338,9 +314,6 @@ describe('handleExperienceSubmit', () => {
   });
 });
 
-// -------------------------------------------------------------
-// handleEducationSubmit
-// -------------------------------------------------------------
 describe('handleEducationSubmit', () => {
   const helpers = { setErrors: jest.fn() };
 

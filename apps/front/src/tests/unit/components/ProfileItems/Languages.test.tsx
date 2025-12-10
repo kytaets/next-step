@@ -1,16 +1,8 @@
-/**
- * Languages.test.tsx — ПРАЦЮЮЧИЙ ТЕСТ БЕЗ ЗМІН У КОМПОНЕНТІ
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Languages from '@/components/ProfileItems/Languages';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 jest.mock('@tanstack/react-query');
-
-// --------------------------------------------------
-// MOCKS
-// --------------------------------------------------
 
 const mockUpdate = jest.fn();
 const mockInvalidate = jest.fn();
@@ -34,16 +26,10 @@ beforeEach(() => {
   });
 });
 
-// --------------------------------------------------
-
 const mockUserData = [
-  { language: { id: '1', name: 'English' }, level: 'PRE_INTERMEDIATE' }, // B1
-  { language: { id: '2', name: 'German' }, level: 'ELEMENTARY' }, // A2
+  { language: { id: '1', name: 'English' }, level: 'PRE_INTERMEDIATE' },
+  { language: { id: '2', name: 'German' }, level: 'ELEMENTARY' },
 ];
-
-// --------------------------------------------------
-// TESTS
-// --------------------------------------------------
 
 describe('Languages Component', () => {
   test('renders list in view mode', () => {
@@ -51,58 +37,44 @@ describe('Languages Component', () => {
 
     expect(screen.getByText('Languages')).toBeInTheDocument();
 
-    // Titles
     expect(screen.getByText('English')).toBeInTheDocument();
     expect(screen.getByText('German')).toBeInTheDocument();
 
-    // Levels: component uses toClientLangLevel
-    // PRE_INTERMEDIATE => "B1 (Pre-Intermediate)"
-    // ELEMENTARY       => "A2 (Elementary)"
     expect(screen.getByText(/B1/i)).toBeInTheDocument();
     expect(screen.getByText(/A2/i)).toBeInTheDocument();
   });
 
-  // --------------------------------------------------
-
   test('enters edit mode when clicking Edit', () => {
     render(<Languages isEditable={true} data={mockUserData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit button
+    fireEvent.click(screen.getByRole('button'));
 
-    // Now selects should appear
     const selects = document.querySelectorAll('select');
     expect(selects.length).toBeGreaterThan(0);
   });
 
-  // --------------------------------------------------
-
   test('adds a new language row', () => {
     render(<Languages isEditable={true} data={mockUserData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button'));
 
-    // Count initial rows
     let rows = document.querySelectorAll('.language-row');
     expect(rows.length).toBe(2);
 
-    // Click Add +
     fireEvent.click(screen.getByText(/Add \+/i));
 
     rows = document.querySelectorAll('.language-row');
     expect(rows.length).toBe(3);
   });
 
-  // --------------------------------------------------
-
   test('removes a language row', () => {
     render(<Languages isEditable={true} data={mockUserData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button'));
 
     let rows = document.querySelectorAll('.language-row');
     expect(rows.length).toBe(2);
 
-    // Remove first
     const removeBtns = document.querySelectorAll('.form-del-btn');
     fireEvent.click(removeBtns[0]);
 
@@ -110,22 +82,17 @@ describe('Languages Component', () => {
     expect(rows.length).toBe(1);
   });
 
-  // --------------------------------------------------
-
   test('submits correct payload', async () => {
     render(<Languages isEditable={true} data={mockUserData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button'));
 
     const selects = document.querySelectorAll('select');
 
-    // Change level of first language
-    fireEvent.change(selects[1], { target: { value: 'INTERMEDIATE' } }); // B2
+    fireEvent.change(selects[1], { target: { value: 'INTERMEDIATE' } });
 
-    // Change second language level
-    fireEvent.change(selects[3], { target: { value: 'ELEMENTARY' } }); // A2
+    fireEvent.change(selects[3], { target: { value: 'ELEMENTARY' } });
 
-    // Submit
     fireEvent.click(screen.getByText('Save changes'));
 
     await waitFor(() =>
@@ -136,19 +103,16 @@ describe('Languages Component', () => {
     );
   });
 
-  // --------------------------------------------------
-
   test('Go Back exits edit mode', () => {
     render(<Languages isEditable={true} data={mockUserData} />);
 
-    fireEvent.click(screen.getByRole('button')); // Edit
+    fireEvent.click(screen.getByRole('button'));
 
     const selects = document.querySelectorAll('select');
     expect(selects.length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByText(/Go Back/i));
 
-    // Edit mode should close → no selects
     expect(document.querySelectorAll('select').length).toBe(0);
   });
 });

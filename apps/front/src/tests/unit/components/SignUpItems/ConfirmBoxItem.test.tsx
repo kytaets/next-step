@@ -3,50 +3,32 @@ import '@testing-library/jest-dom';
 
 import ConfirmBoxItem from '@/components/SignUpItems/ConfirmBoxItem';
 
-// ---------------------------
-// Mock next/image
-// ---------------------------
 jest.mock('next/image', () => {
   return function MockedImage(props: any) {
-    const { priority, ...rest } = props; // игнорируем priority
+    const { priority, ...rest } = props;
     return <img {...rest} />;
   };
 });
 
-// ---------------------------
-// Mock framer-motion
-// ---------------------------
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
 }));
 
-// ---------------------------
-// Mock HoveredItem
-// ---------------------------
 jest.mock('@/components/HoveredItem/HoveredItem', () => (props: any) => (
   <div data-testid="mock-hovered">{props.children}</div>
 ));
 
-// ---------------------------
-// Mock MessageBox
-// ---------------------------
 jest.mock('@/components/MessageBox/MessageBox', () => (props: any) => (
   <div data-testid="mock-messagebox">{props.children}</div>
 ));
 
-// ---------------------------
-// Mock resendEmail service
-// ---------------------------
 const resendMock = jest.fn();
 jest.mock('@/services/userService', () => ({
   resendEmail: (...args: any) => resendMock(...args),
 }));
 
-// ---------------------------
-// Mock react-query useMutation
-// ---------------------------
 let mutationState: any = {
   mutate: jest.fn(),
   isSuccess: false,

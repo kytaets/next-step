@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import CompanyInfoBox from '@/components/CompanyInfos/CompanyInfoBox';
 
-// mock modal store
 const mockOpenModal = jest.fn();
 jest.mock('@/store/modalSlice', () => ({
   useModalStore: (selector) =>
@@ -12,7 +11,6 @@ jest.mock('@/store/modalSlice', () => ({
     }),
 }));
 
-// clean mock of framer-motion (removes motion props)
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }) => {
@@ -25,7 +23,6 @@ jest.mock('framer-motion', () => ({
   ),
 }));
 
-// mock CompanyInfoModal
 jest.mock('@/components/CompanyInfos/CompanyInfoModal', () => () => (
   <div data-testid="company-info-modal">Modal</div>
 ));

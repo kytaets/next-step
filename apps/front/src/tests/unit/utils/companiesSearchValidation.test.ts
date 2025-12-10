@@ -2,7 +2,7 @@ import {
   searchCompaniesFormValidate,
   submitCompaniesSearchForm,
   mapQueryToCompaniesForm,
-} from '@/utils/companiesSearchValidation'; // ← поправ шлях, якщо інший
+} from '@/utils/companiesSearchValidation';
 
 describe('searchCompaniesFormValidate', () => {
   it('returns error when name is shorter than 10 chars', () => {

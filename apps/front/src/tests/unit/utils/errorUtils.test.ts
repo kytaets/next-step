@@ -78,7 +78,6 @@ describe('handleError', () => {
 });
 
 describe('isAxiosErrorWithData', () => {
-  // We import it USING require since it is not exported directly
   const { isAxiosErrorWithData } = require('@/utils/errorUtils');
 
   it('returns true for valid axios-style error', () => {

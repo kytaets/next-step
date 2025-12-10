@@ -29,7 +29,6 @@ jest.mock('js-cookie', () => ({
   set: jest.fn(),
 }));
 
-// Позбавляємось анімацій
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({ children }: any) => (
   <div>{children}</div>
 ));

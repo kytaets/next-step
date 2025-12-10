@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import RecruiterProfileContainer from '@/components/RecruiterProfileItems/RecruiterProfileContainer';
 
-// -------------------------------
-// Mock next/navigation
-// -------------------------------
 const pushMock = jest.fn();
 
 jest.mock('next/navigation', () => ({
@@ -14,9 +11,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// -------------------------------
-// Mock child components
-// -------------------------------
 jest.mock('@/components/ProfileItems/Avatar', () => (props: any) => (
   <div data-testid="mock-avatar">Avatar: {props.data}</div>
 ));

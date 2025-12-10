@@ -40,7 +40,7 @@ describe('VacancyApplicationsPage routing behavior', () => {
     });
 
     (useQuery as jest.Mock).mockImplementation(({ queryFn }) => {
-      queryFn(); // ← ключовий виклик!
+      queryFn();
       return {
         data: { data: [] },
         isError: false,

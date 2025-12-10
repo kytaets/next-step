@@ -4,9 +4,6 @@ import LanguagesFields from '@/components/VacanciesItems/VacancyForm/LanguagesFi
 import React from 'react';
 import '@testing-library/jest-dom';
 
-// -------- MOCKS --------
-
-// mock framer motion
 jest.mock('framer-motion', () => {
   const React = require('react');
 
@@ -40,7 +37,6 @@ jest.mock('framer-motion', () => {
   };
 });
 
-// mock react-query
 jest.mock('@tanstack/react-query', () => ({
   useQuery: () => ({
     data: [
@@ -51,17 +47,13 @@ jest.mock('@tanstack/react-query', () => ({
   }),
 }));
 
-// mock AnimatedIcon
 jest.mock('@/components/HoveredItem/HoveredItem', () => {
   return ({ children }) => <span data-testid="animated-icon">{children}</span>;
 });
 
-// mock LanguageRow
 jest.mock('@/components/FormItems/LanguageRow', () => {
   return () => <div data-testid="language-row">Row</div>;
 });
-
-// -------- HELPER --------
 
 function renderWithFormik(ui: React.ReactNode) {
   return render(
@@ -72,8 +64,6 @@ function renderWithFormik(ui: React.ReactNode) {
     </Formik>
   );
 }
-
-// -------- TESTS --------
 
 describe('LanguagesFields', () => {
   test('renders languages title', () => {
@@ -104,11 +94,9 @@ describe('LanguagesFields', () => {
       </Formik>
     );
 
-    // знаходимо кнопку
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
-    // Formik сам викликає push — не треба мокати
     expect(button).toBeInTheDocument();
   });
 });

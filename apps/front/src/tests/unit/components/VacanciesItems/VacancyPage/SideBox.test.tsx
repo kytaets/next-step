@@ -3,22 +3,17 @@ import SideBox from '@/components/VacanciesItems/VacancyPage/SideBox';
 import '@testing-library/jest-dom';
 import React from 'react';
 
-// ======================= Mocks =======================
-
-// motion
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }) => <div {...rest}>{children}</div>,
   },
 }));
 
-// HoveredItem
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({
   __esModule: true,
   default: ({ children }) => <span data-testid="hovered-item">{children}</span>,
 }));
 
-// Link
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ href, children }) => (
@@ -28,7 +23,6 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-// ApplyBtn MOCK — правильний
 const ApplyBtnMock = jest.fn();
 jest.mock('@/components/ApplicationItems/ApplyBtn', () => ({
   __esModule: true,
@@ -39,18 +33,14 @@ ApplyBtnMock.mockImplementation(({ vacancyId }) => (
   <button data-testid="apply-btn">Apply {vacancyId}</button>
 ));
 
-// Cookies
 jest.mock('js-cookie', () => ({
   get: jest.fn(),
 }));
 
-// validateImageUrl
 const validateImageUrlMock = jest.fn();
 jest.mock('@/utils/validation', () => ({
   validateImageUrl: (...args) => validateImageUrlMock(...args),
 }));
-
-// =================== Test Data ===================
 
 const vacancyMock = {
   id: 'VAC123',
@@ -67,8 +57,6 @@ const vacancyMock = {
   salaryMax: 2000,
   isActive: true,
 };
-
-// =================== Tests ===================
 
 describe('SideBox Component', () => {
   beforeEach(() => {

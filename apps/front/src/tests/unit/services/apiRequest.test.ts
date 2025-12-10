@@ -2,7 +2,7 @@ jest.mock('@/services/authInterceptor', () => ({
   handleResponseError: jest.fn((err) => Promise.reject(err)),
 }));
 
-jest.mock('@/services/axios'); // підтягне __mocks__/axios.ts
+jest.mock('@/services/axios'); 
 
 import api from '@/services/axios';
 import apiRequest from '@/services/apiRequest';

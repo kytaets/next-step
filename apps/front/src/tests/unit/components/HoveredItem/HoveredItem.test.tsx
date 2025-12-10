@@ -3,12 +3,10 @@ import { render, screen } from '@testing-library/react';
 import HoveredItem from '@/components/HoveredItem/HoveredItem';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 
-// CSS module mock
 jest.mock('@/components/HoveredItem/HoveredItem.module.css', () => ({
   'basic-icon': 'basic-icon',
 }));
 
-// Correct framer-motion mock
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, whileHover, ...rest }: any) => (
@@ -19,7 +17,6 @@ jest.mock('framer-motion', () => ({
   },
 }));
 
-// FontAwesome mock
 jest.mock('@fortawesome/react-fontawesome', () => ({
   FontAwesomeIcon: ({ icon }: any) => (
     <svg data-testid="fa-icon">{icon.iconName}</svg>

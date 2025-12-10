@@ -28,10 +28,6 @@ describe('profile service', () => {
     jest.clearAllMocks();
   });
 
-  // -----------------------------
-  // createProfile
-  // -----------------------------
-
   it('createProfile returns ok on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({});
 
@@ -54,10 +50,6 @@ describe('profile service', () => {
     });
   });
 
-  // -----------------------------
-  // getProfile
-  // -----------------------------
-
   it('getProfile returns res.data', async () => {
     (api.get as jest.Mock).mockResolvedValue({ data: { id: 1 } });
 
@@ -77,10 +69,6 @@ describe('profile service', () => {
       message: 'Forbidden',
     });
   });
-
-  // -----------------------------
-  // updatePersonalData
-  // -----------------------------
 
   it('updatePersonalData returns ok', async () => {
     (api.patch as jest.Mock).mockResolvedValue({});
@@ -104,10 +92,6 @@ describe('profile service', () => {
     });
   });
 
-  // -----------------------------
-  // getSkills
-  // -----------------------------
-
   it('getSkills returns data on success', async () => {
     (api.get as jest.Mock).mockResolvedValue({
       data: [{ id: 1 }],
@@ -127,10 +111,6 @@ describe('profile service', () => {
       message: 'Failed to fetch skills',
     });
   });
-
-  // -----------------------------
-  // createNewSkill
-  // -----------------------------
 
   it('createNewSkill returns ok with data', async () => {
     (api.post as jest.Mock).mockResolvedValue({
@@ -160,10 +140,6 @@ describe('profile service', () => {
     });
   });
 
-  // -----------------------------
-  // updateSkills
-  // -----------------------------
-
   it('updateSkills returns ok', async () => {
     (api.put as jest.Mock).mockResolvedValue({});
 
@@ -182,10 +158,6 @@ describe('profile service', () => {
 
     expect(res).toEqual({ status: 'error', error: 'Bad' });
   });
-
-  // -----------------------------
-  // getLanguages
-  // -----------------------------
 
   it('getLanguages returns data', async () => {
     (api.get as jest.Mock).mockResolvedValue({
@@ -206,10 +178,6 @@ describe('profile service', () => {
       message: 'Failed to fetch skills',
     });
   });
-
-  // -----------------------------
-  // updateUserLanguages
-  // -----------------------------
 
   it('updateUserLanguages returns ok', async () => {
     (api.put as jest.Mock).mockResolvedValue({});
@@ -235,10 +203,6 @@ describe('profile service', () => {
     expect(res).toEqual({ status: 'error', error: 'Wrong' });
   });
 
-  // -----------------------------
-  // updateUserContacts
-  // -----------------------------
-
   it('updateUserContacts returns ok', async () => {
     (api.put as jest.Mock).mockResolvedValue({});
 
@@ -257,10 +221,6 @@ describe('profile service', () => {
 
     expect(res).toEqual({ status: 'error', error: 'Fail!' });
   });
-
-  // -----------------------------
-  // getProfileById
-  // -----------------------------
 
   it('getProfileById returns res.data', async () => {
     (api.get as jest.Mock).mockResolvedValue({

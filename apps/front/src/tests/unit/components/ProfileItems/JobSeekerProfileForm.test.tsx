@@ -36,7 +36,7 @@ describe('JobSeekerProfileForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mutateMock = jest.fn(); // новий мок для кожного тесту
+    mutateMock = jest.fn();
 
     (useQueryClient as jest.Mock).mockReturnValue({
       invalidateQueries: invalidateMock,
@@ -52,7 +52,6 @@ describe('JobSeekerProfileForm', () => {
       selector({ closeModal: closeModalMock })
     );
 
-    // 🟢 Найважливіше — правильний мок useMutation
     (useMutation as jest.Mock).mockReturnValue({
       mutate: (values: any) => mutateMock(values),
       isPending: false,
@@ -71,7 +70,6 @@ describe('JobSeekerProfileForm', () => {
 
   test('submits form successfully and triggers redirect', async () => {
     mutateMock.mockImplementation((values) => {
-      // імітація React Query
       useMutation.mock.calls[0][0].onSuccess({ status: 'success' });
     });
 

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import JobSeekersPage from '@/app/job-seekers/page';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

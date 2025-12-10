@@ -1,13 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ===============================
-// 🔧 MOCK next/navigation
-// ===============================
 jest.mock('next/navigation', () => ({
   useSearchParams: () => ({
     get: (key: string) => {
@@ -19,16 +12,10 @@ jest.mock('next/navigation', () => ({
 
 let mockCompanyId: string | null = '123';
 
-// ===============================
-// 🔧 MOCK services
-// ===============================
 jest.mock('@/services/vacanciesService', () => ({
   getMyVacancies: jest.fn(),
 }));
 
-// ===============================
-// 🔧 MOCK components
-// ===============================
 jest.mock('@/components/VacanciesItems/VacancyItem', () => (props: any) => (
   <div>VacancyItem {props.data.id}</div>
 ));
@@ -40,9 +27,6 @@ jest.mock('@/components/HoveredItem/HoveredItem', () => (props: any) => (
 import CompanyVacancies from '@/app/my-profile/recruiter/company/vacancies/CompanyVacancies';
 import { getMyVacancies } from '@/services/vacanciesService';
 
-// ===============================
-// Render Helper
-// ===============================
 function renderPage() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -55,16 +39,12 @@ function renderPage() {
   );
 }
 
-// ===============================
-// TESTS
-// ===============================
 describe('CompanyVacancies tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCompanyId = '123';
   });
 
-  // -------------------------------------------
   test('shows loading message', async () => {
     (getMyVacancies as jest.Mock).mockReturnValue(new Promise(() => {}));
 
@@ -75,7 +55,6 @@ describe('CompanyVacancies tests', () => {
     ).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('shows error message when query fails', async () => {
     (getMyVacancies as jest.Mock).mockRejectedValue({
       message: 'Server error',
@@ -86,7 +65,6 @@ describe('CompanyVacancies tests', () => {
     expect(await screen.findByText(/server error/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('renders vacancies list when data loads successfully', async () => {
     (getMyVacancies as jest.Mock).mockResolvedValue({
       data: [
@@ -111,7 +89,6 @@ describe('CompanyVacancies tests', () => {
     expect(screen.getByText(/VacancyItem 2/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test("renders 'No vacancies found.' when list is empty", async () => {
     (getMyVacancies as jest.Mock).mockResolvedValue({
       data: [],
@@ -122,7 +99,6 @@ describe('CompanyVacancies tests', () => {
     expect(await screen.findByText(/No vacancies found/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('does not call getMyVacancies when companyId is missing', async () => {
     mockCompanyId = null;
 

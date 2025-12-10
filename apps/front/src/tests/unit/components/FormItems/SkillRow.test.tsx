@@ -55,13 +55,10 @@ describe('SkillsRow', () => {
       initialValues
     );
 
-    // находим первую кнопку удаления
     const deleteBtn = screen.getAllByRole('button')[0];
 
     fireEvent.click(deleteBtn);
 
-    // FieldArray → remove вызывается внутрь Formik, поэтому нужно мокать поведение,
-    // но проверяем что кнопка кликается
     expect(deleteBtn).toBeInTheDocument();
   });
 
@@ -93,7 +90,6 @@ describe('SkillsRow', () => {
       />
     );
 
-    // React и TypeScript должны быть скрыты
     expect(screen.queryByText('React')).not.toBeNull();
     expect(screen.queryByText('Node.js')).not.toBeNull();
   });
@@ -108,10 +104,8 @@ describe('SkillsRow', () => {
       />
     );
 
-    // Node.js должен быть
     expect(screen.getByText('Node.js')).toBeInTheDocument();
 
-    // GraphQL не должен показываться
     expect(screen.queryByText('GraphQL')).toBeNull();
   });
 

@@ -118,7 +118,6 @@ describe('BottomRow', () => {
       })
     );
 
-    // React-query mutation
     expect(mockClear).toHaveBeenCalled();
     expect(Cookies.remove).toHaveBeenCalledWith('sid');
     expect(Cookies.remove).toHaveBeenCalledWith('company-id');

@@ -30,10 +30,6 @@ describe('auth service', () => {
     jest.clearAllMocks();
   });
 
-  // --------------------------------
-  // registerUser
-  // --------------------------------
-
   it('registerUser returns ok on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({});
 
@@ -61,10 +57,6 @@ describe('auth service', () => {
     expect(res).toEqual({ status: 'error', error: 'Registration failed' });
   });
 
-  // --------------------------------
-  // checkUserConfirmed
-  // --------------------------------
-
   it('checkUserConfirmed returns true when confirmed', async () => {
     (api.get as jest.Mock).mockResolvedValue({
       data: { confirmed: true },
@@ -86,10 +78,6 @@ describe('auth service', () => {
       'Failed to check confirmation status'
     );
   });
-
-  // --------------------------------
-  // loginUser
-  // --------------------------------
 
   it('loginUser returns ok on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({});
@@ -117,10 +105,6 @@ describe('auth service', () => {
     expect(handleError).toHaveBeenCalled();
     expect(res).toEqual({ status: 'error', error: 'Sign In failed' });
   });
-
-  // --------------------------------
-  // forgetPass
-  // --------------------------------
 
   it('forgetPass returns ok on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({});
@@ -150,10 +134,6 @@ describe('auth service', () => {
     });
   });
 
-  // --------------------------------
-  // resetPass
-  // --------------------------------
-
   it('resetPass returns true when confirmed', async () => {
     (api.post as jest.Mock).mockResolvedValue({
       data: { confirmed: true },
@@ -177,10 +157,6 @@ describe('auth service', () => {
     );
   });
 
-  // --------------------------------
-  // resendEmail
-  // --------------------------------
-
   it('resendEmail returns true on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({
       data: { confirmed: true },
@@ -202,10 +178,6 @@ describe('auth service', () => {
       'Failed to resend confirmation email'
     );
   });
-
-  // --------------------------------
-  // logoutUser
-  // --------------------------------
 
   it('logoutUser returns ok on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({});
@@ -233,10 +205,6 @@ describe('auth service', () => {
       statusCode: 400,
     });
   });
-
-  // --------------------------------
-  // logoutAll
-  // --------------------------------
 
   it('logoutAll returns response.data on success', async () => {
     (api.post as jest.Mock).mockResolvedValue({

@@ -5,12 +5,10 @@ import { useModalStore } from '@/store/modalSlice';
 
 import RecruiterProfileForm from '@/components/ProfileItems/RecruiterProfileForm';
 
-// mock next/navigation router
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-// mock React Query
 jest.mock('@tanstack/react-query', () => ({
   useMutation: jest.fn(),
   useQueryClient: () => ({
@@ -18,22 +16,18 @@ jest.mock('@tanstack/react-query', () => ({
   }),
 }));
 
-// mock modal store
 jest.mock('@/store/modalSlice', () => ({
   useModalStore: jest.fn(),
 }));
 
-// mock API
 jest.mock('@/services/recruiterProfileService', () => ({
   createRecruiterProfile: jest.fn(),
 }));
 
-// ✨ KEY FIX: Formik must allow submit → so no validation errors
 jest.mock('@/utils/recruiterValidation', () => ({
   validateCreateRecruiterForm: jest.fn(() => ({})),
 }));
 
-// mocking AnimatedIcon wrapper
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({ children }: any) => (
   <div>{children}</div>
 ));

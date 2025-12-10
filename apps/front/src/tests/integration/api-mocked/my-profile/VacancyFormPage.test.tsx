@@ -14,7 +14,6 @@ import {
 import { createNewSkill, getSkills } from '@/services/jobseekerService';
 import { validateVacancyForm } from '@/utils/vacancyValidation';
 
-// Mock dependencies
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
@@ -39,7 +38,6 @@ jest.mock('@/utils/vacancyValidation', () => ({
   validateVacancyForm: jest.fn(),
 }));
 
-// Mock child components
 jest.mock('@/components/VacanciesItems/VacancyForm/MainInfoFields', () => {
   return function MainInfoFields() {
     return <div data-testid="main-info-fields">Main Info Fields</div>;
@@ -436,7 +434,6 @@ describe('VacancyForm Integration Tests', () => {
         expect(submitButton).toBeDisabled();
       });
 
-      // Cleanup
       resolveCreate({ status: 'success', data: { id: 'test' } });
     });
 
@@ -465,7 +462,6 @@ describe('VacancyForm Integration Tests', () => {
         expect(submitButton).toBeDisabled();
       });
 
-      // Cleanup
       resolveUpdateLang({ status: 'success' });
     });
   });
@@ -497,15 +493,10 @@ describe('VacancyForm Integration Tests', () => {
       });
       await userEvent.click(submitButton);
 
-      // Wait for getSkills to be called
       await waitFor(() => {
         expect(getSkills).toHaveBeenCalled();
       });
 
-      // Verify that the form proceeds with vacancy creation
-      // Note: createNewSkill is called inside addMissingSkills utility
-      // which is not directly testable in this integration test without
-      // mocking the entire utility. This test verifies the flow works.
       await waitFor(
         () => {
           expect(createVacancy).toHaveBeenCalled();

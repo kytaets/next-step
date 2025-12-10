@@ -29,10 +29,6 @@ describe('companyProfile service', () => {
     jest.clearAllMocks();
   });
 
-  // -----------------------------
-  // apiRequest-based functions
-  // -----------------------------
-
   it('getMyCompanyProfile calls apiRequest correctly', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({ id: 1 });
 
@@ -105,10 +101,6 @@ describe('companyProfile service', () => {
       '/companies/recruiters/555'
     );
   });
-
-  // -----------------------------
-  // getCompanyProfileById
-  // -----------------------------
 
   it('getCompanyProfileById returns res.data on success', async () => {
     (api.get as jest.Mock).mockResolvedValue({

@@ -2,9 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MainHeader from '@/components/MainHeader/MainHeader';
 
-// -------------------
-// next/link mock
-// -------------------
 jest.mock('next/link', () => {
   return ({ href, children, ...rest }: any) => (
     <a href={href} {...rest}>
@@ -13,16 +10,10 @@ jest.mock('next/link', () => {
   );
 });
 
-// -------------------
-// next/image mock
-// -------------------
 jest.mock('next/image', () => (props: any) => {
   return <img {...props} />;
 });
 
-// -------------------
-// next/navigation mock
-// -------------------
 const mockPush = jest.fn();
 const mockPathname = '/';
 
@@ -33,18 +24,12 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// -------------------
-// framer-motion mock
-// -------------------
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children }: any) => <div>{children}</div>,
   },
 }));
 
-// -------------------
-// zustand store mock
-// -------------------
 const mockSetIsLogged = jest.fn();
 
 jest.mock('@/store/authSlice', () => ({
@@ -54,9 +39,6 @@ jest.mock('@/store/authSlice', () => ({
   }),
 }));
 
-// -------------------
-// js-cookie mock
-// -------------------
 import Cookies from 'js-cookie';
 
 jest.mock('js-cookie', () => ({
@@ -64,9 +46,6 @@ jest.mock('js-cookie', () => ({
   remove: jest.fn(),
 }));
 
-// -------------------
-// react-query mocks
-// -------------------
 const mockMutate = jest.fn();
 const mockClear = jest.fn();
 
@@ -79,9 +58,6 @@ jest.mock('@tanstack/react-query', () => ({
   }),
 }));
 
-// -------------------
-// user service mock
-// -------------------
 jest.mock('@/services/userService', () => ({
   logoutUser: jest.fn(),
 }));
@@ -115,7 +91,6 @@ describe('MainHeader', () => {
   });
 
   test('logout triggers confirm and mutation', () => {
-    // mock confirm dialog
     jest.spyOn(window, 'confirm').mockReturnValue(true);
 
     render(<MainHeader />);

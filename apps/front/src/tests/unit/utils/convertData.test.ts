@@ -16,7 +16,7 @@ import {
   toClientLangLevel,
   capitalize,
   toKebabCase,
-} from '@/utils/convertData'; // ← поправ шлях, якщо інший
+} from '@/utils/convertData'; 
 
 describe('isoToDate', () => {
   it('formats ISO date to dd.mm.yyyy', () => {

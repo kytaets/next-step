@@ -18,7 +18,6 @@ jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(),
 }));
 
-// Framer motion mock
 jest.mock('framer-motion', () => ({
   __esModule: true,
   motion: {
@@ -26,13 +25,11 @@ jest.mock('framer-motion', () => ({
   },
 }));
 
-// Mock AnimatedIcon
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({
   __esModule: true,
   default: ({ children }: any) => <span>{children}</span>,
 }));
 
-// Mock LabeledField – return simple input
 jest.mock('@/components/ProfileItems/LabeledField', () => ({
   __esModule: true,
   default: ({ label, name }: any) => (
@@ -40,18 +37,15 @@ jest.mock('@/components/ProfileItems/LabeledField', () => ({
   ),
 }));
 
-// ❗ Correct RequestErrors mock — using the real import path from component
 jest.mock('@/components/RequestErrors/RequestErrors', () => ({
   __esModule: true,
   default: ({ error }: any) => <div data-testid="request-error">{error}</div>,
 }));
 
-// Mock backend mutation
 jest.mock('@/services/jobseekerService', () => ({
   updateUserContacts: jest.fn(),
 }));
 
-// Mock profileValidation utils
 jest.mock('@/utils/profileValidation', () => ({
   removeEmpty: jest.fn((v) => v),
   replaceNulls: jest.fn((v) => v),

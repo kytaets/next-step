@@ -3,7 +3,6 @@ import { useModalStore } from '@/store/modalSlice';
 
 describe('useModalStore (Zustand modal)', () => {
   beforeEach(() => {
-    // Скидаємо стан стора перед кожним тестом
     useModalStore.setState({
       isOpen: false,
       content: null,
@@ -28,7 +27,7 @@ describe('useModalStore (Zustand modal)', () => {
 
     expect(state.isOpen).toBe(true);
     expect(state.content).toBe('Test content');
-    expect(state.isAbsolute).toBe(false); // default
+    expect(state.isAbsolute).toBe(false);
   });
 
   test('openModal should accept isAbsolute=true', () => {

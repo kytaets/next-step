@@ -201,8 +201,8 @@ describe('Vacancies Search Page (mocked)', () => {
 
     cy.get('select[name="seniorityLevel"]').select('MIDDLE');
 
-    cy.get('#workFormats-select').click({ force: true }); // відкрити меню
-    cy.get('#workFormats-REMOTE').parent().find('input').click({ force: true }); // вибрати пункт
+    cy.get('#workFormats-select').click({ force: true });
+    cy.get('#workFormats-REMOTE').parent().find('input').click({ force: true });
     cy.get('#workFormats-select').click({ force: true });
 
     cy.get('#employmentTypes-select').click({ force: true });

@@ -3,9 +3,6 @@ import '@testing-library/jest-dom';
 
 import RequestErrors from '@/components/RequestErrors/RequestErrors';
 
-// ------------------
-// Mock MessageBox
-// ------------------
 jest.mock('@/components/MessageBox/MessageBox', () => (props: any) => (
   <div data-testid="mock-messagebox">{props.children}</div>
 ));

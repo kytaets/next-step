@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, waitFor } from '@testing-library/react';
 import CompanyInvitationPage from '@/app/company-invitation/page';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,8 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { acceptInvite } from '@/services/recruiterProfileService';
 import { useModalStore } from '@/store/modalSlice';
-
-// ---------------- MOCKS ----------------
 
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
@@ -40,12 +34,10 @@ describe('CompanyInvitationPage — Integration Tests (API-mocked)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Мокаємо router
     (useRouter as jest.Mock).mockReturnValue({
       replace: replaceMock,
     });
 
-    // Мокаємо zustand store
     (useModalStore as jest.Mock).mockImplementation((selector) =>
       selector({
         openModal: openModalMock,
@@ -59,14 +51,11 @@ describe('CompanyInvitationPage — Integration Tests (API-mocked)', () => {
       get: () => 'abc123',
     });
 
-    (acceptInvite as jest.Mock).mockReturnValue(new Promise(() => {})); // never resolves
+    (acceptInvite as jest.Mock).mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
-    expect(openModalMock).toHaveBeenCalledWith(
-      expect.anything(), // modal JSX
-      true
-    );
+    expect(openModalMock).toHaveBeenCalledWith(expect.anything(), true);
   });
 
   test('redirects to company page when invitation accepted (success)', async () => {
@@ -113,10 +102,7 @@ describe('CompanyInvitationPage — Integration Tests (API-mocked)', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(openModalMock).toHaveBeenCalledWith(
-        expect.anything(), // JSX modal
-        true
-      );
+      expect(openModalMock).toHaveBeenCalledWith(expect.anything(), true);
     });
   });
 
@@ -127,7 +113,6 @@ describe('CompanyInvitationPage — Integration Tests (API-mocked)', () => {
 
     renderPage();
 
-    // нічого не викликається
     expect(openModalMock).not.toHaveBeenCalled();
     expect(acceptInvite).not.toHaveBeenCalled();
     expect(replaceMock).not.toHaveBeenCalled();

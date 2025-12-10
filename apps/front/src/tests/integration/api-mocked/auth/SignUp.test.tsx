@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import RegistrationForm from '@/components/SignUpItems/RegistrationForm';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

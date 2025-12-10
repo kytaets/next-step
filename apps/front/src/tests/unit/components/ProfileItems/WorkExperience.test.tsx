@@ -5,7 +5,6 @@ import { handleExperienceSubmit } from '@/utils/profileValidation';
 
 jest.mock('@/utils/profileValidation');
 
-// ---- Моки InfoBox та InfoItem, щоб не ламали DOM структуру ----
 jest.mock(
   '@/components/ProfileItems/InfoBox',
   () =>
@@ -79,7 +78,7 @@ describe('WorkExperience', () => {
     const user = userEvent.setup();
     render(<WorkExperience isEditable data={mockData} />);
 
-    await user.click(screen.getByRole('button')); // edit mode
+    await user.click(screen.getByRole('button'));
 
     const deleteButton = screen.getByText('Delete');
     await user.click(deleteButton);
@@ -88,8 +87,6 @@ describe('WorkExperience', () => {
       screen.queryByPlaceholderText('Company Name')
     ).not.toBeInTheDocument();
   });
-
-  // ---- ВАЛІДАЦІЯ ----
 
   test('shows error when fields are empty', async () => {
     const user = userEvent.setup();
@@ -102,7 +99,7 @@ describe('WorkExperience', () => {
 
     render(<WorkExperience isEditable data={mockData} />);
 
-    await user.click(screen.getByRole('button')); // edit mode
+    await user.click(screen.getByRole('button'));
 
     await user.clear(screen.getByPlaceholderText('Company Name'));
     await user.click(screen.getByText('Save changes'));
@@ -171,9 +168,8 @@ describe('WorkExperience', () => {
 
     render(<WorkExperience isEditable data={mockData} />);
 
-    await user.click(screen.getByRole('button')); // edit mode
+    await user.click(screen.getByRole('button'));
 
-    // change company name
     const companyInput = screen.getByPlaceholderText('Company Name');
     await user.clear(companyInput);
     await user.type(companyInput, 'Amazon');

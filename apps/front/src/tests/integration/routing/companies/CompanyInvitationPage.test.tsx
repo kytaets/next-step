@@ -5,7 +5,6 @@ import { useModalStore } from '@/store/modalSlice';
 
 import CompanyInvitationPage from '@/app/company-invitation/page';
 
-// ---- Моки ----
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
   useRouter: jest.fn(),
@@ -42,7 +41,6 @@ describe('CompanyInvitationPage routing behaviour', () => {
     });
 
     (useModalStore as jest.Mock).mockReturnValue((cb: any) => {
-      // возвращаем функции стейта
       if (cb.name === 'openModal') return openModalMock;
       if (cb.name === 'closeModal') return closeModalMock;
       return null;
@@ -53,7 +51,6 @@ describe('CompanyInvitationPage routing behaviour', () => {
     jest.clearAllMocks();
   });
 
-  // ---------- SUCCESS case ----------
   it('redirects to company page on success', async () => {
     (useSearchParams as jest.Mock).mockReturnValue({
       get: () => 'token123',
@@ -73,7 +70,6 @@ describe('CompanyInvitationPage routing behaviour', () => {
     });
   });
 
-  // ---------- 403 ERROR case ----------
   it('redirects to recruiter profile if error status=403', async () => {
     (useSearchParams as jest.Mock).mockReturnValue({
       get: () => 'token123',

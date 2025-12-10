@@ -2,9 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SkillsInput from '@/components/SearchItems/Fields/Skills';
 import '@testing-library/jest-dom';
 
-// ======================================================
-// MOCK useFormikContext
-// ======================================================
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(),
   FieldArray: ({ name, children }: any) => {
@@ -17,26 +14,17 @@ jest.mock('formik', () => ({
 
 const mockUseFormikContext = require('formik').useFormikContext as jest.Mock;
 
-// ======================================================
-// MOCK useQuery (skills list)
-// ======================================================
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
 }));
 
 const mockUseQuery = require('@tanstack/react-query').useQuery as jest.Mock;
 
-// ======================================================
-// MOCK AnimatedIcon
-// ======================================================
 jest.mock('@/components/HoveredItem/HoveredItem', () => ({
   __esModule: true,
   default: ({ children }: any) => <span>{children}</span>,
 }));
 
-// ======================================================
-// MOCK RequestErrors
-// ======================================================
 jest.mock('@/components/RequestErrors/RequestErrors', () => ({
   __esModule: true,
   default: ({ error }: any) => <div data-testid="request-error">{error}</div>,
@@ -53,9 +41,6 @@ describe('SkillsInput Component', () => {
     newSkill: '',
   };
 
-  // ======================================================
-  // BASE RENDER
-  // ======================================================
   test('renders label "Skills"', () => {
     mockUseFormikContext.mockReturnValue({
       values: mockValues,
@@ -69,9 +54,6 @@ describe('SkillsInput Component', () => {
     expect(screen.getByText('Skills')).toBeInTheDocument();
   });
 
-  // ======================================================
-  // NAME FIELD LOGIC
-  // ======================================================
   test('uses requiredSkillIds for vacancies', () => {
     mockUseFormikContext.mockReturnValue({
       values: mockValues,
@@ -97,13 +79,9 @@ describe('SkillsInput Component', () => {
 
     render(<SkillsInput type="jobSeekers" />);
 
-    // from mockValues.skillIds
     expect(screen.getByText('Node')).toBeInTheDocument();
   });
 
-  // ======================================================
-  // REMOVE BUTTON
-  // ======================================================
   test('remove() is called when trash button is clicked', () => {
     const removeMock = jest.fn();
     const pushMock = jest.fn();
@@ -133,9 +111,6 @@ describe('SkillsInput Component', () => {
     expect(removeMock).toHaveBeenCalled();
   });
 
-  // ======================================================
-  // AUTOCOMPLETE LIST
-  // ======================================================
   test('clicking autocomplete item triggers push()', () => {
     const pushMock = jest.fn();
 
@@ -144,16 +119,16 @@ describe('SkillsInput Component', () => {
 
     mockUseFormikContext.mockReturnValue({
       values: {
-        requiredSkillIds: [], // важливо: React не повинен бути тут!
+        requiredSkillIds: [],
         skillIds: [],
-        newSkill: 're', // тригер показу автокомпліта
+        newSkill: 're',
       },
       handleChange: jest.fn(),
       setFieldValue: jest.fn(),
     });
 
     mockUseQuery.mockReturnValue({
-      data: [{ id: 1, name: 'React' }], // skillsList → містить "React"
+      data: [{ id: 1, name: 'React' }],
       error: null,
     });
 
@@ -167,9 +142,6 @@ describe('SkillsInput Component', () => {
     });
   });
 
-  // ======================================================
-  // ERROR FROM API
-  // ======================================================
   test('displays fetch error when useQuery returns error', () => {
     mockUseFormikContext.mockReturnValue({
       values: { ...mockValues, newSkill: 're' },

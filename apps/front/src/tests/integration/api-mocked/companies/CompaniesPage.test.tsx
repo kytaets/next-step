@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import CompaniesPage from '@/app/companies/page';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -126,10 +122,8 @@ describe('CompaniesPage — Integration Tests (API-mocked)', () => {
 
     const { container } = renderPage();
 
-    // Дочекаємось появи інпута
     const input = await screen.findByRole('textbox');
 
-    // Знаходимо form через DOM API — бо без data-testid і aria-label
     const form = container.querySelector('form');
     expect(form).not.toBeNull();
 

@@ -5,9 +5,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ===============================
-// 🔧 MOCK modalSlice
-// ===============================
 const openModalMock = jest.fn();
 const closeModalMock = jest.fn();
 
@@ -19,25 +16,16 @@ jest.mock('@/store/modalSlice', () => ({
     }),
 }));
 
-// ===============================
-// 🔧 MOCK Cookies
-// ===============================
 const setCookieMock = jest.fn();
 
 jest.mock('js-cookie', () => ({
   set: (...args) => setCookieMock(...args),
 }));
 
-// ===============================
-// 🔧 MOCK next/navigation
-// ===============================
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-// ===============================
-// 🔧 MOCK CompanyProfileContainer
-// ===============================
 jest.mock(
   '@/components/CompanyProfileItems/CompanyProfileContainer',
   () => (props: any) => (
@@ -45,8 +33,6 @@ jest.mock(
   )
 );
 
-// ===============================
-// 🔧 MOCK ProfileFormModal (іменований компонент)
 jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   function ProfileFormModalMock(props: any) {
     return <div>ProfileFormModal {props.role}</div>;
@@ -54,9 +40,6 @@ jest.mock('@/components/ProfileItems/ProfileFormModal', () => {
   return ProfileFormModalMock;
 });
 
-// ===============================
-// 🔧 MOCK SERVICE
-// ===============================
 jest.mock('@/services/companyProfileService', () => ({
   getMyCompanyProfile: jest.fn(),
 }));
@@ -64,8 +47,6 @@ jest.mock('@/services/companyProfileService', () => ({
 import CompanyProfilePage from '@/app/my-profile/recruiter/company/CompanyProfilePage';
 import { getMyCompanyProfile } from '@/services/companyProfileService';
 
-// ===============================
-// 🔧 render helper
 function renderPage() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -78,15 +59,11 @@ function renderPage() {
   );
 }
 
-// ===============================
-// 🧪 TESTS
-// ===============================
 describe('CompanyProfilePage tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // -------------------------------------------
   test('opens modal when profile is forbidden (403)', async () => {
     (getMyCompanyProfile as jest.Mock).mockRejectedValue({
       status: 403,
@@ -104,7 +81,6 @@ describe('CompanyProfilePage tests', () => {
     expect(modalElement.props.role).toBe('company');
   });
 
-  // -------------------------------------------
   test('displays error message for non-403 errors', async () => {
     (getMyCompanyProfile as jest.Mock).mockRejectedValue({
       status: 500,
@@ -120,7 +96,6 @@ describe('CompanyProfilePage tests', () => {
     expect(screen.getByText(/server error/i)).toBeInTheDocument();
   });
 
-  // -------------------------------------------
   test('renders profile and sets cookies on success', async () => {
     (getMyCompanyProfile as jest.Mock).mockResolvedValue({
       id: 55,
@@ -139,7 +114,6 @@ describe('CompanyProfilePage tests', () => {
     expect(closeModalMock).toHaveBeenCalledTimes(1);
   });
 
-  // -------------------------------------------
   test('returns null while loading', async () => {
     (getMyCompanyProfile as jest.Mock).mockReturnValue(new Promise(() => {}));
 

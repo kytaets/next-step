@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import VacanciesPage from '@/app/vacancies/VacanciesPage'; // adjust path if needed
+import VacanciesPage from '@/app/vacancies/VacanciesPage'; 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { searchVacancies } from '@/services/vacanciesService';
@@ -22,7 +22,6 @@ function renderPage(searchParamsObj: Record<string, string> = {}) {
     defaultOptions: { queries: { retry: false } },
   });
 
-  // mock search params
   (useSearchParams as jest.Mock).mockReturnValue({
     entries: () => Object.entries(searchParamsObj),
     get: (key: string) => searchParamsObj[key],
@@ -44,7 +43,7 @@ describe('VacanciesPage — Integration Tests', () => {
 
   test('renders loading state', async () => {
     (searchVacancies as jest.Mock).mockReturnValue(
-      new Promise(() => {}) // never resolve → simulates pending
+      new Promise(() => {}) 
     );
 
     renderPage();

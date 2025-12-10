@@ -1,4 +1,4 @@
-import React from 'react'; // ← додай це
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import MessageBox from '@/components/MessageBox/MessageBox';
 

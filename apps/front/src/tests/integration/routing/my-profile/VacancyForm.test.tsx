@@ -19,7 +19,7 @@ jest.mock('js-cookie', () => ({
 }));
 
 jest.mock('@/utils/vacancyValidation', () => ({
-  validateVacancyForm: jest.fn(() => ({})), // IMPORTANT
+  validateVacancyForm: jest.fn(() => ({})),
 }));
 
 jest.mock('@/services/jobseekerService', () => ({
@@ -47,7 +47,7 @@ jest.mock(
 
 describe('VacancyForm routing behavior', () => {
   beforeEach(() => {
-    (Cookies.get as jest.Mock).mockReturnValue('ABC123'); // MOCK NOW WORKS
+    (Cookies.get as jest.Mock).mockReturnValue('ABC123');
   });
 
   it('redirects after successful CREATE', async () => {

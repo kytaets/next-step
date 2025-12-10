@@ -178,6 +178,10 @@
   }
 }
 
+/* ========================================= */
+/* ADAPTIVE LAYOUT FOR COMPANYINFOS          */
+/* ========================================= */
+
 /* Tablets */
 @media (max-width: 1024px) {
   .companies-container {
